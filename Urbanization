@@ -8,6 +8,9 @@ var smod2030 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2030").select('smod_code');
 
 // Add urban data for 2000 to layer
 Map.addLayer(smod2000.updateMask(smod2000.gt(21)), {}, 'Degree of Urbanization 2000');
+Map.addLayer(smod2010.updateMask(smod2010.gt(21)), {}, 'Degree of Urbanization 2010');
+Map.addLayer(smod2020.updateMask(smod2020.gt(21)), {}, 'Degree of Urbanization 2020');
+Map.addLayer(smod2030.updateMask(smod2030.gt(21)), {}, 'Degree of Urbanization 2030');
 
 // import Population data 
 var pop2000 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2000');
@@ -23,6 +26,9 @@ var populationCountVis = {
 
 // add population estimates for 2000 to layer
 Map.addLayer(pop2000.updateMask(pop2000.gt(0)), populationCountVis, 'Population count, 2000');
+Map.addLayer(pop2010.updateMask(pop2010.gt(0)), populationCountVis, 'Population count, 2010');
+Map.addLayer(pop2020.updateMask(pop2020.gt(0)), populationCountVis, 'Population count, 2020');
+Map.addLayer(pop2030.updateMask(pop2030.gt(0)), populationCountVis, 'Population count, 2030');
 
 
 
