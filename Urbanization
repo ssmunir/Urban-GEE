@@ -1,0 +1,27 @@
+// Import Urbanisation Dataset
+var smod2000 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2000").select('smod_code');
+var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
+var smod2020 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2020").select('smod_code');
+var smod2030 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2030").select('smod_code');
+
+// Add urban data for 2000 to layer
+Map.addLayer(smod2000.updateMask(smod2000.gt(21)), {}, 'Degree of Urbanization 2000');
+
+// import Population data 
+var pop2000 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2000');
+var pop2010 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2010');
+var pop2020 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2020');
+var pop2030 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2030');
+var populationCountVis = {
+  min: 0.0,
+  max: 100.0,
+  palette:
+      ['000004', '320A5A', '781B6C', 'BB3654', 'EC6824', 'FBB41A', 'FCFFA4']
+};
+
+// add population estimates for 2000 to layer
+Map.addLayer(pop2000.updateMask(pop2000.gt(0)), populationCountVis, 'Population count, 2000');
+
+
+
+
