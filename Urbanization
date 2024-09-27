@@ -1,5 +1,18 @@
 Map.setCenter(16.22, 16.82, 4);
 
+// Add Country Boundries
+var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
+
+var styleParams = {
+  fillColor: 'b5ffb4',
+  color: '00909F',
+  width: 1.0,
+};
+
+countries = countries.style(styleParams);
+
+Map.addLayer(countries, {}, 'Country Boundaries');
+
 // Import Urbanisation Dataset
 var smod2000 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2000").select('smod_code');
 var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
