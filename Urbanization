@@ -14,16 +14,43 @@ countries = countries.style(styleParams);
 Map.addLayer(countries, {}, 'Country Boundaries');
 
 // Import Urbanisation Dataset
+var smod1980 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/1980").select('smod_code');
+var smod1990 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/1990").select('smod_code');
 var smod2000 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2000").select('smod_code');
 var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
 var smod2020 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2020").select('smod_code');
 var smod2030 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2030").select('smod_code');
 
-// Add urban data for 2000 to layer
+// Add urban data to layer
+Map.addLayer(smod1980.updateMask(smod1980.gt(21)), {}, 'Degree of Urbanization 1980');
+Map.addLayer(smod1990.updateMask(smod1990.gt(21)), {}, 'Degree of Urbanization 1990');
 Map.addLayer(smod2000.updateMask(smod2000.gt(21)), {}, 'Degree of Urbanization 2000');
 Map.addLayer(smod2010.updateMask(smod2010.gt(21)), {}, 'Degree of Urbanization 2010');
-Map.addLayer(smod2020.updateMask(smod2020.gt(21)), {}, 'Degree of Urbanization 2020');
+Map.addLayer(smod2020, {}, 'Degree of Urbanization 2020');
 Map.addLayer(smod2030.updateMask(smod2030.gt(21)), {}, 'Degree of Urbanization 2030');
+
+// Define a function to create urban binary layer
+var createUrbanLayer = function(image, year) {
+  var urbanLayer = image.eq(22).or(image.eq(23)).or(image.eq(30))
+      .multiply(1) // Ensure it's 1 for urban areas
+      .where(image.neq(22).and(image.neq(23)).and(image.neq(30)), 0); // Set non-urban areas to 0
+  return urbanLayer.rename('urban_'+ year);
+};
+
+// Create urban layers for each year
+var urban1980 = createUrbanLayer(smod1980, '1980');
+var urban1990 = createUrbanLayer(smod1990, '1990');
+var urban2000 = createUrbanLayer(smod2000, '2000');
+var urban2010 = createUrbanLayer(smod2010, '2010');
+var urban2020 = createUrbanLayer(smod2020, '2020');
+var urban2030 = createUrbanLayer(smod2030, '2030');
+
+// Combine urban layers into an multiband raster
+var urbanTimeSeries = ee.Image.cat([urban1980, urban1990, urban2000, urban2010, urban2020, urban2030]);
+
+// Add the layers to the map
+Map.addLayer(urbanTimeSeries, {},  'Urban Time Series');
+
 
 // import Population data 
 var pop2000 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2000');
@@ -38,11 +65,9 @@ var populationCountVis = {
 };
 
 // add population estimates for 2000 to layer
-Map.addLayer(pop2000.updateMask(pop2000.gt(0)), populationCountVis, 'Population count, 2000');
-Map.addLayer(pop2010.updateMask(pop2010.gt(0)), populationCountVis, 'Population count, 2010');
-Map.addLayer(pop2020.updateMask(pop2020.gt(0)), populationCountVis, 'Population count, 2020');
-Map.addLayer(pop2030.updateMask(pop2030.gt(0)), populationCountVis, 'Population count, 2030');
-
-
+//Map.addLayer(pop2000.updateMask(pop2000.gt(0)), populationCountVis, 'Population count, 2000');
+//Map.addLayer(pop2010.updateMask(pop2010.gt(0)), populationCountVis, 'Population count, 2010');
+//Map.addLayer(pop2020.updateMask(pop2020.gt(0)), populationCountVis, 'Population count, 2020');
+//Map.addLayer(pop2030.updateMask(pop2030.gt(0)), populationCountVis, 'Population count, 2030');
 
 
