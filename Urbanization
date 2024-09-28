@@ -1,4 +1,4 @@
-Map.setCenter(16.22, 16.82, 4);
+Map.setCenter(7.7501, 12.8969, 4);
 
 // Add Country Boundries
 var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
@@ -11,7 +11,9 @@ var styleParams = {
 
 countries = countries.style(styleParams);
 
-Map.addLayer(countries, {}, 'Country Boundaries');
+
+
+///////////////
 
 // Import Urbanisation Dataset
 var smod1980 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/1980").select('smod_code');
@@ -21,13 +23,16 @@ var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
 var smod2020 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2020").select('smod_code');
 var smod2030 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2030").select('smod_code');
 
+var smodSeries = ee.Image.cat([
+  smod1980.updateMask(smod1980.gt(21)).rename('smod1980'), smod1990.updateMask(smod1990.gt(21)).rename('smod1990'),
+  smod2000.updateMask(smod2000.gt(21)).rename('smod2000'), smod2010.updateMask(smod2010.gt(21)).rename('smod2010'),
+  smod2020.updateMask(smod2020.gt(21)).rename('smod2020'), smod2030.updateMask(smod2030.gt(21)).rename('smod2030')
+  ]);
 // Add urban data to layer
-Map.addLayer(smod1980.updateMask(smod1980.gt(21)), {}, 'Degree of Urbanization 1980');
-Map.addLayer(smod1990.updateMask(smod1990.gt(21)), {}, 'Degree of Urbanization 1990');
-Map.addLayer(smod2000.updateMask(smod2000.gt(21)), {}, 'Degree of Urbanization 2000');
-Map.addLayer(smod2010.updateMask(smod2010.gt(21)), {}, 'Degree of Urbanization 2010');
-Map.addLayer(smod2020, {}, 'Degree of Urbanization 2020');
-Map.addLayer(smod2030.updateMask(smod2030.gt(21)), {}, 'Degree of Urbanization 2030');
+
+Map.addLayer(smodSeries, {}, 'Degree of Urbanization');
+
+////////////
 
 // Define a function to create urban binary layer
 var createUrbanLayer = function(image, year) {
@@ -69,5 +74,82 @@ var populationCountVis = {
 //Map.addLayer(pop2010.updateMask(pop2010.gt(0)), populationCountVis, 'Population count, 2010');
 //Map.addLayer(pop2020.updateMask(pop2020.gt(0)), populationCountVis, 'Population count, 2020');
 //Map.addLayer(pop2030.updateMask(pop2030.gt(0)), populationCountVis, 'Population count, 2030');
+
+
+///////// CURRENT URBAN POPULATION
+
+// Define function to multiply urban layer by population
+var multiplyUrbanByPopulation = function(urbanLayer, populationLayer, year) {
+  return urbanLayer.multiply(populationLayer).rename('population_urban_'+ year);
+};
+
+// Create population urban layers for each year (current year)
+var populationUrban2000 = multiplyUrbanByPopulation(urban2000, pop2000, '2000');
+var populationUrban2010 = multiplyUrbanByPopulation(urban2010, pop2010, '2010');
+var populationUrban2020 = multiplyUrbanByPopulation(urban2020, pop2020, '2020');
+var populationUrban2030 = multiplyUrbanByPopulation(urban2030, pop2030, '2030');
+
+// Combine all population urban layers into a single image with multiple bands
+var multiBandPopulationUrban = ee.Image.cat([
+  populationUrban2000,
+  populationUrban2010,
+  populationUrban2020,
+  populationUrban2030
+]);
+
+// Add the multi-band population urban layer to the map
+Map.addLayer(multiBandPopulationUrban, {}, 'Population in Urban Areas');
+
+
+//////////// 10 YEAR LAG
+
+// Define function to multiply urban population today by urban 10 years ago
+var multiplyUrban10ByPopToday = function(urbanLayer, populationLayer, year) {
+  return urbanLayer.multiply(populationLayer).rename('popUrban_10YearLag_'+ year);
+};
+
+// Create population urban layers for each year (current year)
+var popUrban_10YearLag2000 = multiplyUrban10ByPopToday(urban1990, populationUrban2000, '2000');
+var popUrban_10YearLag2010 = multiplyUrban10ByPopToday(urban2000, populationUrban2010, '2010');
+var popUrban_10YearLag2020 = multiplyUrban10ByPopToday(urban2010, populationUrban2020, '2020');
+var popUrban_10YearLag2030 = multiplyUrban10ByPopToday(urban2020, populationUrban2030, '2030');
+
+// Combine all population urban layers into a single image with multiple bands
+var multiBandPopUrban10YearLag = ee.Image.cat([
+  popUrban_10YearLag2000,
+  popUrban_10YearLag2010,
+  popUrban_10YearLag2020,
+  popUrban_10YearLag2030
+]);
+
+// Add the multi-band population urban layer to the map
+Map.addLayer(multiBandPopUrban10YearLag, {}, 'Urban Population 10 year lag');
+
+
+
+//////////// 20 YEAR LAG
+
+// Define function to multiply urban population today by urban 20 years ago
+var multiplyUrban20ByPopToday = function(urbanLayer, populationLayer, year) {
+  return urbanLayer.multiply(populationLayer).rename('popUrban_20YearLag_'+ year);
+};
+
+// Create population urban layers for each year (current year)
+var popUrban_20YearLag2000 = multiplyUrban20ByPopToday(urban1980, populationUrban2000, '2000');
+var popUrban_20YearLag2010 = multiplyUrban20ByPopToday(urban1990, populationUrban2010, '2010');
+var popUrban_20YearLag2020 = multiplyUrban20ByPopToday(urban2000, populationUrban2020, '2020');
+var popUrban_20YearLag2030 = multiplyUrban20ByPopToday(urban2010, populationUrban2030, '2030');
+
+// Combine all population urban layers into a single image with multiple bands
+var multiBandPopUrban20YearLag = ee.Image.cat([
+  popUrban_20YearLag2000,
+  popUrban_20YearLag2010,
+  popUrban_20YearLag2020,
+  popUrban_20YearLag2030
+]);
+
+// Add the multi-band population urban layer to the map
+Map.addLayer(multiBandPopUrban20YearLag, {}, 'Urban Population 20 year lag');
+
 
 
