@@ -3,14 +3,6 @@ Map.setCenter(7.7501, 12.8969, 4);
 // Add Country Boundries
 var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
-var styleParams = {
-  fillColor: 'b5ffb4',
-  color: '00909F',
-  width: 1.0,
-};
-
-countries = countries.style(styleParams);
-
 
 
 ///////////////
@@ -140,6 +132,8 @@ var multiBandPopUrban20YearLag = ee.Image.cat([
   popUrban_20YearLag2030
 ]);
 
+// Add country boundaries
+Map.addLayer(countries, {color: 'FF0000'}, 'country boundaries');
 // Add population to layer
 Map.addLayer(pop2000, {}, 'Population 2000');
 // Add urban data to layer
