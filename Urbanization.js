@@ -149,17 +149,17 @@ Map.addLayer(multiBandPopUrban20YearLag.select('popUrban_20YearLag_2020'), {}, '
 //////// ZONAL STATISTICS
 
 
-// Define the function to compute zonal statistics and export the results with dynamic column names
+// Define function to compute zonal statistics and export the results
 function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   // Compute zonal statistics: sum of population for each country
   var zonalStats = raster.reduceRegions({
-    collection: countries,               // The countries feature collection
+    collection: countries,               // countries feature collection
     reducer: ee.Reducer.sum(),           // Sum reducer for population
     scale: 1000,                         // Coarser scale for faster computation
     crs: 'EPSG:4326'                     // Use WGS84 as the CRS
   });
 
-  // Create a simplified FeatureCollection with just country name and the dynamically named sum
+  // Create a simplified FeatureCollection with just country name and sum columns
   var simplifiedZonalStats = zonalStats.map(function(feature) {
     var properties = {};
     properties['country'] = feature.get('ADM0_NAME');   // Get the country name
@@ -205,7 +205,7 @@ var rasters = [
 
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
-  var rasterName = r.prefix + r.year;  // Create the dynamic column name based on prefix and year
+  var rasterName = r.prefix + r.year;  // Create column name based on prefix and year
   computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
 });
 
