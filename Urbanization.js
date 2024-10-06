@@ -4,6 +4,7 @@ Map.setCenter(7.7501, 12.8969, 4);
 var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
 
+
 ///////////////
 
 // Import Urbanisation Dataset
@@ -55,6 +56,11 @@ var populationCountVis = {
       ['000004', '320A5A', '781B6C', 'BB3654', 'EC6824', 'FBB41A', 'FCFFA4']
 };
 
+// add population estimates for 2000 to layer
+//Map.addLayer(pop2000.updateMask(pop2000.gt(0)), populationCountVis, 'Population count, 2000');
+//Map.addLayer(pop2010.updateMask(pop2010.gt(0)), populationCountVis, 'Population count, 2010');
+//Map.addLayer(pop2020.updateMask(pop2020.gt(0)), populationCountVis, 'Population count, 2020');
+//Map.addLayer(pop2030.updateMask(pop2030.gt(0)), populationCountVis, 'Population count, 2030');
 
 
 ///////// CURRENT URBAN POPULATION
@@ -151,14 +157,19 @@ Map.addLayer(multiBandPopUrban20YearLag.select('popUrban_20YearLag_2020'), {}, '
 
 // Define the function to compute zonal statistics and export the results with dynamic column names
 function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
-  // Compute zonal statistics: sum of population for each country
-  var zonalStats = raster.reduceRegions({
-    collection: countries,               // The countries feature collection
-    reducer: ee.Reducer.sum(),           // Sum reducer for population
-    scale: 100,                         
-    crs: raster.projection()                     // Use raster projections
+ // Reproject the population raster to EPSG:4326 (WGS84) to match the countries
+  var reprojectedRaster = raster.reproject({
+    crs: 'EPSG:4326',
+    scale: 100   // Set the resolution to 100 meters (or adjust based on your raster)
   });
-  
+
+  // Compute zonal statistics: sum of population for each country using the reprojected raster
+  var zonalStats = reprojectedRaster.reduceRegions({
+    collection: countries,               // Use the countries in their native EPSG:4326 projection
+    reducer: ee.Reducer.sum(),           // Sum reducer for population
+    scale: 100,                          // Keep the scale consistent with the raster
+    crs: 'EPSG:4326'                     // Ensure both raster and polygons are in EPSG:4326
+  });
   
  
 
@@ -166,7 +177,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   var simplifiedZonalStats = zonalStats.map(function(feature) {
     var properties = {};
     properties['country'] = feature.get('ADM0_NAME');   // Get the country name
-    properties[rasterName] = feature.get('sum');        // rename the population sum column
+    properties[rasterName] = feature.get('sum');        // Rename the population sum column
     properties['year'] = year;                          // Add the year as a property
 
     return ee.Feature(null, properties);
@@ -206,10 +217,10 @@ var rasters = [
   { image: popUrban_20YearLag2030.updateMask(popUrban_20YearLag2030.gt(0)), year: 2030, prefix: 'UrbanPopulation_20YearLag' }
 ];
 
+
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
   var rasterName = r.prefix + r.year;  // Create the dynamic column name based on prefix and year
   computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
 });
-
 
