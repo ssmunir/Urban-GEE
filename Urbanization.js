@@ -149,21 +149,24 @@ Map.addLayer(multiBandPopUrban20YearLag.select('popUrban_20YearLag_2020'), {}, '
 //////// ZONAL STATISTICS
 
 
-// Define function to compute zonal statistics and export the results
+// Define the function to compute zonal statistics and export the results with dynamic column names
 function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   // Compute zonal statistics: sum of population for each country
   var zonalStats = raster.reduceRegions({
-    collection: countries,               // countries feature collection
+    collection: countries,               // The countries feature collection
     reducer: ee.Reducer.sum(),           // Sum reducer for population
-    scale: 1000,                         // Coarser scale for faster computation
-    crs: 'EPSG:4326'                     // Use WGS84 as the CRS
+    scale: 100,                         
+    crs: raster.projection()                     // Use raster projections
   });
+  
+  
+ 
 
-  // Create a simplified FeatureCollection with just country name and sum columns
+  // Create a simplified FeatureCollection with just country name and the dynamically named sum
   var simplifiedZonalStats = zonalStats.map(function(feature) {
     var properties = {};
     properties['country'] = feature.get('ADM0_NAME');   // Get the country name
-    properties[rasterName] = feature.get('sum');        // Rename the population sum column
+    properties[rasterName] = feature.get('sum');        // rename the population sum column
     properties['year'] = year;                          // Add the year as a property
 
     return ee.Feature(null, properties);
@@ -185,27 +188,28 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
 
 // List of rasters with corresponding years
 var rasters = [
-  { image: pop2000, year: 2000, prefix: 'Population' }, // popultion
-  { image: pop2010, year: 2010, prefix: 'Population' },
-  { image: pop2020, year: 2020, prefix: 'Population' },
-  { image: pop2030, year: 2030, prefix: 'Population' },
-  { image: populationUrban2000, year: 2000, prefix: 'UrbanPopulation' }, // urban population
-  { image: populationUrban2010, year: 2010, prefix: 'UrbanPopulation' },
-  { image: populationUrban2020, year: 2020, prefix: 'UrbanPopulation' },
-  { image: populationUrban2030, year: 2030, prefix: 'UrbanPopulation' },
-  { image: popUrban_10YearLag2000, year: 2000, prefix: 'UrbanPopulation_10YearLag' }, // urban population 10 year lag
-  { image: popUrban_10YearLag2010, year: 2010, prefix: 'UrbanPopulation_10YearLag' },
-  { image: popUrban_10YearLag2020, year: 2020, prefix: 'UrbanPopulation_10YearLag' },
-  { image: popUrban_10YearLag2030, year: 2030, prefix: 'UrbanPopulation_10YearLag' },
-  { image: popUrban_20YearLag2000, year: 2000, prefix: 'UrbanPopulation_20YearLag' }, // urban population 20 year lag
-  { image: popUrban_20YearLag2010, year: 2010, prefix: 'UrbanPopulation_20YearLag' },
-  { image: popUrban_20YearLag2020, year: 2020, prefix: 'UrbanPopulation_20YearLag' },
-  { image: popUrban_20YearLag2030, year: 2030, prefix: 'UrbanPopulation_20YearLag' }
+  { image: pop2000.updateMask(pop2000.gt(0)), year: 2000, prefix: 'Population' }, // popultion
+  { image: pop2010.updateMask(pop2010.gt(0)), year: 2010, prefix: 'Population' },
+  { image: pop2020.updateMask(pop2020.gt(0)), year: 2020, prefix: 'Population' },
+  { image: pop2030.updateMask(pop2030.gt(0)), year: 2030, prefix: 'Population' },
+  { image: populationUrban2000.updateMask(populationUrban2000.gt(0)), year: 2000, prefix: 'UrbanPopulation' }, // urban population
+  { image: populationUrban2010.updateMask(populationUrban2010.gt(0)), year: 2010, prefix: 'UrbanPopulation' },
+  { image: populationUrban2020.updateMask(populationUrban2020.gt(0)), year: 2020, prefix: 'UrbanPopulation' },
+  { image: populationUrban2030.updateMask(populationUrban2030.gt(0)), year: 2030, prefix: 'UrbanPopulation' },
+  { image: popUrban_10YearLag2000.updateMask(popUrban_10YearLag2000.gt(0)), year: 2000, prefix: 'UrbanPopulation_10YearLag' }, // urban population 10 year lag
+  { image: popUrban_10YearLag2010.updateMask(popUrban_10YearLag2010.gt(0)), year: 2010, prefix: 'UrbanPopulation_10YearLag' },
+  { image: popUrban_10YearLag2020.updateMask(popUrban_10YearLag2020.gt(0)), year: 2020, prefix: 'UrbanPopulation_10YearLag' },
+  { image: popUrban_10YearLag2030.updateMask(popUrban_10YearLag2030.gt(0)), year: 2030, prefix: 'UrbanPopulation_10YearLag' },
+  { image: popUrban_20YearLag2000.updateMask(popUrban_20YearLag2000.gt(0)), year: 2000, prefix: 'UrbanPopulation_20YearLag' }, // urban population 20 year lag
+  { image: popUrban_20YearLag2010.updateMask(popUrban_20YearLag2010.gt(0)), year: 2010, prefix: 'UrbanPopulation_20YearLag' },
+  { image: popUrban_20YearLag2020.updateMask(popUrban_20YearLag2020.gt(0)), year: 2020, prefix: 'UrbanPopulation_20YearLag' },
+  { image: popUrban_20YearLag2030.updateMask(popUrban_20YearLag2030.gt(0)), year: 2030, prefix: 'UrbanPopulation_20YearLag' }
 ];
 
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
-  var rasterName = r.prefix + r.year;  // Create column name based on prefix and year
+  var rasterName = r.prefix + r.year;  // Create the dynamic column name based on prefix and year
   computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
 });
+
 
