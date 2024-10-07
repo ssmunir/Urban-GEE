@@ -4,7 +4,7 @@ import os
 import dask.dataframe as dd
 
 # Define the folder containing the CSV files
-folder_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Population data"
+folder_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data"
 
 # Loop through all files in the folder and create a list of DataFrames
 dataframes = []
