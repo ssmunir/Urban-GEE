@@ -160,7 +160,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
  // Reproject the population raster to EPSG:4326 (WGS84) to match the countries
   var reprojectedRaster = raster.reproject({
     crs: 'EPSG:4326',
-    scale: 100   // Set the resolution to 100 meters (or adjust based on your raster)
+    scale: 100   // Set the resolution to 100 meters 
   });
 
   // Compute zonal statistics: sum of population for each country using the reprojected raster
@@ -173,7 +173,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   
  
 
-  // Create a simplified FeatureCollection with just country name and the dynamically named sum
+  // Create a simplified FeatureCollection with just country name and the rename sum column
   var simplifiedZonalStats = zonalStats.map(function(feature) {
     var properties = {};
     properties['country'] = feature.get('ADM0_NAME');   // Get the country name
@@ -220,7 +220,7 @@ var rasters = [
 
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
-  var rasterName = r.prefix + r.year;  // Create the dynamic column name based on prefix and year
+  var rasterName = r.prefix + r.year;  // Create the column name based on prefix and year
   computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
 });
 
