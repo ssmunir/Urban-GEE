@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9.13
+  - python=3.12.4
   - numpy
   - pandas
   - scipy
@@ -16,3 +16,9 @@ dependencies:
   - googledrivedownloader
   - spyder
   - earthengine-api
+  - dask[dataframe]
+  - openpyxl
+  - pip
+  - pip:
+    - pycountry_convert
+  
