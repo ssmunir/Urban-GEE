@@ -19,6 +19,7 @@ dependencies:
   - dask[dataframe]
   - openpyxl
   - pip
+  - seaborn
   - pip:
     - pycountry_convert
   
