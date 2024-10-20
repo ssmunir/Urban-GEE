@@ -72,11 +72,6 @@ country_name = data["country"]  # list with country names
 continent_name = [country_to_continent(i) for i in country_name] # list with continent names
 data.insert(1, "continent", continent_name)  # insert column 
 
-# group by country name and sum
-data = data.groupby("country").sum().reset_index()
-
-
-
 # rename population data country names to match Income class country name for better merge
 data = country_renamer("Taiwan", "Taiwan, China")
 data = country_renamer("Turkey", "Türkiye")
@@ -104,6 +99,8 @@ data = country_renamer("Micronesia, Federated States of", "Micronesia, Fed. Sts.
 data = country_renamer("Moldova, Republic of", "Moldova")
 data = country_renamer("Sao Tome and Principe", "São Tomé and Príncipe")
 
+# group by country name and sum
+data = data.groupby("country").sum().reset_index()
 
 
 ####### Generate summary statistics by region ##############
@@ -114,10 +111,14 @@ incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only rel
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 
 
+# Drop countries with less than 100000 population in 2000
+popData = popData.loc[popData['Population2000'] > 100000]
+
 # Compute the final merged result and save it to a new CSV file
 popData.to_csv(results + r"\full_population_data.csv")
 print(f'Main population data saved at: {results}')
 
+'''
 # drop high income countries
 lowMidIncome = popData[popData["Income group"] != "High income"]
 
@@ -266,6 +267,6 @@ mainTable2 = maintableregion._append(maintableIncomegroup, ignore_index=True)
 # save to csv
 mainTable2.to_csv(results + r"\table2_2010and2030.csv")
 print(f'All results saved at: {results}')
-
+'''
 
 
