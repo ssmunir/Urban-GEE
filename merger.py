@@ -5,14 +5,16 @@ import pycountry_convert as pc
 
 # Define the folder containing the CSV files
 main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data"
-folder_path = main_path + r"\Population data"
-results = main_path + r"\Results"
+pop_def1 = main_path + r"\Population data def1"  # urban class 1 data folder
+pop_def2 = main_path + r"\Population data def1"  # urban class 2 data folder
+results1 = main_path + r"\Results\urban def 1"   # urban class 1 result folder
+results2 = main_path + r"\Results\urban def 2"   # urban class 2 result folder
 
 # Loop through all files in the folder and create a list of DataFrames
 dataframes = []
-for i, filename in enumerate(os.listdir(folder_path)):
+for i, filename in enumerate(os.listdir(pop_def2)):
     if filename.endswith(".csv"):
-        file_path = os.path.join(folder_path, filename)
+        file_path = os.path.join(pop_def2, filename)
 
         # Read the CSV using Dask
         df = dd.read_csv(file_path)
@@ -111,162 +113,15 @@ incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only rel
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 
 
-# Drop countries with less than 100000 population in 2000
-popData = popData.loc[popData['Population2000'] > 100000]
+"""
+# Compute the final merged result and save it to a new CSV file - 
+popData.to_csv(results1 + r"\full_population_data.csv")
+print(f'Main population data saved at: {results1}')
+"""
+
 
 # Compute the final merged result and save it to a new CSV file
-popData.to_csv(results + r"\full_population_data.csv")
-print(f'Main population data saved at: {results}')
-
-'''
-# drop high income countries
-lowMidIncome = popData[popData["Income group"] != "High income"]
-
-##------------2010 - 2020---------------------------###
-# main table 1  -- Region
-t1regionCount = lowMidIncome[["Region", "Population2010"]].groupby('Region').agg(['count']).reset_index()
-t1region = lowMidIncome[["Region", "Population2010", "Population2020", "UrbanPopulation2020", "UrbanPopulation2010", "UrbanPopulation_10YearLag2020"]].groupby('Region').agg(['sum']).reset_index()
-t1region["popChange"] = t1region["Population2020"]["sum"] - t1region["Population2010"]["sum"]
-t1region["urbanPopChange"] = t1region["UrbanPopulation2020"]["sum"] - t1region["UrbanPopulation2010"]["sum"]
-
-maintableregion = pd.DataFrame()
-maintableregion["Category"] = t1region["Region"]
-maintableregion["Count"] = t1regionCount["Population2010"]["count"]
-maintableregion["Population2010"] = t1region["Population2010"]["sum"]
-maintableregion["popChangein2020"] = t1region["popChange"]
-maintableregion["UrbanPopulation2010"] = t1region["UrbanPopulation2010"]["sum"]
-maintableregion["urbanPopChange"] = t1region["urbanPopChange"]
-maintableregion["UrbanPopulation_10YearLag2020"] = t1region["UrbanPopulation_10YearLag2020"]
-
-# main table 1  -- Income group
-t1IncomegroupCount = lowMidIncome[["Income group", "Population2010"]].groupby('Income group').agg(['count']).reset_index()
-t1Incomegroup = lowMidIncome[["Income group", "Population2010", "Population2020", "UrbanPopulation2020", "UrbanPopulation2010", "UrbanPopulation_10YearLag2020"]].groupby("Income group").agg(["sum"]).reset_index()
-t1Incomegroup["popChange"] = t1Incomegroup["Population2020"]["sum"] - t1Incomegroup["Population2010"]["sum"]
-t1Incomegroup["urbanPopChange"] = t1Incomegroup["UrbanPopulation2020"]["sum"] - t1Incomegroup["UrbanPopulation2010"]["sum"]
-
-maintableIncomegroup = pd.DataFrame()
-maintableIncomegroup["Category"] = t1Incomegroup["Income group"]
-maintableIncomegroup["Count"] = t1IncomegroupCount["Population2010"]["count"]
-maintableIncomegroup["Population2010"] = t1Incomegroup["Population2010"]["sum"]
-maintableIncomegroup["popChangein2020"] = t1Incomegroup["popChange"]
-maintableIncomegroup["UrbanPopulation2010"] = t1Incomegroup["UrbanPopulation2010"]["sum"]
-maintableIncomegroup["urbanPopChange"] = t1Incomegroup["urbanPopChange"]
-maintableIncomegroup["UrbanPopulation_10YearLag2020"] = t1Incomegroup["UrbanPopulation_10YearLag2020"]
-
-### Append income group to regions
-mainTable1 = maintableregion._append(maintableIncomegroup, ignore_index=True)
-# save to csv
-mainTable1.to_csv(results + r"\table1_2010and2020.csv")
-
-##------------------2020 - 2030--------------------###
-# main table 2  -- Region
-t1regionCount = lowMidIncome[["Region", "Population2020"]].groupby('Region').agg(['count']).reset_index()
-t1region = lowMidIncome[["Region", "Population2020", "Population2030", "UrbanPopulation2020", "UrbanPopulation2030", "UrbanPopulation_10YearLag2030"]].groupby('Region').agg(['sum']).reset_index()
-t1region["popChange"] = t1region["Population2030"]["sum"] - t1region["Population2020"]["sum"]
-t1region["urbanPopChange"] = t1region["UrbanPopulation2030"]["sum"] - t1region["UrbanPopulation2020"]["sum"]
-
-maintableregion = pd.DataFrame()
-maintableregion["Category"] = t1region["Region"]
-maintableregion["Count"] = t1regionCount["Population2020"]["count"]
-maintableregion["Population2020"] = t1region["Population2020"]["sum"]
-maintableregion["popChangein2030"] = t1region["popChange"]
-maintableregion["UrbanPopulation2020"] = t1region["UrbanPopulation2020"]["sum"]
-maintableregion["urbanPopChange"] = t1region["urbanPopChange"]
-maintableregion["UrbanPopulation_10YearLag2030"] = t1region["UrbanPopulation_10YearLag2030"]
-
-# main table 2  -- Income group
-t1IncomegroupCount = lowMidIncome[["Income group", "Population2020"]].groupby('Income group').agg(['count']).reset_index()
-t1Incomegroup = lowMidIncome[["Income group", "Population2020", "Population2030", "UrbanPopulation2020", "UrbanPopulation2030", "UrbanPopulation_10YearLag2030"]].groupby("Income group").agg(["sum"]).reset_index()
-t1Incomegroup["popChange"] = t1Incomegroup["Population2030"]["sum"] - t1Incomegroup["Population2020"]["sum"]
-t1Incomegroup["urbanPopChange"] = t1Incomegroup["UrbanPopulation2030"]["sum"] - t1Incomegroup["UrbanPopulation2020"]["sum"]
-
-maintableIncomegroup = pd.DataFrame()
-maintableIncomegroup["Category"] = t1Incomegroup["Income group"]
-maintableIncomegroup["Count"] = t1IncomegroupCount["Population2020"]["count"]
-maintableIncomegroup["Population2020"] = t1Incomegroup["Population2020"]["sum"]
-maintableIncomegroup["popChangein2030"] = t1Incomegroup["popChange"]
-maintableIncomegroup["UrbanPopulation2020"] = t1Incomegroup["UrbanPopulation2020"]["sum"]
-maintableIncomegroup["urbanPopChange"] = t1Incomegroup["urbanPopChange"]
-maintableIncomegroup["UrbanPopulation_10YearLag2030"] = t1Incomegroup["UrbanPopulation_10YearLag2030"]
-
-###Append income group to regions
-mainTable2 = maintableregion._append(maintableIncomegroup, ignore_index=True)
-# save to csv
-mainTable2.to_csv(results + r"\table2_2020and2030.csv")
-
-
-##------------------2000 - 2020--------------------###
-# main table 3  -- Region
-t1regionCount = lowMidIncome[["Region", "Population2000"]].groupby('Region').agg(['count']).reset_index()
-t1region = lowMidIncome[["Region", "Population2000", "Population2020", "UrbanPopulation2000", "UrbanPopulation2020", "UrbanPopulation_20YearLag2020"]].groupby('Region').agg(['sum']).reset_index()
-t1region["popChange"] = t1region["Population2020"]["sum"] - t1region["Population2000"]["sum"]
-t1region["urbanPopChange"] = t1region["UrbanPopulation2020"]["sum"] - t1region["UrbanPopulation2000"]["sum"]
-
-maintableregion = pd.DataFrame()
-maintableregion["Category"] = t1region["Region"]
-maintableregion["Count"] = t1regionCount["Population2000"]["count"]
-maintableregion["Population2000"] = t1region["Population2000"]["sum"]
-maintableregion["popChangein2020"] = t1region["popChange"]
-maintableregion["UrbanPopulation2000"] = t1region["UrbanPopulation2000"]["sum"]
-maintableregion["urbanPopChange"] = t1region["urbanPopChange"]
-maintableregion["UrbanPopulation_20YearLag2020"] = t1region["UrbanPopulation_20YearLag2020"]
-
-# main table 3  -- Income group
-t1IncomegroupCount = lowMidIncome[["Income group", "Population2000"]].groupby('Income group').agg(['count']).reset_index()
-t1Incomegroup = lowMidIncome[["Income group", "Population2000", "Population2020", "UrbanPopulation2000", "UrbanPopulation2020", "UrbanPopulation_20YearLag2020"]].groupby("Income group").agg(["sum"]).reset_index()
-t1Incomegroup["popChange"] = t1Incomegroup["Population2020"]["sum"] - t1Incomegroup["Population2000"]["sum"]
-t1Incomegroup["urbanPopChange"] = t1Incomegroup["UrbanPopulation2020"]["sum"] - t1Incomegroup["UrbanPopulation2000"]["sum"]
-
-maintableIncomegroup = pd.DataFrame()
-maintableIncomegroup["Category"] = t1Incomegroup["Income group"]
-maintableIncomegroup["Count"] = t1IncomegroupCount["Population2000"]["count"]
-maintableIncomegroup["Population2000"] = t1Incomegroup["Population2000"]["sum"]
-maintableIncomegroup["popChangein2020"] = t1Incomegroup["popChange"]
-maintableIncomegroup["UrbanPopulation2000"] = t1Incomegroup["UrbanPopulation2000"]["sum"]
-maintableIncomegroup["urbanPopChange"] = t1Incomegroup["urbanPopChange"]
-maintableIncomegroup["UrbanPopulation_20YearLag2020"] = t1Incomegroup["UrbanPopulation_20YearLag2020"]
-
-### Append income group to regions
-mainTable2 = maintableregion._append(maintableIncomegroup, ignore_index=True)
-# save to csv
-mainTable2.to_csv(results + r"\table2_2000and2020.csv")
-
-##------------------2010 - 2030--------------------###
-# main table 3  -- Region
-t1regionCount = lowMidIncome[["Region", "Population2010"]].groupby('Region').agg(['count']).reset_index()
-t1region = lowMidIncome[["Region", "Population2010", "Population2030", "UrbanPopulation2010", "UrbanPopulation2030", "UrbanPopulation_20YearLag2030"]].groupby('Region').agg(['sum']).reset_index()
-t1region["popChange"] = t1region["Population2030"]["sum"] - t1region["Population2010"]["sum"]
-t1region["urbanPopChange"] = t1region["UrbanPopulation2030"]["sum"] - t1region["UrbanPopulation2010"]["sum"]
-
-maintableregion = pd.DataFrame()
-maintableregion["Category"] = t1region["Region"]
-maintableregion["Count"] = t1regionCount["Population2010"]["count"]
-maintableregion["Population2010"] = t1region["Population2010"]["sum"]
-maintableregion["popChangein2030"] = t1region["popChange"]
-maintableregion["UrbanPopulation2010"] = t1region["UrbanPopulation2010"]["sum"]
-maintableregion["urbanPopChange"] = t1region["urbanPopChange"]
-maintableregion["UrbanPopulation_20YearLag2030"] = t1region["UrbanPopulation_20YearLag2030"]
-
-# main table 3  -- Income group
-t1IncomegroupCount = lowMidIncome[["Income group", "Population2010"]].groupby('Income group').agg(['count']).reset_index()
-t1Incomegroup = lowMidIncome[["Income group", "Population2010", "Population2030", "UrbanPopulation2010", "UrbanPopulation2030", "UrbanPopulation_20YearLag2030"]].groupby("Income group").agg(["sum"]).reset_index()
-t1Incomegroup["popChange"] = t1Incomegroup["Population2030"]["sum"] - t1Incomegroup["Population2010"]["sum"]
-t1Incomegroup["urbanPopChange"] = t1Incomegroup["UrbanPopulation2030"]["sum"] - t1Incomegroup["UrbanPopulation2010"]["sum"]
-
-maintableIncomegroup = pd.DataFrame()
-maintableIncomegroup["Category"] = t1Incomegroup["Income group"]
-maintableIncomegroup["Count"] = t1IncomegroupCount["Population2010"]["count"]
-maintableIncomegroup["Population2010"] = t1Incomegroup["Population2010"]["sum"]
-maintableIncomegroup["popChangein2030"] = t1Incomegroup["popChange"]
-maintableIncomegroup["UrbanPopulation2010"] = t1Incomegroup["UrbanPopulation2010"]["sum"]
-maintableIncomegroup["urbanPopChange"] = t1Incomegroup["urbanPopChange"]
-maintableIncomegroup["UrbanPopulation_20YearLag2030"] = t1Incomegroup["UrbanPopulation_20YearLag2030"]
-
-### Append income group to regions
-mainTable2 = maintableregion._append(maintableIncomegroup, ignore_index=True)
-# save to csv
-mainTable2.to_csv(results + r"\table2_2010and2030.csv")
-print(f'All results saved at: {results}')
-'''
+popData.to_csv(results2 + r"\full_population_data.csv")
+print(f'Main population data saved at: {results2}')
 
 
