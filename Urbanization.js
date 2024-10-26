@@ -298,10 +298,10 @@ var rasters = [
   { image: c1PopChange2010_2030.updateMask(c1PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c1UrbanPopChange_' }, 
   { image: c1PopChange2020_2030.updateMask(c1PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c1UrbanPopChange_' },
   
-  { image: c3PopChange2000_2020.updateMask(c3PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c2UrbanPopChange_' }, // Class 2 urban change
-  { image: c3PopChange2010_2020.updateMask(c3PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c2UrbanPopChange_' },
-  { image: c3PopChange2010_2030.updateMask(c3PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c2UrbanPopChange_' }, 
-  { image: c3PopChange2020_2030.updateMask(c3PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c2UrbanPopChange_' },
+  { image: c2PopChange2000_2020.updateMask(c2PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c2UrbanPopChange_' }, // Class 2 urban change
+  { image: c2PopChange2010_2020.updateMask(c2PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c2UrbanPopChange_' },
+  { image: c2PopChange2010_2030.updateMask(c2PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c2UrbanPopChange_' }, 
+  { image: c2PopChange2020_2030.updateMask(c2PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c2UrbanPopChange_' },
   
   { image: c3PopChange2000_2020.updateMask(c3PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c3UrbanPopChange_' }, // Class 3 urban change
   { image: c3PopChange2010_2020.updateMask(c3PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c3UrbanPopChange_' },

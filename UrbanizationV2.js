@@ -79,7 +79,7 @@ var multiBandPopulationUrban = ee.Image.cat([
 var NOTurbanlagBYpop = function(currentUrbanLayer, pastUrbanLayer, populationLayer, yearlag, year) {
   // Areas that are urban in the current year but were not urban n years ago
   var NoturbanTodayUrbanBefore = currentUrbanLayer.eq(1)        //  Urban areas today
-      .and(pastUrbanLayer.eq(0));                          // non urban areas n years ago
+      .and(pastUrbanLayer.eq(0));                          // non Urban areas n years ago
   // Multiply this mask with the population layer
   return NoturbanTodayUrbanBefore.multiply(populationLayer)
                             .rename(yearlag + year);
@@ -145,13 +145,13 @@ var popChange_2020_2030 = pop2030.subtract(pop2020);
 var class1PopChange = function(currentUrbanLayer, pastUrbanLayer, popChange, yearlag, year) {
   // Areas that are not urban in y2 but were urban in y1
   var class1 =  pastUrbanLayer.eq(1)       // urban y1
-      .and(currentUrbanLayer.eq(0));        // not urban y2
+      .and(currentUrbanLayer.eq(0));                          // not urban y2
   // Multiply this mask with the pop change y1 y2
   return class1.multiply(popChange)    // multiply by pop change y1 y2
                             .rename(yearlag + year);
 };
 
-// define class 1 pop change variable
+// define class 1 pop change variable for 2000/2020
 var c1PopChange2000_2020 = class1PopChange(urban2020, urban2000, popChange_2000_2020, 'c1UrbanPopChange_', '2000_2020') // 2000/2020
 var c1PopChange2010_2020 = class1PopChange(urban2020, urban2010, popChange_2010_2020, 'c1UrbanPopChange_', '2010_2020') // 2010/2020
 var c1PopChange2010_2030 = class1PopChange(urban2030, urban2010, popChange_2010_2030, 'c1UrbanPopChange_', '2010_2030') // 2010/2030
@@ -161,17 +161,17 @@ var c1PopChange2020_2030 = class1PopChange(urban2030, urban2020, popChange_2020_
 
 // CLASS 2 -- cells that are only urban in y2, but not in y1 times pop_changey1y2
 
-// Define function to get cells that are only urban in y2, but not y1 times pop_changey1y2
+// Define function to get cells that are only urban in y1, but not y2 times pop_changey1y2
 var class2PopChange = function(currentUrbanLayer, pastUrbanLayer, popChange, yearlag, year) {
   // Areas that are not urban in y1 but were urban in y2
   var class2 =  pastUrbanLayer.eq(0)       // not urban y1
-      .and(currentUrbanLayer.eq(1));       //  urban in y2
+      .and(currentUrbanLayer.eq(1));                          //  urban y2
   // Multiply this mask with the pop change y1 y2
   return class2.multiply(popChange)    // multiply by pop change y1 y2
                             .rename(yearlag + year);
 };
 
-// define class 1 pop change variable
+// define class 1 pop change variable for 2000/2020
 var c2PopChange2000_2020 = class2PopChange(urban2020, urban2000, popChange_2000_2020, 'c2UrbanPopChange_', '2000_2020') // 2000/2020
 var c2PopChange2010_2020 = class2PopChange(urban2020, urban2010, popChange_2010_2020, 'c2UrbanPopChange_', '2010_2020') // 2010/2020
 var c2PopChange2010_2030 = class2PopChange(urban2030, urban2010, popChange_2010_2030, 'c2UrbanPopChange_', '2010_2030') // 2010/2030
@@ -221,6 +221,7 @@ Map.addLayer(multiBandPopUrban20YearLag.select('popUrban_20YearLag_2020'), {}, '
 
 //////// ZONAL STATISTICS
 
+
 // Define the function to compute zonal statistics and export the results with dynamic column names
 function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
  // Reproject the population raster to EPSG:4326 (WGS84) to match the countries
@@ -237,6 +238,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
     crs: 'EPSG:4326'                     // Ensure both raster and polygons are in EPSG:4326
   });
   
+ 
 
   // Create a simplified FeatureCollection with just country name and the dynamically named sum
   var simplifiedZonalStats = zonalStats.map(function(feature) {
@@ -296,10 +298,10 @@ var rasters = [
   { image: c1PopChange2010_2030.updateMask(c1PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c1UrbanPopChange_' }, 
   { image: c1PopChange2020_2030.updateMask(c1PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c1UrbanPopChange_' },
   
-  { image: c3PopChange2000_2020.updateMask(c3PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c2UrbanPopChange_' }, // Class 2 urban change
-  { image: c3PopChange2010_2020.updateMask(c3PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c2UrbanPopChange_' },
-  { image: c3PopChange2010_2030.updateMask(c3PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c2UrbanPopChange_' }, 
-  { image: c3PopChange2020_2030.updateMask(c3PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c2UrbanPopChange_' },
+  { image: c2PopChange2000_2020.updateMask(c2PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c2UrbanPopChange_' }, // Class 2 urban change
+  { image: c2PopChange2010_2020.updateMask(c2PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c2UrbanPopChange_' },
+  { image: c2PopChange2010_2030.updateMask(c2PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c2UrbanPopChange_' }, 
+  { image: c2PopChange2020_2030.updateMask(c2PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c2UrbanPopChange_' },
   
   { image: c3PopChange2000_2020.updateMask(c3PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c3UrbanPopChange_' }, // Class 3 urban change
   { image: c3PopChange2010_2020.updateMask(c3PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c3UrbanPopChange_' },
