@@ -13,12 +13,12 @@ var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
 var smod2020 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2020").select('smod_code');
 var smod2030 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2030").select('smod_code');
 
-
+/*
 var smodSeries = ee.Image.cat([
   smod2000.updateMask(smod2000.gt(21)).rename('smod2000'), smod2010.updateMask(smod2010.gt(21)).rename('smod2010'),
   smod2020.updateMask(smod2020.gt(21)).rename('smod2020'), smod2030.updateMask(smod2030.gt(21)).rename('smod2030')
   ]);
-
+*/
 ////////////
 
 // Define a function to create urban binary layer
