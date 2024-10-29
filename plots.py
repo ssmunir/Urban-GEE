@@ -29,7 +29,7 @@ dt["urbanGrowthRate"] = dt["UrbpopChange"]/dt["UrbanPopulation2010"]
 dt["shOfPopUrban2010"] = dt["UrbanPopulation2010"]/dt["Population2010"]
 
 # Plot 1 Urban Growth Rate vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 sns.scatterplot(data=dt, x="urbanGrowthRate", y="shOfUrbanPopinPeri", hue="Region", palette="bright")
 plt.xlabel("Urban Growth Rate")
 plt.ylabel("Share of Urban Population on the Periphery")
@@ -42,20 +42,20 @@ plt.savefig(results1 + r"\Urban Growth Rate vs Share of Urban Population on Peri
 # -----------------------------------------
 
 # Plot 2 Urban Share in 2010 vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 sns.scatterplot(data=dt, x="shOfPopUrban2010", y="shOfUrbanPopinPeri", hue="Region", palette="bright")
-plt.xlabel("Urban Population Share in 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Share of Urban Population on the Periphery")
-plt.title("Urban Population Share in 2010 vs Share of Urban Population on Periphery")
+plt.title("Share of urban population in 2010 vs Share of Urban Population on Periphery")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results1 + r"\Urban Share in 2010 vs Share of Urban Population on Periphery.png")
+plt.savefig(results1 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
 #plt.show()
 
 # --------------------------------------------
 
 # Plot 3  Urban Growth Rate vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y="urbanGrowthRate", x="shOfPopUrban2010", hue="Region", palette="bright")
 plt.xlabel("Urban Population Share in 2010")
@@ -76,7 +76,7 @@ plt.savefig(results1 + r"\Urban Growth Rate vs Urban Population Share in 2010.pn
 y_axis = (dt["c2UrbanPopChange_2010-2020"])/(dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])
 pop2010_urban2020 = dt["UrbanPopulation2020"] - dt["c2UrbanPopChange_2010-2020"] - dt["c3UrbanPopChange_2010-2020"]
 x_axis = (dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])/pop2010_urban2020
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
 plt.xlabel("Total growth rate for current urban area")
@@ -90,15 +90,15 @@ plt.savefig(results1 + r"\Urban Growth Rate vs Urban pop change on pp as share o
 # ------------------------------------------------
 # Plot 5  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
 x_axis = dt["UrbanPopulation2010"]/dt["Population2010"]
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
-plt.xlabel("Share of population that is urban 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Urban pop change on periphery as share of current urban change")
-plt.title("Share of population that is urban 2010 vs Urban pop change on periphery as share of current urban change")
+plt.title("Share of urban population in 2010 vs Urban pop change on periphery as share of current urban change")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results1 + r"\Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change.png")
+plt.savefig(results1 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
 #plt.show()
 
 # ---------------------------------------------------
@@ -107,15 +107,15 @@ plt.savefig(results1 + r"\Share of population that is urban 2010 vs Urban pop ch
 dt["urbanPopChange"] = dt["UrbanPopulation2020"] - dt["UrbanPopulation2010"]
 y_axis =  dt["urbanPopChange"]/dt["UrbanPopulation2010"] 
 x_axis = dt["UrbanPopulation2010"]/dt["Population2010"]
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
-plt.xlabel("Share of population that is urban 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Total growth rate for current urban area")
-plt.title("Share of population that is urban 2010 vs total growth rate for current urban area")
+plt.title("Share of urban population in 2010 vs total growth rate for current urban area")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results1 + r"\Share of population that is urban 2010 vs Total growth rate for current urban area.png")
+plt.savefig(results1 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
 #plt.show()
 
 print('Results saved in ' + results1)
@@ -140,11 +140,11 @@ dt["shOfPopUrban2010"] = dt["UrbanPopulation2010"]/dt["Population2010"]
 # ----------------------------------------------
 
 # Plot 1 Urban Growth Rate vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 sns.scatterplot(data=dt, x="urbanGrowthRate", y="shOfUrbanPopinPeri", hue="Region", palette="bright")
 plt.xlabel("Urban Growth Rate")
 plt.ylabel("Share of Urban Population on the Periphery")
-plt.title("Urban Growth Rate vs Share of Urban Population on Periphery 2010/2020")
+plt.title("Urban Growth Rate vs Share of Urban Population on Periphery")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
 plt.savefig(results2 + r"\Urban Growth Rate vs Share of Urban Population on Periphery.png")
@@ -153,28 +153,28 @@ plt.savefig(results2 + r"\Urban Growth Rate vs Share of Urban Population on Peri
 # -----------------------------------------
 
 # Plot 2 Urban Share in 2010 vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 sns.scatterplot(data=dt, x="shOfPopUrban2010", y="shOfUrbanPopinPeri", hue="Region", palette="bright")
-plt.xlabel("Urban Population Share in 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Share of Urban Population on the Periphery")
-plt.title("Urban Population Share in 2010 vs Share of Urban Population on Periphery")
+plt.title("Share of urban population in 2010 vs Share of Urban Population on Periphery")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results2 + r"\Urban Share in 2010 vs Share of Urban Population on Periphery.png")
+plt.savefig(results2 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
 #plt.show()
 
 # --------------------------------------------
 
 # Plot 3  Urban Growth Rate vs Share of Urban Population on Periphery
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y="urbanGrowthRate", x="shOfPopUrban2010", hue="Region", palette="bright")
-plt.xlabel("Urban Population Share in 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Urban Growth Rate")
-plt.title("Urban Growth Rate vs Urban Population Share in 2010")
+plt.title("Urban Growth Rate vs Share of urban population in 2010")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results2 + r"\Urban Growth Rate vs Urban Population Share in 2010.png")
+plt.savefig(results2 + r"\Urban Growth Rate vs Share of urban population in 2010.png")
 #plt.show()
 
 # ----------------------------------------------
@@ -187,7 +187,7 @@ plt.savefig(results2 + r"\Urban Growth Rate vs Urban Population Share in 2010.pn
 y_axis = (dt["c2UrbanPopChange_2010-2020"])/(dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])
 pop2010_urban2020 = dt["UrbanPopulation2020"] - dt["c2UrbanPopChange_2010-2020"] - dt["c3UrbanPopChange_2010-2020"]
 x_axis = (dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])/pop2010_urban2020
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
 plt.xlabel("Total growth rate for current urban area")
@@ -202,15 +202,15 @@ plt.savefig(results2 + r"\Urban Growth Rate vs Urban pop change on pp as share o
 
 # Plot 5  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
 x_axis = dt["UrbanPopulation2010"]/dt["Population2010"]
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
-plt.xlabel("Share of population that is urban 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Urban pop change on periphery as share of current urban change")
-plt.title("Share of population that is urban in 2010 vs Urban pop change on periphery as share of current urban change")
+plt.title("Share of urban population in 2010 vs Urban pop change on periphery as share of current urban change")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results2 + r"\Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change.png")
+plt.savefig(results2 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
 #plt.show()
 
 
@@ -220,15 +220,15 @@ plt.savefig(results2 + r"\Share of population that is urban 2010 vs Urban pop ch
 dt["urbanPopChange"] = dt["UrbanPopulation2020"] - dt["UrbanPopulation2010"]
 y_axis =  dt["urbanPopChange"]/dt["UrbanPopulation2010"] 
 x_axis = dt["UrbanPopulation2010"]/dt["Population2010"]
-plt.figure(figsize=(11, 6))
+plt.figure(figsize=(12, 7))
 
 sns.scatterplot(data=dt, y=y_axis, x=x_axis, hue="Region", palette="bright")
-plt.xlabel("Share of population that is urban 2010")
+plt.xlabel("Share of urban population in 2010")
 plt.ylabel("Total growth rate for current urban area")
-plt.title("Share of population that is urban in 2010 vs Total growth rate for current urban area")
+plt.title("Share of urban population in 2010 vs Total growth rate for current urban area")
 plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left', title="Region \n")
 plt.tight_layout()
-plt.savefig(results2 + r"\Share of population that is urban 2010 vs total growth rate for current urban area.png")
+plt.savefig(results2 + r"\Share of urban population 2010 vs Total growth rate for current urban area.png")
 #plt.show()
 
 print('Results saved in ' + results2)
