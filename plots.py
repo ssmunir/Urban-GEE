@@ -100,10 +100,10 @@ dt["sqPopulation2000"] = np.sqrt(dt["Population2000"])
 plot_urban_data(data=dt, x_col="urbanGrowthRate", y_col="shOfUrbanPopinPeri",x_label="Urban Growth Rate", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Share of Urban Population on Periphery.png")
 
 # Plot 2 Urban Share in 2010 vs Share of Urban Population on Periphery
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="shOfUrbanPopinPeri",x_label="Share of urban population in 2010", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="shOfUrbanPopinPeri",x_label="Urban population share in 2010", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
 
 # Plot 3  Urban Growth Rate vs Share of Urban Population in 2010
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="urbanGrowthRate", x_label="Share of urban population in 2010", y_label="Urban Growth Rate", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Share of urban population in 2010.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="urbanGrowthRate", x_label="Urban population share in 2010", y_label="Urban Growth Rate", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Share of urban population in 2010.png")
 
 
 
@@ -116,13 +116,13 @@ x_axis = (dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])/p
 
 
 # Plot 4  Urban Growth Rate vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col=x_axis, y_col=y_axis, x_label="Total growth rate for current urban area", y_label="Urban pop change on periphery as share of current urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Urban pop change on pp as share of current urban change.png")
+plot_urban_data(data=dt, x_col=x_axis, y_col=y_axis, x_label="Total growth rate for current urban area", y_label="Urban population change on periphery as share of urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Urban pop change on pp as share of current urban change.png")
 
 # Plot 5  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=y_axis, x_label="Share of urban population in 2010", y_label="Urban pop change on periphery as share of current urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=y_axis, x_label="Urban population share in 2010", y_label="Urban population change on periphery as share of urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
 
 # Plot 6  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=x_axis, x_label="Share of urban population in 2010", y_label="Total growth rate for current urban area", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=x_axis, x_label="Urban population share in 2010", y_label="Total growth rate for current urban area", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
 
 print('Results for urban def 1 saved in ' + results1)
 
@@ -152,10 +152,10 @@ dt["sqPopulation2000"] = np.sqrt(dt["Population2000"])
 plot_urban_data(data=dt, x_col="urbanGrowthRate", y_col="shOfUrbanPopinPeri",x_label="Urban Growth Rate", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Urban Growth Rate vs Share of Urban Population on Periphery.png")
 
 # Plot 2 Urban Share in 2010 vs Share of Urban Population on Periphery
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="shOfUrbanPopinPeri",x_label="Share of urban population in 2010", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="shOfUrbanPopinPeri",x_label="Urban population share in 2010", y_label="Share of Urban Population on the Periphery", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Share of Urban Population on Periphery.png")
 
 # Plot 3  Urban Growth Rate vs Share of Urban Population in 2010
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="urbanGrowthRate", x_label="Share of urban population in 2010", y_label="Urban Growth Rate", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Urban Growth Rate vs Share of urban population in 2010.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col="urbanGrowthRate", x_label="Urban population share in 2010", y_label="Urban Growth Rate", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Urban Growth Rate vs Share of urban population in 2010.png")
 
 
 
@@ -168,13 +168,13 @@ x_axis = (dt["c2UrbanPopChange_2010-2020"] + dt["c3UrbanPopChange_2010-2020"])/p
 
 
 # Plot 4  Urban Growth Rate vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col=x_axis, y_col=y_axis, x_label="Total growth rate for current urban area", y_label="Urban pop change on periphery as share of current urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Urban Growth Rate vs Urban pop change on pp as share of current urban change.png")
+plot_urban_data(data=dt, x_col=x_axis, y_col=y_axis, x_label="Total growth rate for current urban area", y_label="Urban population change on periphery as share of urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Urban Growth Rate vs Urban pop change on pp as share of current urban change.png")
 
 # Plot 5  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=y_axis, x_label="Share of urban population in 2010", y_label="Urban pop change on periphery as share of current urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=y_axis, x_label="Urban population share in 2010", y_label="Urban population change on periphery as share of urban change", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Urban pop change on pp as share of current urban change.png")
 
 # Plot 6  Share of population that is urban 2010 vs Urban pop change on pp as share of current urban change
-plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=x_axis, x_label="Share of urban population in 2010", y_label="Total growth rate for current urban area", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
+plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=x_axis, x_label="Urban population share in 2010", y_label="Total growth rate for current urban area", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
 
 print('Results for urban def 2 saved in ' + results2)
 
