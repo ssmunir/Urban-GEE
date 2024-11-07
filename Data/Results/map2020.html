@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_02470248edd92f213a243c2b5a2d84c7 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_02470248edd92f213a243c2b5a2d84c7" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_02470248edd92f213a243c2b5a2d84c7 = L.map(
+                "map_02470248edd92f213a243c2b5a2d84c7",
+                {
+                    center: [20.0, 0.0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 2,
+                    zoomControl: true,
+                    preferCanvas: false,
+                    pluginFullscreen: false,
+                    pluginDraw: false,
+                    searchControl: false,
+                    eeInitialize: true,
+                    addGoogleMap: false,
+                    pluginLatlngpopup: false,
+                    DrawExport: false,
+                    pluginMinimap: false,
+                    locateControl: false,
+                    scale: false,
+                    layersControl: true,
+                }
+            );
+            L.control.scale().addTo(map_02470248edd92f213a243c2b5a2d84c7);
+
+            
+
+        
+    
+            var tile_layer_820ce9ae3db85808c8e56f97ffbbb017 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 30, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_820ce9ae3db85808c8e56f97ffbbb017.addTo(map_02470248edd92f213a243c2b5a2d84c7);
+        
+    
+            map_02470248edd92f213a243c2b5a2d84c7.fitBounds(
+                [[20, 0], [20, 0]],
+                {"maxZoom": 2}
+            );
+        
+    
+            map_02470248edd92f213a243c2b5a2d84c7.fitBounds(
+                [[-6.913, 38.7759], [-6.913, 38.7759]],
+                {"maxZoom": 8.5}
+            );
+        
+    
+            var tile_layer_b388dca7e543a0d76dc2b0bd76906845 = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/urbanization-436918/maps/ebad2e4740b52268b02be7868f907b5a-054bee3e11f291549b765683fbc72e6b/tiles/{z}/{x}/{y}",
+                {"attribution": "Google Earth Engine", "detectRetina": false, "maxZoom": 24, "minZoom": 0, "noWrap": false, "opacity": 1.0, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_b388dca7e543a0d76dc2b0bd76906845.addTo(map_02470248edd92f213a243c2b5a2d84c7);
+        
+    
+        L.Control.CustomControl = L.Control.extend({
+            onAdd: function(map) {
+                let div = L.DomUtil.create('div');
+                div.innerHTML = `<!DOCTYPE html>
+<html lang="en">
+    <head> </head>
+    <body>
+        <div
+            id="maplegend"
+            class="maplegend"
+            style="
+              bottom: 20px;
+              right: 5px;
+              position: fixed;
+              z-index: 9999;
+              background-color: rgba(255, 255, 255, 0.8);
+              padding: 10px;
+              border-radius: 5px;
+              font-size: 14px;
+            "
+        >
+            <div class="legend-title">Degree of Urbanization 2020</div>
+            <div class="legend-scale">
+                <ul class="legend-labels">
+                    <li><span style='background:#FF0000;opacity:1.0;'></span>30 Urban Centre</li>
+                    <li><span style='background:#FFA500;opacity:1.0;'></span>23 Dense Urban Cluster</li>
+                    <li><span style='background:#FFD700;opacity:1.0;'></span>22 Semi-dense Urban Cluster</li>
+                    <li><span style='background:#ADFF2F;opacity:1.0;'></span>21 Suburban or Peri-urban</li>
+                    <li><span style='background:#32CD32;opacity:1.0;'></span>13 Rural Cluster</li>
+                    <li><span style='background:#98FB98;opacity:1.0;'></span>12 Low Density Rural</li>
+                    <li><span style='background:#D3D3D3;opacity:1.0;'></span>11 Very Low Density Rural</li>
+                    <li><span style='background:#87CEEB;opacity:1.0;'></span>10 Water</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>
+
+<style type="text/css">
+    .maplegend .legend-title {
+        text-align: left;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 90%;
+    }
+    .maplegend .legend-scale ul {
+        margin: 0;
+        margin-bottom: 5px;
+        padding: 0;
+        float: left;
+        list-style: none;
+    }
+    .maplegend .legend-scale ul li {
+        font-size: 80%;
+        list-style: none;
+        margin-left: 0;
+        line-height: 18px;
+        margin-bottom: 2px;
+    }
+    .maplegend ul.legend-labels li span {
+        display: block;
+        float: left;
+        height: 16px;
+        width: 30px;
+        margin-right: 5px;
+        margin-left: 0;
+        border: 1px solid #999;
+    }
+    .maplegend .legend-source {
+        font-size: 80%;
+        color: #777;
+        clear: both;
+    }
+    .maplegend a {
+        color: #777;
+    }
+</style>
+`;
+                return div;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+        L.control.customControl = function(opts) {
+            return new L.Control.CustomControl(opts);
+        }
+        L.control.customControl(
+            { position: "bottomright" }
+        ).addTo(map_02470248edd92f213a243c2b5a2d84c7);
+        
+    
+            var layer_control_fe829e969c01cf2dc66c74f89b74bf2e_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_820ce9ae3db85808c8e56f97ffbbb017,
+                },
+                overlays :  {
+                    "Degree of Urbanization 2020" : tile_layer_b388dca7e543a0d76dc2b0bd76906845,
+                },
+            };
+            let layer_control_fe829e969c01cf2dc66c74f89b74bf2e = L.control.layers(
+                layer_control_fe829e969c01cf2dc66c74f89b74bf2e_layers.base_layers,
+                layer_control_fe829e969c01cf2dc66c74f89b74bf2e_layers.overlays,
+                {"autoZIndex": true, "collapsed": true, "position": "topright"}
+            ).addTo(map_02470248edd92f213a243c2b5a2d84c7);
+
+        
+</script>
+</html>
