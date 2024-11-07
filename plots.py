@@ -1,4 +1,4 @@
-import os
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -18,6 +18,7 @@ del dt["Unnamed: 0"]
 
 # Drop countries with less than 100000 population in 2000
 dt = dt.loc[dt['Population2000'] > 100000]
+
 
 # define function to plot variables
 
@@ -60,10 +61,18 @@ def plot_urban_data(data, x_col, x_label, y_col, y_label, hue_col, size_col, pal
     hue_legend = plt.legend(hue_handles, hue_labels, bbox_to_anchor=(1, 1), loc='upper left', title=hue_col)
     plt.gca().add_artist(hue_legend)  # Add the hue legend to the plot
 
-    # Size legend
+    # Size legend with labels in millions
     size_handles = handles[size_index + 1:]
-    size_labels = labels[size_index + 1:]
-    plt.legend(size_handles, size_labels, bbox_to_anchor=(1.05, 0.6), loc='upper left', title="Population in Millions", labelspacing=1.2)
+    size_labels = []
+    for label in labels[size_index + 1:]:
+        try:
+            # Reverse the square root transformation and convert to millions
+            population = (float(label) ** 2) / 1e6  # Convert to millions
+            size_labels.append(f"{int(population)}M")
+        except ValueError:
+            size_labels.append("N/A")  # Handle any unexpected errors
+    plt.legend(size_handles, size_labels, bbox_to_anchor=(1.05, 0.6), loc='upper left', title="Population Size (Millions)", labelspacing=1.2)
+
 
     plt.tight_layout()
 
@@ -71,7 +80,7 @@ def plot_urban_data(data, x_col, x_label, y_col, y_label, hue_col, size_col, pal
     if save_path:
         plt.savefig(save_path)
     
-    plt.show()
+    #plt.show()
 
 # Usage example:
 #plot_urban_data(data=dt, x_col="urbanGrowthRate", y_col="shOfUrbanPopinPeri", hue_col="Region", size_col="sqPopulation2000", save_path=results1 + r"\Urban Growth Rate vs Share of Urban Population on Periphery.png")
@@ -168,33 +177,5 @@ plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=y_axis, x_label="Share 
 plot_urban_data(data=dt, x_col="shOfPopUrban2010", y_col=x_axis, x_label="Share of urban population in 2010", y_label="Total growth rate for current urban area", hue_col="Region", size_col="sqPopulation2000", save_path=results2 + r"\Share of urban population in 2010 vs Total growth rate for current urban area.png")
 
 print('Results for urban def 2 saved in ' + results2)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
