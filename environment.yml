@@ -21,5 +21,9 @@ dependencies:
   - pip
   - seaborn
   - pip:
+    - pycountry
     - pycountry_convert
+    - ee
+    - folium 
+    - geemap
   
