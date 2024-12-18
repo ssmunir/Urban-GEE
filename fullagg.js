@@ -1,80 +1,99 @@
-function processCountryPopulation(countryName, exportFileName, customGeometry) {
-  var ghsPop2020 = ee.Image("JRC/GHSL/P2023A/GHS_POP/2020");
+var population = ee.Image("JRC/GHSL/P2023A/GHS_POP/2020");
+var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
-  // Use the custom geometry if provided; otherwise, fetch the country's geometry
-  var region = customGeometry || ee.FeatureCollection('FAO/GAUL/2015/level0')
-    .filter(ee.Filter.eq('ADM0_NAME', countryName))
-    .geometry();
+// Aggregate population data to 1-km grid cells
+var proj_0 = population.projection();
+var proj_at1km = proj_0.atScale(1000);
 
-  // Clip the population data to the region
-  var population = ghsPop2020.clip(region);
+var population1km = population.reduceResolution({
+    reducer: ee.Reducer.sum().unweighted(),
+    maxPixels: 1024
+  })
+  .reproject({
+    crs: proj_at1km
+  });
+  
+//Map.addLayer(population, {}, "Population");
+//Map.addLayer(population1km, {}, "Population at 1km");
 
-  // Aggregate population data to 1-km grid cells
-  var proj_0 = population.projection();
-  var proj_at1km = proj_0.atScale(1000);
+var Population1km = population1km.where(population1km.lt(0), 0);
 
-  var population1km = population.reduceResolution({
-      reducer: ee.Reducer.sum().unweighted(),
-      maxPixels: 1024
-    })
-    .reproject({
-      crs: proj_at1km
+//Map.addLayer(Population1km, {}, "Pop negative replaced");
+
+
+// function starts
+function processRegionPopulation(countries, exportFileName) {
+  // Initialize empty FeatureCollection to aggregate results for the region
+  var regionResults = ee.FeatureCollection([]);
+   // Loop through each country in the region
+  countries.forEach(function (countryName) {
+    // Filter the country geometry
+    var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
+
+    // Clip population data to the country
+    var population2 = Population1km.clip(countryGeometry);
+
+    // Create a new raster by rounding up population values to the nearest 100
+    var binnedPopulation = population2.expression(
+      "ceil(pop / 100) * 100", {
+        'pop': population2,
+      }
+    ).rename('binned_population');
+
+    // Combine original population data and binned raster
+    var combined = population2.addBands(binnedPopulation)
+
+    // Reduce to bin-level population totals
+    var popByBin = combined.reduceRegion({
+      reducer: ee.Reducer.sum().group({
+        groupField: 1,
+      }),
+      geometry: countryGeometry,
+      scale: 1000,
+      maxPixels: 1e9,
     });
 
-  // Create a new raster by rounding up population values to the nearest 100
-  var roundedRaster = population1km.expression(
-    "ceil(pop / 100) * 100", {
-      'pop': population1km
-    }
-  ).rename('rounded_population');
+    // Extract grouped data
+    var groups = ee.List(ee.Dictionary(popByBin).get('groups'));
 
-  // Combine original population data and rounded raster
-  var combined = population1km.addBands(roundedRaster);
-
-  // Compute population by bins
-  var popByBin = combined.reduceRegion({
+    // Create a FeatureCollection from grouped data for the country
+    var countryFeatures = groups.map(function (group) {
+      group = ee.Dictionary(group);
+      return ee.Feature(null, {
+        'Bin': group.get('group'), // Bin ID
+        'PopulationSum': group.get('sum'), // Population sum for the bin
+      });
+    });
+  // Append country results to the region's FeatureCollection
+  regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
+});
+  var merged = regionResults.reduceColumns({
     reducer: ee.Reducer.sum().group({
-      groupField: 1
+      groupField: 0,  // Index of the column to group by
+      groupName: 'Bin',
     }),
-    geometry: region,
-    scale: 1000,
-    maxPixels: 1e9
-  });
+    selectors: ['Bin', 'PopulationSum']  
+  }).get('groups');
 
-  // Extract grouped data
-  var groups = ee.List(ee.Dictionary(popByBin).get('groups'));
-
-  // Create a FeatureCollection from the grouped data
-  var features = groups.map(function(group) {
-    group = ee.Dictionary(group); // Cast as dictionary
+  // Convert the merged results back to a FeatureCollection
+  var mergedFC = ee.FeatureCollection(ee.List(merged).map(function(group) {
+    var groupValue = ee.Dictionary(group).get('Bin');
+    var sumValue = ee.Dictionary(group).get('sum');
+    
     return ee.Feature(null, {
-      'Bin': group.get('group'), // Bin ID
-      'PopulationSum': group.get('sum') // Population sum for the bin
+      'Bin': groupValue,
+      'PopulationSum': sumValue
     });
-  });
+  }));
 
-  var featureCollection = ee.FeatureCollection(features);
-
-  // Export the FeatureCollection to Drive
+  // Export to CSV
   Export.table.toDrive({
-    collection: featureCollection,
-    description: exportFileName,
-    fileFormat: 'CSV',
-    selectors: ['Bin', 'PopulationSum'] // Columns to include
+    collection: mergedFC,
+    description: exportFileName,  // Name of your export file
+    fileFormat: 'CSV'
   });
-
-  //print('Export started for:', countryName);
 }
-
-
-//processCountryPopulation('Nigeria', 'Nigeria_PopulationByBin');
-
-
-
-
-// List of regions to process
-// Sub saharan Africa
-/*
+// Sub-Saharan Africa
 var SSA = ['Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
 'Botswana', 'Burkina Faso', 'Burundi', 'Cape Verde', 'Cameroon', 
 'Central African Republic', 'Chad', 'Comoros', 'Congo', 
@@ -85,35 +104,7 @@ var SSA = ['Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
 'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'United Republic of Tanzania', 
 'Togo', 'Uganda', 'Zambia', 'Zimbabwe'];
 
-
-
-
-SSA.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_SSA'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
-*/
-
-// North America
-
-var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
-
-// Filter for Canada
-var canada = countries.filter(ee.Filter.eq('ADM0_NAME', 'Canada'));
-// Merge all geometries into one
-var mergedCanada = canada.geometry().dissolve(); // Combines all geometries into a single one
-// Print the merged geometry for inspection
-//print('Merged Canada Geometry:', mergedCanada);
-
-// Use this merged geometry to process population data
-processCountryPopulation('Canada', 'Canada_PopulationByBin', mergedCanada);
-processCountryPopulation('United States of America', 'USA_PopulationByBin');
-
-
-
-/*
 // East Asia and Pacific
-
 var EAP =['American Samoa', 'Australia', 'Brunei Darussalam', 'Cambodia', 'China', 'Fiji',
 'French Polynesia', 'Guam', 'Hong Kong', 'Indonesia', 'Japan', 'Kiribati', 
 "Dem People's Rep of Korea", "Republic of Korea", "Lao People's Democratic Republic",
@@ -123,14 +114,7 @@ var EAP =['American Samoa', 'Australia', 'Brunei Darussalam', 'Cambodia', 'China
 'Taiwan', 'Thailand', 'Timor-Leste', 'Tonga', 'Tuvalu','Vanuatu', 'Viet Nam'
   ];
   
-  
-EAP.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_EAP'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
-  
 // Europe and Central Asia
-
 var ECA = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium',
 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Denmark', 'Estonia', 'Faroe Islands',
 'Finland', 'France', 'Georgia', 'Germany', 'Gibraltar', 'Greece', 'Greenland', 'Hungary', 'Iceland',
@@ -140,14 +124,7 @@ var ECA = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 
 'Turkmenistan', 'Turkey', 'Ukraine', 'U.K. of Great Britain and Northern Ireland', 'Uzbekistan'
 ];
 
-
-ECA.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_ECA'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
-
 // Latin America & Caribbean
-
 var LAC = ['Antigua and Barbuda', 'Argentina', 'Aruba', 'Barbados', 'Belize', 'Bolivia', 'Brazil', 'British Virgin Islands',
 'Cayman Islands', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Dominica', 'Dominican Republic', 'Ecuador', 'El Salvador', 
 'Grenada', 'Guatemala', 'Guyana', 'Haiti', 'Honduras', 'Jamaica', 'Mexico', 'Nicaragua', 'Panama', 'Paraguay', 'Peru', 
@@ -155,36 +132,21 @@ var LAC = ['Antigua and Barbuda', 'Argentina', 'Aruba', 'Barbados', 'Belize', 'B
 'Turks and Caicos islands', 'Uruguay', 'Venezuela', 'United States Virgin Islands'
 ];
 
-LAC.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_LAC'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
-
 // Middle East & North Africa
-
 var MENA = ['Algeria', 'Bahrain', 'Djibouti', 'Egypt', 'Iran  (Islamic Republic of)', 'Iraq', 'Israel', 'Jordan',
 'Kuwait', 'Lebanon', 'Libya', 'Malta', 'Morocco', 'Oman', 'Qatar', 'Saudi Arabia', 'Syrian Arab Republic',
 'Tunisia', 'United Arab Emirates', 'West Bank', 'Yemen'
   ];
-  
-  
-MENA.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_MENA'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
-
-
 
 //South Asia
-
 var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'
 ];
   
-SA.forEach(function(country) {
-  var fileName = country + '_PopulationByBin_SA'; // Dynamically generate file name
-  processCountryPopulation(country, fileName);
-});
+// North America
+var NA = ['Canada', 'United States of America']
   
+processRegionPopulation(EAP, 'East_Asia_and_Pacific');
 
-*/
 
+    
+    
