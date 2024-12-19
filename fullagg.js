@@ -2,10 +2,11 @@ var population = ee.Image("JRC/GHSL/P2023A/GHS_POP/2020");
 var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
 // Aggregate population data to 1-km grid cells
+//BEFORE reducing resolution: set missing population to zero, not negative
 var proj_0 = population.projection();
 var proj_at1km = proj_0.atScale(1000);
 
-var population1km = population.reduceResolution({
+var population1km = population.where(population.lt(0), 0).reduceResolution({
     reducer: ee.Reducer.sum().unweighted(),
     maxPixels: 1024
   })
@@ -13,12 +14,8 @@ var population1km = population.reduceResolution({
     crs: proj_at1km
   });
   
-//Map.addLayer(population, {}, "Population");
-//Map.addLayer(population1km, {}, "Population at 1km");
-
-var Population1km = population1km.where(population1km.lt(0), 0);
-
-//Map.addLayer(Population1km, {}, "Pop negative replaced");
+Map.addLayer(population, {}, "Population");
+Map.addLayer(population1km, {}, "Population at 1km");
 
 
 // function starts
