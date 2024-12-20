@@ -11,8 +11,8 @@ var population1km = population.where(population.lt(0), 0).reduceResolution({
     crs: population.projection().atScale(1000)
   });
   
-Map.addLayer(population, {}, "Population");
-Map.addLayer(population1km, {}, "Population at 1km");
+//Map.addLayer(population, {}, "Population");
+//Map.addLayer(population1km, {}, "Population at 1km");
 
 // Round up population values to the nearest 100 as a new raster
 var binned_pop1km = population1km.expression(
@@ -21,7 +21,7 @@ var binned_pop1km = population1km.expression(
   }
 ).rename('binned_population');
 
-Map.addLayer(binned_pop1km, {}, "Population at 1km round up to nearest 100");
+//Map.addLayer(binned_pop1km, {}, "Population at 1km round up to nearest 100");
 
 // Combine original population data and binned raster
 var combined = population1km.addBands(binned_pop1km);
@@ -29,81 +29,154 @@ var combined = population1km.addBands(binned_pop1km);
 
 
 // function starts------------------------------------------------------
-function processRegionPopulation(countries, exportFileName) {
-  
-  // Initialize empty FeatureCollection to aggregate results for the region
+
+// Unified function to process both single and multipolygon countries
+function processDynamicRegion(countries, exportFileName) {
+  // Initialize empty FeatureCollection to aggregate results
   var regionResults = ee.FeatureCollection([]);
-  
-  // Loop through each country in the region
-  countries.forEach(function (countryName) {
-      // Filter the country geometry
-      var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
-  
-      // Clip population data to the country
+
+  countries.forEach(function(countryName) {
+    var countryFC = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName));
+    var countrySize = countryFC.size();
+
+    // Handle each country separately to avoid projection issues
+    if (countrySize.gt(1)) {
+      // Handle multipolygon countries
+      var features = countryFC.toList(countrySize);
+      
+      // Process each feature separately
+      var processFeature = function(feature) {
+        feature = ee.Feature(feature);
+        var featureGeometry = feature.geometry();
+        
+        // Reproject the geometry to match the population data's projection
+        //featureGeometry = featureGeometry.transform(population1km.projection(), ee.ErrorMargin(1000, 'meters'));
+        
+        // Clip population data to the feature geometry
+        var combined_x = combined.clip(featureGeometry);
+        
+        // Use unbounded geometry for reduction
+        //var reducerGeometry = featureGeometry.bounds();
+        
+        // Define reducer
+        var reducer = ee.Reducer.sum().combine({
+          reducer2: ee.Reducer.count(),
+          sharedInputs: true
+        }).group({groupField: 1});
+        
+        try {
+          // Reduce to bin-level population totals with error handling
+          var popByBin = combined_x.reduceRegion({
+            reducer: reducer,
+            geometry: featureGeometry,
+            scale: 1000,
+            maxPixels: 1e13,
+            tileScale: 4
+          });
+          
+          // Extract grouped data
+          var groups = ee.List(popByBin.get('groups'));
+          
+          return ee.FeatureCollection(groups.map(function(group) {
+            group = ee.Dictionary(group);
+            return ee.Feature(null, {
+              'Bin': group.get('group'),
+              'PopulationSum': group.get('sum'),
+              'GridcellCount': group.get('count'),
+            });
+          }));
+        } catch (e) {
+          print('Error processing feature in country: ' + countryName);
+          return ee.FeatureCollection([]);
+        }
+      };
+      
+      // Map over all features
+      var allResults = features.map(function(feature) {
+        return processFeature(feature);
+      });
+      
+      // Merge all results for multipolygon
+      var mergedResults = ee.FeatureCollection(allResults).flatten();
+      regionResults = regionResults.merge(mergedResults);
+      
+    } else {
+      // Handle single geometry countries
+      var countryGeometry = countryFC.geometry();
+      
+      // Reproject the geometry to match the population data's projection
+      //countryGeometry = countryGeometry.transform(population1km.projection(), ee.ErrorMargin(1000, 'meters'));
+      
       var combined_x = combined.clip(countryGeometry);
       
-      //Define a reducer that counts cells and sums population
+      // Use unbounded geometry for reduction
+      //var reducerGeometry = countryGeometry.bounds();
+      
+      // Define reducer
       var reducer = ee.Reducer.sum().combine({
         reducer2: ee.Reducer.count(),
         sharedInputs: true
-      }).group({groupField: 1,});
+      }).group({groupField: 1});
       
-      
-      // Reduce to bin-level population totals
-      var popByBin = combined_x.reduceRegion({
-        reducer: reducer,
-        geometry: countryGeometry,
-        scale: 1000,
-        maxPixels: 1e9,
-      });
-  
-      // Extract grouped data
-      var groups = ee.List(popByBin.get('groups'));
-      
-
-      // Create a FeatureCollection from grouped data for the country
-      var countryFeatures = groups.map(function (group) {
-        group = ee.Dictionary(group);
-        return ee.Feature(null, {
-          'Bin': group.get('group'), // Bin ID
-          'PopulationSum': group.get('sum'), // Population sum for the bin
-          'GridcellCount': group.get('count'), // Count of gridcells for the bin
+      try {
+        // Reduce to bin-level population totals with error handling
+        var popByBin = combined_x.reduceRegion({
+          reducer: reducer,
+          geometry: countryGeometry,
+          scale: 1000,
+          maxPixels: 1e13,
+          tileScale: 4
         });
-      });
-
-    // Append country results to the region's FeatureCollection
-    regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
+        
+        // Extract grouped data
+        var groups = ee.List(popByBin.get('groups'));
+        
+        // Create features from grouped data
+        var countryFeatures = groups.map(function(group) {
+          group = ee.Dictionary(group);
+          return ee.Feature(null, {
+            'Bin': group.get('group'),
+            'PopulationSum': group.get('sum'),
+            'GridcellCount': group.get('count'),
+          });
+        });
+        
+        regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
+      } catch (e) {
+        print('Error processing country: ' + countryName);
+      }
+    }
   });
-  
-  // Calculate sum of both population and gridcells
-  var merged = regionResults.reduceColumns({
+
+  // Aggregate results by bin
+  var finalResults = regionResults.reduceColumns({
     reducer: ee.Reducer.sum().repeat(2).group({
-      groupField: 0,  // Index of the column to group by
+      groupField: 0,
       groupName: 'Bin',
     }),
-    selectors: ['Bin', 'PopulationSum', 'GridcellCount']  
+    selectors: ['Bin', 'PopulationSum', 'GridcellCount']
   }).get('groups');
 
-  // Convert the merged results back to a FeatureCollection
-  var mergedFC = ee.FeatureCollection(ee.List(merged).map(function(group) {
-    var groupValue = ee.Dictionary(group).get('Bin');
-    var sumValue = ee.List(ee.Dictionary(group).get('sum')).get(0);
-    var countValue = ee.List(ee.Dictionary(group).get('sum')).get(1);
-    
+  // Convert to final FeatureCollection
+  var finalFC = ee.FeatureCollection(ee.List(finalResults).map(function(group) {
+    var dict = ee.Dictionary(group);
+    var sumList = ee.List(dict.get('sum'));
     return ee.Feature(null, {
-      'Bin': groupValue,
-      'PopulationSum': sumValue,
-      'GridcellCount': countValue
+      'Bin': dict.get('Bin'),
+      'PopulationSum': sumList.get(0),
+      'GridcellCount': sumList.get(1)
     });
   }));
-  
+
   // Export to CSV
   Export.table.toDrive({
-    collection: mergedFC,
-    description: exportFileName,  // Name of your export file
+    collection: finalFC,
+    description: exportFileName,
     fileFormat: 'CSV'
   });
 }
+
+// Define regions
 
 // Sub-Saharan Africa
 var SSA = ['Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
@@ -154,102 +227,14 @@ var MENA = ['Algeria', 'Bahrain', 'Djibouti', 'Egypt', 'Iran  (Islamic Republic 
 var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'
 ];
   
-  
-processRegionPopulation(EAP, 'East_Asia_and_Pacific');
-processRegionPopulation(SSA, 'Sub_Saharan_Africa');
-processRegionPopulation(LAC, 'Latin America & Caribbean');
-processRegionPopulation(MENA, 'Middle East & North Africa');
-processRegionPopulation(ECA, 'Europe and Central Asia');
-processRegionPopulation(SA, 'South Asia');
+// North America 
+var NA = ['Bermuda', 'Canada', 'United States of America'];
 
+//processDynamicRegion(EAP, 'East_Asia_and_Pacific');
+//processDynamicRegion(SSA, 'Sub_Saharan_Africa');
+//processDynamicRegion(LAC, 'Latin_America_&_Caribbean');
+//processDynamicRegion(MENA, 'Middle_East_&_North_Africa');
+//processDynamicRegion(ECA, 'Europe_and_Central_Asia');
+processDynamicRegion(SA, 'South_Asia');
+//processDynamicRegion(NA, 'North_America');
 
-// function to process canada and usa --------------
-function processMultiPolygonCountry(countryName, exportFileName) {
-  // Get the country feature collection
-  var countryFC = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName));
-  
-  // Get all features (polygons) for the country
-  var features = countryFC.toList(countryFC.size());
-  
-  // Initialize empty FeatureCollection to aggregate results
-  var countryResults = ee.FeatureCollection([]);
-  
-  // Function to process each feature
-  var processFeature = function(feature) {
-    feature = ee.Feature(feature);
-    var featureGeometry = feature.geometry();
-    
-    // Clip population data to the feature geometry
-    var combined_x = combined.clip(featureGeometry);
-    
-    // Define reducer
-    var reducer = ee.Reducer.sum().combine({
-      reducer2: ee.Reducer.count(),
-      sharedInputs: true
-    }).group({groupField: 1});
-    
-    // Reduce to bin-level population totals
-    var popByBin = combined_x.reduceRegion({
-      reducer: reducer,
-      geometry: featureGeometry,
-      scale: 1000,
-      maxPixels: 1e9,
-    });
-    
-    // Extract grouped data
-    var groups = ee.List(popByBin.get('groups'));
-    
-    // Create features from grouped data
-    return ee.FeatureCollection(groups.map(function(group) {
-      group = ee.Dictionary(group);
-      return ee.Feature(null, {
-        'Bin': group.get('group'),
-        'PopulationSum': group.get('sum'),
-        'GridcellCount': group.get('count'),
-      });
-    }));
-  };
-  
-  // Map over all features
-  var allResults = features.map(function(feature) {
-    return processFeature(feature);
-  });
-  
-  // Merge all results
-  var mergedResults = ee.FeatureCollection(allResults).flatten();
-  
-  // Aggregate results by bin
-  var finalResults = mergedResults.reduceColumns({
-    reducer: ee.Reducer.sum().repeat(2).group({
-      groupField: 0,
-      groupName: 'Bin',
-    }),
-    selectors: ['Bin', 'PopulationSum', 'GridcellCount']
-  }).get('groups');
-  
-  // Convert to final FeatureCollection
-  var finalFC = ee.FeatureCollection(ee.List(finalResults).map(function(group) {
-    var dict = ee.Dictionary(group);
-    var sumList = ee.List(dict.get('sum'));
-    return ee.Feature(null, {
-      'Bin': dict.get('Bin'),
-      'PopulationSum': sumList.get(0),
-      'GridcellCount': sumList.get(1)
-    });
-  }));
-  
-  // Export results
-  Export.table.toDrive({
-    collection: finalFC,
-    description: exportFileName,
-    fileFormat: 'CSV'
-  });
-  
-  return finalFC;
-}
-
-// Process Canada
-processMultiPolygonCountry('Canada', 'Canada_Population_Bins');
-processMultiPolygonCountry('United States of America', 'USA_Population_Bins');
-    
-    
