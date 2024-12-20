@@ -28,8 +28,7 @@ var combined = population1km.addBands(binned_pop1km);
 
 
 
-
-// function starts
+// function starts------------------------------------------------------
 function processRegionPopulation(countries, exportFileName) {
   
   // Initialize empty FeatureCollection to aggregate results for the region
@@ -42,51 +41,62 @@ function processRegionPopulation(countries, exportFileName) {
   
       // Clip population data to the country
       var combined_x = combined.clip(countryGeometry);
-  
+      
+      //Define a reducer that counts cells and sums population
+      var reducer = ee.Reducer.sum().combine({
+        reducer2: ee.Reducer.count(),
+        sharedInputs: true
+      }).group({groupField: 1,});
+      
+      
       // Reduce to bin-level population totals
       var popByBin = combined_x.reduceRegion({
-        reducer: ee.Reducer.sum().group({
-          groupField: 1,
-        }),
+        reducer: reducer,
         geometry: countryGeometry,
         scale: 1000,
         maxPixels: 1e9,
       });
   
       // Extract grouped data
-      var groups = ee.List(ee.Dictionary(popByBin).get('groups'));
-  
+      var groups = ee.List(popByBin.get('groups'));
+      
+
       // Create a FeatureCollection from grouped data for the country
       var countryFeatures = groups.map(function (group) {
         group = ee.Dictionary(group);
         return ee.Feature(null, {
           'Bin': group.get('group'), // Bin ID
           'PopulationSum': group.get('sum'), // Population sum for the bin
+          'GridcellCount': group.get('count'), // Count of gridcells for the bin
         });
       });
+
     // Append country results to the region's FeatureCollection
     regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
   });
-    
+  
+  // Calculate sum of both population and gridcells
   var merged = regionResults.reduceColumns({
-    reducer: ee.Reducer.sum().group({
+    reducer: ee.Reducer.sum().repeat(2).group({
       groupField: 0,  // Index of the column to group by
       groupName: 'Bin',
     }),
-    selectors: ['Bin', 'PopulationSum']  
+    selectors: ['Bin', 'PopulationSum', 'GridcellCount']  
   }).get('groups');
 
   // Convert the merged results back to a FeatureCollection
   var mergedFC = ee.FeatureCollection(ee.List(merged).map(function(group) {
     var groupValue = ee.Dictionary(group).get('Bin');
-    var sumValue = ee.Dictionary(group).get('sum');
+    var sumValue = ee.List(ee.Dictionary(group).get('sum')).get(0);
+    var countValue = ee.List(ee.Dictionary(group).get('sum')).get(1);
     
     return ee.Feature(null, {
       'Bin': groupValue,
-      'PopulationSum': sumValue
+      'PopulationSum': sumValue,
+      'GridcellCount': countValue
     });
   }));
-
+  
   // Export to CSV
   Export.table.toDrive({
     collection: mergedFC,
