@@ -154,11 +154,102 @@ var MENA = ['Algeria', 'Bahrain', 'Djibouti', 'Egypt', 'Iran  (Islamic Republic 
 var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', 'Pakistan', 'Sri Lanka'
 ];
   
-// North America
-var NA = ['Canada', 'United States of America']
   
 processRegionPopulation(EAP, 'East_Asia_and_Pacific');
+processRegionPopulation(SSA, 'Sub_Saharan_Africa');
+processRegionPopulation(LAC, 'Latin America & Caribbean');
+processRegionPopulation(MENA, 'Middle East & North Africa');
+processRegionPopulation(ECA, 'Europe and Central Asia');
+processRegionPopulation(SA, 'South Asia');
 
 
+// function to process canada and usa --------------
+function processMultiPolygonCountry(countryName, exportFileName) {
+  // Get the country feature collection
+  var countryFC = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName));
+  
+  // Get all features (polygons) for the country
+  var features = countryFC.toList(countryFC.size());
+  
+  // Initialize empty FeatureCollection to aggregate results
+  var countryResults = ee.FeatureCollection([]);
+  
+  // Function to process each feature
+  var processFeature = function(feature) {
+    feature = ee.Feature(feature);
+    var featureGeometry = feature.geometry();
+    
+    // Clip population data to the feature geometry
+    var combined_x = combined.clip(featureGeometry);
+    
+    // Define reducer
+    var reducer = ee.Reducer.sum().combine({
+      reducer2: ee.Reducer.count(),
+      sharedInputs: true
+    }).group({groupField: 1});
+    
+    // Reduce to bin-level population totals
+    var popByBin = combined_x.reduceRegion({
+      reducer: reducer,
+      geometry: featureGeometry,
+      scale: 1000,
+      maxPixels: 1e9,
+    });
+    
+    // Extract grouped data
+    var groups = ee.List(popByBin.get('groups'));
+    
+    // Create features from grouped data
+    return ee.FeatureCollection(groups.map(function(group) {
+      group = ee.Dictionary(group);
+      return ee.Feature(null, {
+        'Bin': group.get('group'),
+        'PopulationSum': group.get('sum'),
+        'GridcellCount': group.get('count'),
+      });
+    }));
+  };
+  
+  // Map over all features
+  var allResults = features.map(function(feature) {
+    return processFeature(feature);
+  });
+  
+  // Merge all results
+  var mergedResults = ee.FeatureCollection(allResults).flatten();
+  
+  // Aggregate results by bin
+  var finalResults = mergedResults.reduceColumns({
+    reducer: ee.Reducer.sum().repeat(2).group({
+      groupField: 0,
+      groupName: 'Bin',
+    }),
+    selectors: ['Bin', 'PopulationSum', 'GridcellCount']
+  }).get('groups');
+  
+  // Convert to final FeatureCollection
+  var finalFC = ee.FeatureCollection(ee.List(finalResults).map(function(group) {
+    var dict = ee.Dictionary(group);
+    var sumList = ee.List(dict.get('sum'));
+    return ee.Feature(null, {
+      'Bin': dict.get('Bin'),
+      'PopulationSum': sumList.get(0),
+      'GridcellCount': sumList.get(1)
+    });
+  }));
+  
+  // Export results
+  Export.table.toDrive({
+    collection: finalFC,
+    description: exportFileName,
+    fileFormat: 'CSV'
+  });
+  
+  return finalFC;
+}
+
+// Process Canada
+processMultiPolygonCountry('Canada', 'Canada_Population_Bins');
+processMultiPolygonCountry('United States of America', 'USA_Population_Bins');
     
     
