@@ -1,4 +1,4 @@
-var population = ee.Image("JRC/GHSL/P2023A/GHS_POP/2020");
+var population = ee.Image("JRC/GHSL/P2023A/GHS_POP/1980");
 var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
 // Aggregate population data to 1-km grid cells
@@ -64,14 +64,14 @@ function processDynamicRegion(countries, exportFileName) {
           sharedInputs: true
         }).group({groupField: 1});
         
-        try {
+        
           // Reduce to bin-level population totals with error handling
           var popByBin = combined_x.reduceRegion({
             reducer: reducer,
             geometry: featureGeometry,
             scale: 1000,
-            maxPixels: 1e13,
-            tileScale: 4
+            maxPixels: 1e13
+            //tileScale: 4
           });
           
           // Extract grouped data
@@ -85,10 +85,6 @@ function processDynamicRegion(countries, exportFileName) {
               'GridcellCount': group.get('count'),
             });
           }));
-        } catch (e) {
-          print('Error processing feature in country: ' + countryName);
-          return ee.FeatureCollection([]);
-        }
       };
       
       // Map over all features
@@ -102,10 +98,7 @@ function processDynamicRegion(countries, exportFileName) {
       
     } else {
       // Handle single geometry countries
-      var countryGeometry = countryFC.geometry();
-      
-      // Reproject the geometry to match the population data's projection
-      //countryGeometry = countryGeometry.transform(population1km.projection(), ee.ErrorMargin(1000, 'meters'));
+      var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
       
       var combined_x = combined.clip(countryGeometry);
       
@@ -118,14 +111,14 @@ function processDynamicRegion(countries, exportFileName) {
         sharedInputs: true
       }).group({groupField: 1});
       
-      try {
+     
         // Reduce to bin-level population totals with error handling
         var popByBin = combined_x.reduceRegion({
           reducer: reducer,
           geometry: countryGeometry,
           scale: 1000,
-          maxPixels: 1e13,
-          tileScale: 4
+          maxPixels: 1e9
+          //tileScale: 4
         });
         
         // Extract grouped data
@@ -142,9 +135,6 @@ function processDynamicRegion(countries, exportFileName) {
         });
         
         regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
-      } catch (e) {
-        print('Error processing country: ' + countryName);
-      }
     }
   });
 
@@ -157,23 +147,20 @@ function processDynamicRegion(countries, exportFileName) {
     selectors: ['Bin', 'PopulationSum', 'GridcellCount']
   }).get('groups');
 
-  // Convert to final FeatureCollection
-  var finalFC = ee.FeatureCollection(ee.List(finalResults).map(function(group) {
-    var dict = ee.Dictionary(group);
-    var sumList = ee.List(dict.get('sum'));
+  // Convert the merged results back to a FeatureCollection
+  var mergedFC = ee.FeatureCollection(ee.List(finalResults).map(function(group) {
+    var groupValue = ee.Dictionary(group).get('Bin');
+    var sumValue = ee.List(ee.Dictionary(group).get('sum')).get(0);
+    var countValue = ee.List(ee.Dictionary(group).get('sum')).get(1);
+    
     return ee.Feature(null, {
-      'Bin': dict.get('Bin'),
-      'PopulationSum': sumList.get(0),
-      'GridcellCount': sumList.get(1)
+      'Bin': groupValue,
+      'PopulationSum': sumValue,
+      'GridcellCount': countValue
     });
   }));
-
-  // Export to CSV
-  Export.table.toDrive({
-    collection: finalFC,
-    description: exportFileName,
-    fileFormat: 'CSV'
-  });
+ 
+  return mergedFC;
 }
 
 // Define regions
@@ -210,7 +197,7 @@ var ECA = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 
 ];
 
 // Latin America & Caribbean
-var LAC = ['Antigua and Barbuda', 'Argentina', 'Aruba', 'Barbados', 'Belize', 'Bolivia', 'Brazil', 'British Virgin Islands',
+var LAC = ['Antigua and Barbuda', 'Argentina', 'Aruba', 'Barbados', 'Belize', 'Bolivia', 'Brazil', 'Bermuda', 'British Virgin Islands',
 'Cayman Islands', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Dominica', 'Dominican Republic', 'Ecuador', 'El Salvador', 
 'Grenada', 'Guatemala', 'Guyana', 'Haiti', 'Honduras', 'Jamaica', 'Mexico', 'Nicaragua', 'Panama', 'Paraguay', 'Peru', 
 'Puerto Rico', 'Saint Kitts and Nevis', 'Saint Vincent and the Grenadines', 'Suriname', 'Trinidad and Tobago',
@@ -228,13 +215,86 @@ var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', '
 ];
   
 // North America 
-var NA = ['Bermuda', 'Canada', 'United States of America'];
+var NA = ['Canada', 'United States of America'];
 
-//processDynamicRegion(EAP, 'East_Asia_and_Pacific');
-//processDynamicRegion(SSA, 'Sub_Saharan_Africa');
-//processDynamicRegion(LAC, 'Latin_America_&_Caribbean');
-//processDynamicRegion(MENA, 'Middle_East_&_North_Africa');
-//processDynamicRegion(ECA, 'Europe_and_Central_Asia');
+/*
+processDynamicRegion(EAP, 'East_Asia_and_Pacific');
+processDynamicRegion(SSA, 'Sub_Saharan_Africa');
+processDynamicRegion(LAC, 'Latin_America_&_Caribbean');
+processDynamicRegion(MENA, 'Middle_East_&_North_Africa');
+processDynamicRegion(ECA, 'Europe_and_Central_Asia');
 processDynamicRegion(SA, 'South_Asia');
-//processDynamicRegion(NA, 'North_America');
+processDynamicRegion(NA, 'North_America');
+*/
+
+// New function to merge and export all regions
+function mergeAndExportAllRegions() {
+  // Process each region and store results
+  var eapResults = processDynamicRegion(EAP, 'East_Asia_and_Pacific');
+  var ssaResults = processDynamicRegion(SSA, 'Sub_Saharan_Africa');
+  var lacResults = processDynamicRegion(LAC, 'Latin_America_&_Caribbean');
+  var menaResults = processDynamicRegion(MENA, 'Middle_East_&_North_Africa');
+  var ecaResults = processDynamicRegion(ECA, 'Europe_and_Central_Asia');
+  var saResults = processDynamicRegion(SA, 'South_Asia');
+  var naResults = processDynamicRegion(NA, 'North_America');
+
+  // Function to rename columns for a region
+  function renameColumns(fc, prefix) {
+    return fc.map(function(feature) {
+      var bin = feature.get('Bin');
+      var pop = feature.get('PopulationSum');
+      var count = feature.get('GridcellCount');
+      
+      var properties = {
+        'Bin': bin,
+      };
+      properties[prefix + '-population'] = pop;
+      properties[prefix + '-gridcellcount'] = count;
+      
+      return ee.Feature(null, properties);
+    });
+  }
+
+  // Rename columns for each region
+  var eapRenamed = renameColumns(eapResults, 'East_Asia_and_Pacific');
+  var ssaRenamed = renameColumns(ssaResults, 'Sub_Saharan_Africa');
+  var lacRenamed = renameColumns(lacResults, 'Latin_America_&_Caribbean');
+  var menaRenamed = renameColumns(menaResults, 'Middle_East_&_North_Africa');
+  var ecaRenamed = renameColumns(ecaResults, 'Europe_and_Central_Asia');
+  var saRenamed = renameColumns(saResults, 'South_Asia');
+  var naRenamed = renameColumns(naResults, 'North_America');
+
+  // Merge all regions by joining on Bin
+  var merged = eapRenamed;
+  var regionsToMerge = [ssaRenamed, lacRenamed, menaRenamed, ecaRenamed, saRenamed, naRenamed];
+  
+  regionsToMerge.forEach(function(region) {
+    merged = ee.Join.saveFirst('right')
+      .apply({
+        primary: merged,
+        secondary: region,
+        condition: ee.Filter.equals({
+          leftField: 'Bin',
+          rightField: 'Bin'
+        })
+      })
+      .map(function(feature) {
+        var right = ee.Feature(feature.get('right'));
+        return feature.setMulti(right.toDictionary().remove(['Bin']));
+      });
+  });
+
+  // Export merged results
+  Export.table.toDrive({
+    collection: merged,
+    description: 'All_Regions_Population_Statistics',
+    fileFormat: 'CSV'
+  });
+  
+  //return merged;
+}
+
+// Call the new function instead of individual processDynamicRegion calls
+mergeAndExportAllRegions();
+
 
