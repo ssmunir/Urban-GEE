@@ -1,3 +1,6 @@
+// This scripts merges all regions into one csv and export
+// still in production
+
 var population = ee.Image("JRC/GHSL/P2023A/GHS_POP/1980");
 var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 

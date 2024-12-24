@@ -103,7 +103,7 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
 #print(landshare.head(201))
 
 
-def plot_columns(data, plot_title, output_file=None, x_value=20000):
+def plot_columns(data, plot_title, output_file=None, x_value=19000):
     """
     Create a line plot for all columns in the dataset with Bins as the index.
     Legend is sorted based on y-values at x=20000 from highest to lowest.
@@ -136,6 +136,8 @@ def plot_columns(data, plot_title, output_file=None, x_value=20000):
                 color=colors[i % len(colors)],
                 linewidth=3
             )
+            # Store the line object with its column name
+            lines_dict[column] = line
         else:
             line, = plt.plot(  # Note the comma to unpack the tuple
                 data.index, 
@@ -143,10 +145,9 @@ def plot_columns(data, plot_title, output_file=None, x_value=20000):
                 label=column.replace("_", " ").replace("and", "&"), 
                 linestyle=line_styles[i % len(line_styles)],
                 color=colors[i % len(colors)]
-            )
-        
-        # Store the line object with its column name
-        lines_dict[column] = line
+            ) 
+            # Store the line object with its column name
+            lines_dict[column] = line
 
     # Sort columns based on y-values at x=20000
     y_values_at_x = {col: data.loc[x_value, col] for col in data.columns if x_value in data.index}
@@ -177,15 +178,7 @@ def plot_columns(data, plot_title, output_file=None, x_value=20000):
     else:
         plt.show()
 
-landshare, popshare = process_and_merge_csv_files(pop1980)
-plot_title = "Cumulative share of population by density in 1980"
-output_file = pop1980 + r"\Cumulative share of population by density.png"  # Set to None if you want to display the plot
+landshare, popshare = process_and_merge_csv_files(pop2010)
+plot_title = "Cumulative share of population by density in 2010"
+output_file = pop2010 + r"\Cumulative share of population by density 2010.png"  # Set to None if you want to display the plot
 plot_columns(popshare, plot_title, output_file)
-
-'''
-for i in years:
-    landshare, popshare = process_and_merge_csv_files(i)
-    plot_title = "Cumulative share of population by density"
-    output_file = i + "\line_plot.png"  # Set to None if you want to display the plot
-    plot_columns(popshare, plot_title, output_file)
-'''
