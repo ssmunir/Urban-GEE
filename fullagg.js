@@ -217,15 +217,6 @@ var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', '
 // North America 
 var NA = ['Canada', 'United States of America'];
 
-/*
-processDynamicRegion(EAP, 'East_Asia_and_Pacific');
-processDynamicRegion(SSA, 'Sub_Saharan_Africa');
-processDynamicRegion(LAC, 'Latin_America_&_Caribbean');
-processDynamicRegion(MENA, 'Middle_East_&_North_Africa');
-processDynamicRegion(ECA, 'Europe_and_Central_Asia');
-processDynamicRegion(SA, 'South_Asia');
-processDynamicRegion(NA, 'North_America');
-*/
 
 // New function to merge and export all regions
 function mergeAndExportAllRegions() {

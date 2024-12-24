@@ -1,3 +1,6 @@
+## This script loops through the folder containing region csv and 
+## replicates Henderson's figure 1 and 2
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -9,12 +12,12 @@ plt.rcParams['axes.labelsize'] = 16
 plt.rcParams['font.family'] = 'Verdana'  # Replace 'Verdana' with your desired font
 # Data folder
 
-mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data"
-pop1980 = mf + r"\Binned population\pop1980"
-pop1990 = mf + r"\Binned population\pop1990"
-pop2000 = mf + r"\Binned population\pop2000"
-pop2010 = mf + r"\Binned population\pop2010"
-pop2020 = mf + r"\Binned population\pop2020"
+mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Binned population"
+pop1980 = mf + r"\pop1980"
+pop1990 = mf + r"\pop1990"
+pop2000 = mf + r"\pop2000"
+pop2010 = mf + r"\pop2010"
+pop2020 = mf + r"\pop2020"
 
 years = [pop1980, pop1990, pop2000, pop2010, pop2020]
 
@@ -174,9 +177,9 @@ def plot_columns(data, plot_title, output_file=None, x_value=20000):
     else:
         plt.show()
 
-landshare, popshare = process_and_merge_csv_files(pop2020)
-plot_title = "Cumulative share of population by density"
-output_file = pop2020 + r"\line_plot.png"  # Set to None if you want to display the plot
+landshare, popshare = process_and_merge_csv_files(pop1980)
+plot_title = "Cumulative share of population by density in 1980"
+output_file = pop1980 + r"\Cumulative share of population by density.png"  # Set to None if you want to display the plot
 plot_columns(popshare, plot_title, output_file)
 
 '''
