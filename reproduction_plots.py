@@ -9,11 +9,11 @@ import os
 
 sns.set_theme(style="whitegrid")
 plt.rcParams['axes.labelsize'] = 16
-plt.rcParams['font.family'] = 'Verdana'  # Replace 'Verdana' with your desired font
+plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 # Data folder
 
 mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Binned population"
-mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
+#mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
 pop1980 = mf + r"\pop1980"
 pop1990 = mf + r"\pop1990"
 pop2000 = mf + r"\pop2000"
@@ -202,8 +202,8 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
     for i, column in enumerate(common_columns):
         if column == "Sub_Saharan_Africa":
             #data2 = data2.head(200)
-            dt1 = data2[data2[column] >= 0.96][column] * 100
-            dt2 = data1[column].loc[data2[data2[column] >= 0.96][column].index]
+            dt1 = data2[data2[column] >= 0.65][column] * 100
+            dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
             line, = plt.plot(
                 dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
                 linestyle="solid",
@@ -212,8 +212,8 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
             # Store the line object with its column name
             lines_dict[column] = line
         else:
-            dt1 = data2[data2[column] >= 0.96][column] * 100
-            dt2 = data1[column].loc[data2[data2[column] >= 0.96][column].index]
+            dt1 = data2[data2[column] >= 0.65][column] * 100
+            dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
             line, = plt.plot(
                 dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
                 linestyle=line_styles[i % len(line_styles)],
