@@ -19,8 +19,8 @@ pop2000 = mf + r"\pop2000"
 pop2010 = mf + r"\pop2010"
 pop2020 = mf + r"\pop2020"
 
-years = [pop1980, pop1990, pop2000, pop2010, pop2020]
-
+folderList = [pop1980, pop1990, pop2000, pop2010, pop2020]
+years = [1980, 1990, 2000, 2010, 2020]
 
 def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='PopulationSum', cell_count_col='GridcellCount'):
     """
@@ -58,7 +58,6 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
             
             # Calculate total population
             total_population = df[pop_sum_col].sum()
-            df['TotalPopulation'] = total_population
             
             # Calculate cumulative share of population
             df['CumulativeShare'] = df['CumulativePopulation'] / total_population
@@ -100,10 +99,8 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
         
     return merged_landshare.set_index('Bin'), merged_share.set_index('Bin')
 
-#print(landshare.head(201))
 
-
-def plot_columns(data, plot_title, output_file=None, x_value=19000):
+def plot1a(data, plot_title, output_file=None, x_value=19000):
     """
     Create a line plot for all columns in the dataset with Bins as the index.
     Legend is sorted based on y-values at x=20000 from highest to lowest.
@@ -117,8 +114,7 @@ def plot_columns(data, plot_title, output_file=None, x_value=19000):
     data = data.head(200)
     # Define line styles and grey-to-black color gradient
     line_styles = ['solid', 'dashed', 'dashed', 'dashdot', (5, (10, 3)), 'solid', 'solid']  # Add more if needed
-    colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'slategrey']  # colors
-    
+    colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'slategrey']
     # Initialize the plot
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -178,7 +174,81 @@ def plot_columns(data, plot_title, output_file=None, x_value=19000):
     else:
         plt.show()
 
-landshare, popshare = process_and_merge_csv_files(pop2010)
-plot_title = "Cumulative share of population by density in 2010"
-output_file = pop2010 + r"\Cumulative share of population by density 2010.png"  # Set to None if you want to display the plot
-plot_columns(popshare, plot_title, output_file)
+
+def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
+    """
+    Plot columns from two datasets against each other.
+
+    Parameters:
+        data1 (DataFrame): First dataset with 'Bin' as the index.
+        data2 (DataFrame): Second dataset with 'Bin' as the index.
+        plot_title (str): Title for the plot.
+        output_file (str, optional): Path to save the output plot. If None, displays the plot.
+    """
+    # Define line styles and grey-to-black color gradient
+    line_styles = ['solid', 'dashed', 'dashed', 'dashdot', (5, (10, 3)), 'solid', 'solid']  # Add more if needed
+    colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'cornflowerblue']
+    # Initialize the plot
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    # Dictionary to store lines
+    lines_dict = {}
+    # Ensure both datasets have the same columns
+    common_columns = set(data1.columns).intersection(set(data2.columns))
+ 
+ 
+    for i, column in enumerate(common_columns):
+        if column == "Sub_Saharan_Africa":
+            #data2 = data2.head(200)
+            dt1 = data2[data2[column] >= 0.96][column] * 100
+            dt2 = data1[column].loc[data2[data2[column] >= 0.96][column].index]
+            line, = plt.plot(
+                dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
+                linestyle="solid",
+                color='slategrey', linewidth=3
+                )
+            # Store the line object with its column name
+            lines_dict[column] = line
+        else:
+            dt1 = data2[data2[column] >= 0.96][column] * 100
+            dt2 = data1[column].loc[data2[data2[column] >= 0.96][column].index]
+            line, = plt.plot(
+                dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
+                linestyle=line_styles[i % len(line_styles)],
+                color=colors[i % len(colors)]
+                )
+            # Store the line object with its column name
+            lines_dict[column] = line
+    
+    # Customize the plot
+    plt.title(plot_title, fontsize=16)
+    plt.xlabel('Cumulative population in 3% of land with highest density', fontsize=14)
+    plt.ylabel('Share of total population', fontsize=14)
+    plt.legend()
+    plt.grid(True)
+    
+    # Customize x-axis ticks
+    plt.xticks(ticks=[97, 98, 99, 100])
+    plt.xlim(97, 100)
+    plt.ylim(0, 1)
+    
+    # Save or display the plot
+    if output_file:
+        plt.savefig(output_file, bbox_inches='tight')
+        print(f"Plot saved to {output_file}")
+    else:
+        plt.show()
+
+
+for dt, year in zip(folderList, years):
+    landshare, popshare = process_and_merge_csv_files(dt)
+    plot_title = f"Cumulative share of population by density in {year}"
+    output_file = dt + f"\Cumulative share of population by density {year}.png"  # Set to None if you want to display the plot
+    plot1a(popshare, plot_title, output_file)
+    plot_title = f"Cumulative percentage of population by land area in the region in {year}"
+    output_file = dt + f"\Cumulative percentage of population by land area in the region {year}.png"  # Set to None if you want to display the plot
+    plot1b(popshare, landshare, plot_title, output_file)
+
+
+
+
