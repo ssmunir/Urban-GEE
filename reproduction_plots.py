@@ -13,6 +13,7 @@ plt.rcParams['font.family'] = 'Verdana'  # Replace 'Verdana' with your desired f
 # Data folder
 
 mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Binned population"
+mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
 pop1980 = mf + r"\pop1980"
 pop1990 = mf + r"\pop1990"
 pop2000 = mf + r"\pop2000"
@@ -51,7 +52,8 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
             })
             
             # Ensure the DataFrame is sorted by bins
-            df = df.iloc[1:].sort_values(by=bin_col).reset_index(drop=True)
+            ##WHY drop bin 0? df = df.iloc[1:].sort_values(by=bin_col).reset_index(drop=True)
+            df = df.sort_values(by=bin_col).reset_index(drop=True)
             
             # Calculate cumulative population
             df['CumulativePopulation'] = df[pop_sum_col].cumsum()
