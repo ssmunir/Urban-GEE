@@ -73,7 +73,7 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
             df['CumulativeLandShare'] = df['CumulativeCells'] / total_cells
             
             # Limit to the first 200 rows
-            df = df.head(200)
+            #df = df.head(200)
             
             # Select and rename columns for land share
             landshare_df = df[[bin_col, 'CumulativeLandShare']].rename(columns={
@@ -111,7 +111,7 @@ def plot1a(data, plot_title, output_file=None, x_value=19000):
         output_file (str, optional): Path to save the output plot. If None, displays the plot.
     """
     
-    data = data.head(200)
+    #data = data.head(200)
     # Define line styles and grey-to-black color gradient
     line_styles = ['solid', 'dashed', 'dashed', 'dashdot', (5, (10, 3)), 'solid', 'solid']  # Add more if needed
     colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'slategrey']
