@@ -4,6 +4,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.interpolate import interp1d
 import numpy as np
 import os
 
@@ -197,13 +198,15 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
     lines_dict = {}
     # Ensure both datasets have the same columns
     common_columns = set(data1.columns).intersection(set(data2.columns))
- 
- 
+
+    
     for i, column in enumerate(common_columns):
         if column == "Sub_Saharan_Africa":
             #data2 = data2.head(200)
             dt1 = data2[data2[column] >= 0.65][column] * 100
             dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
+            dt1.dropna(inplace=True)
+            dt2.dropna(inplace=True)
             line, = plt.plot(
                 dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
                 linestyle="solid",
@@ -214,6 +217,8 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
         else:
             dt1 = data2[data2[column] >= 0.65][column] * 100
             dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
+            dt1.dropna(inplace=True)
+            dt2.dropna(inplace=True)
             line, = plt.plot(
                 dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
                 linestyle=line_styles[i % len(line_styles)],
