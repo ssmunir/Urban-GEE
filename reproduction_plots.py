@@ -182,7 +182,6 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
         output_file (str, optional): Path to save the output plot. If None, displays the plot.
     """
 
-    
     # Initialize the plot
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -192,9 +191,11 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
     common_columns = set(data1.columns).intersection(set(data2.columns))
 
     for i, col in enumerate(common_columns):
-        print(col)
-        dt1 = data2[data2[col] >= 0.65][col] * 100
-        dt2 = data1[col].loc[data2[data2[col] >= 0.65][col].index]
+        #print(col)
+        #dt1 = data2[data2[col] >= 0.65][col] * 100
+        #dt2 = data1[col].loc[data2[data2[col] >= 0.65][col].index]
+        dt1 = data2[col] * 100
+        dt2 = data1[col]
         dt1.dropna(inplace=True)
         dt2.dropna(inplace=True)
         line, = plt.plot(
