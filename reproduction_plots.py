@@ -14,7 +14,7 @@ plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 # Data folder
 
 mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Binned population"
-#mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
+mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
 pop1980 = mf + r"\pop1980"
 pop1990 = mf + r"\pop1990"
 pop2000 = mf + r"\pop2000"
@@ -23,6 +23,17 @@ pop2020 = mf + r"\pop2020"
 
 folderList = [pop1980, pop1990, pop2000, pop2010, pop2020]
 years = [1980, 1990, 2000, 2010, 2020]
+
+
+#line style dictionary for each region as a list that [style, color, width]
+lsd={   'East_Asia_and_Pacific':       ['solid','lightcoral',1],
+        'Europe_and_Central_Asia':     ['dashed','black',1],
+        'Latin_America_and_Caribbean': ['dashed','cadetblue',1],
+        'Middle_East_and_North_Africa':['dashdot','tomato',1],
+        'North_America':               [(5, (10, 3)),'darkseagreen',1],
+        'South_Asia':                  ['solid','goldenrod',1],
+        'Sub_Saharan_Africa':          ['solid','tomato',3]
+        }
 
 def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='PopulationSum', cell_count_col='GridcellCount'):
     """
@@ -113,11 +124,7 @@ def plot1a(data, plot_title, output_file=None, x_value=19000):
         plot_title (str): Title for the plot.
         output_file (str, optional): Path to save the output plot. If None, displays the plot.
     """
-    
-    #data = data.head(200)
-    # Define line styles and grey-to-black color gradient
-    line_styles = ['solid', 'dashed', 'dashed', 'dashdot', (5, (10, 3)), 'solid', 'solid']  # Add more if needed
-    colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'slategrey']
+
     # Initialize the plot
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -125,28 +132,14 @@ def plot1a(data, plot_title, output_file=None, x_value=19000):
     lines_dict = {}
     
     # Iterate through columns and plot each with a different style
-    for i, column in enumerate(data.columns):
-        if column == "Sub_Saharan_Africa":
-            line, = plt.plot(  # Note the comma to unpack the tuple
-                data.index, 
-                data[column], 
-                label=column.replace("_", " ").replace("and", "&"), 
-                linestyle=line_styles[i % len(line_styles)],
-                color=colors[i % len(colors)],
-                linewidth=3
-            )
-            # Store the line object with its column name
-            lines_dict[column] = line
-        else:
-            line, = plt.plot(  # Note the comma to unpack the tuple
-                data.index, 
-                data[column], 
-                label=column.replace("_", " ").replace("and", "&"), 
-                linestyle=line_styles[i % len(line_styles)],
-                color=colors[i % len(colors)]
-            ) 
-            # Store the line object with its column name
-            lines_dict[column] = line
+    for i, col in enumerate(data.columns):
+        line, = plt.plot(  # Note the comma to unpack the tuple
+            data.index, data[col], 
+            label=col.replace("_", " ").replace("and", "&"), 
+            linestyle=lsd[col][0],color=lsd[col][1], linewidth=lsd[col][2]
+        )
+        # Store the line object with its column name
+        lines_dict[col] = line
 
     # Sort columns based on y-values at x=20000
     y_values_at_x = {col: data.loc[x_value, col] for col in data.columns if x_value in data.index}
@@ -188,9 +181,8 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
         plot_title (str): Title for the plot.
         output_file (str, optional): Path to save the output plot. If None, displays the plot.
     """
-    # Define line styles and grey-to-black color gradient
-    line_styles = ['solid', 'dashed', 'dashed', 'dashdot', (5, (10, 3)), 'solid', 'solid']  # Add more if needed
-    colors = ['lightcoral', 'black', 'cadetblue', 'tomato', 'darkseagreen', 'goldenrod', 'cornflowerblue']
+
+    
     # Initialize the plot
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -199,34 +191,21 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
     # Ensure both datasets have the same columns
     common_columns = set(data1.columns).intersection(set(data2.columns))
 
+    for i, col in enumerate(common_columns):
+        print(col)
+        dt1 = data2[data2[col] >= 0.65][col] * 100
+        dt2 = data1[col].loc[data2[data2[col] >= 0.65][col].index]
+        dt1.dropna(inplace=True)
+        dt2.dropna(inplace=True)
+        line, = plt.plot(
+            dt1, dt2, 
+            label=col.replace("_", " ").replace("and", "&"), 
+            linestyle=lsd[col][0],color=lsd[col][1], linewidth=lsd[col][2]
+            )     
     
-    for i, column in enumerate(common_columns):
-        if column == "Sub_Saharan_Africa":
-            #data2 = data2.head(200)
-            dt1 = data2[data2[column] >= 0.65][column] * 100
-            dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
-            dt1.dropna(inplace=True)
-            dt2.dropna(inplace=True)
-            line, = plt.plot(
-                dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
-                linestyle="solid",
-                color='slategrey', linewidth=3
-                )
-            # Store the line object with its column name
-            lines_dict[column] = line
-        else:
-            dt1 = data2[data2[column] >= 0.65][column] * 100
-            dt2 = data1[column].loc[data2[data2[column] >= 0.65][column].index]
-            dt1.dropna(inplace=True)
-            dt2.dropna(inplace=True)
-            line, = plt.plot(
-                dt1, dt2, label=column.replace("_", " ").replace("and", "&"), 
-                linestyle=line_styles[i % len(line_styles)],
-                color=colors[i % len(colors)]
-                )
-            # Store the line object with its column name
-            lines_dict[column] = line
-    
+        # Store the line object with its column name
+        lines_dict[col] = line
+            
     # Customize the plot
     plt.title(plot_title, fontsize=16)
     plt.xlabel('Cumulative population in 3% of land with highest density', fontsize=14)
