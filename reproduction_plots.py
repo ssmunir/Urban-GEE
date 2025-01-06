@@ -14,7 +14,7 @@ plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 # Data folder
 
 mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Binned population"
-mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
+#mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
 pop1980 = mf + r"\pop1980"
 pop1990 = mf + r"\pop1990"
 pop2000 = mf + r"\pop2000"
@@ -26,13 +26,13 @@ years = [1980, 1990, 2000, 2010, 2020]
 
 
 #line style dictionary for each region as a list that [style, color, width]
-lsd={   'East_Asia_and_Pacific':       ['solid','lightcoral',1],
-        'Europe_and_Central_Asia':     ['dashed','black',1],
-        'Latin_America_and_Caribbean': ['dashed','cadetblue',1],
-        'Middle_East_and_North_Africa':['dashdot','tomato',1],
-        'North_America':               [(5, (10, 3)),'darkseagreen',1],
-        'South_Asia':                  ['solid','goldenrod',1],
-        'Sub_Saharan_Africa':          ['solid','tomato',3]
+lsd={   'East_Asia_and_Pacific':       ['solid',"#8c564b",1],
+        'Europe_and_Central_Asia':     ['dashed',"#ff7f0e",1],
+        'Latin_America_and_Caribbean': ['dashed',"#9467bd",1],
+        'Middle_East_and_North_Africa':['dashdot',"#2ca02c",1],
+        'North_America':               [(5, (10, 3)),"#e377c2",1],
+        'South_Asia':                  ['solid',"#1f77b4",1],
+        'Sub_Saharan_Africa':          ['solid',"#d62728",3]
         }
 
 def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='PopulationSum', cell_count_col='GridcellCount'):
@@ -229,10 +229,10 @@ def plot1b(data1, data2, plot_title, output_file=None, x_value=98):
 
 for dt, year in zip(folderList, years):
     landshare, popshare = process_and_merge_csv_files(dt)
-    plot_title = f"Cumulative share of population by density in {year}"
+    plot_title = " "
     output_file = dt + f"\Cumulative share of population by density {year}.png"  # Set to None if you want to display the plot
     plot1a(popshare, plot_title, output_file)
-    plot_title = f"Cumulative percentage of population by land area in the region in {year}"
+    plot_title = " "
     output_file = dt + f"\Cumulative percentage of population by land area in the region {year}.png"  # Set to None if you want to display the plot
     plot1b(popshare, landshare, plot_title, output_file)
 
