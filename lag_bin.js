@@ -1,12 +1,10 @@
-// This script processes lagged binned population by region and exports each region and year separately
+// This script processes binned population by region and exports each region separately
 
-// Load country and population data for 1980
+// Load population data for 1980
 var population1980 = ee.Image("JRC/GHSL/P2023A/GHS_POP/1980");
 var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
-// Define the Mollweide projection
-var mollweideProjection = ee.Projection('PROJCS["World_Mollweide",GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Mollweide"],PARAMETER["false_easting",0],PARAMETER["false_northing",0],PARAMETER["central_meridian",0],UNIT["Meter",1]]');
-
+// This script processes binned population by region and exports each region as a single CSV
 
 // Function to preprocess population raster and reproject to 1km scale
 function preprocessPopulation(population, year) {
@@ -32,12 +30,9 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
 
   countries.forEach(function (countryName) {
     var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
-    
-    // Reproject country geometry to Mollweide projection
-    var countryGeom = countryGeometry.transform(mollweideProjection, 0.001); 
 
     // Clip and bin the 1980 population
-    var binned1980 = population1980.clip(countryGeom).expression(
+    var binned1980 = population1980.clip(countryGeometry).expression(
       "ceil(pop / 100) * 100", {
         'pop': population1980
       }
@@ -46,24 +41,22 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
     // Count cells within each 1980 bin
     var cellCounts = binned1980.reduceRegion({
       reducer: ee.Reducer.frequencyHistogram(),
-      geometry: countryGeom,
+      geometry: countryGeometry,
       scale: 1000,
       maxPixels: 1e9
     }).get('binned_population');
 
     // Sum population from the other year within the 1980 bins
-    var combined = populationYear.addBands(binned1980);
+    var combined = populationYear.clip(countryGeometry).addBands(binned1980);
     var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
     var popByBin = combined.reduceRegion({
       reducer: reducer,
-      geometry: countryGeom,
+      geometry: countryGeometry,
       scale: 1000,
-      tileScale: 4,
       maxPixels: 1e9
     });
 
-    // use bin groups to create features
     var groups = ee.List(popByBin.get('groups'));
 
     var countryFeatures = groups.map(function (group) {
@@ -71,7 +64,8 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
       return ee.Feature(null, {
         'Bin': group.get('group'),
         'PopulationSum': group.get('sum'),
-        'CellCount': ee.Dictionary(cellCounts).get(group.get('group')) || 0
+        'CellCount': ee.Dictionary(cellCounts).get(group.get('group')) || 0,
+        'Year': year
       });
     });
 
@@ -119,12 +113,8 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
       var featureResults = features.map(function (feature) {
         feature = ee.Feature(feature);
         var featureGeometry = feature.geometry();
-        
-        // Reproject country geometry to Mollweide projection
-        var featureGeom = featureGeometry.transform(mollweideProjection, 0.001); // Valid error margin
 
-
-        var binned1980 = population1980.clip(featureGeom).expression(
+        var binned1980 = population1980.clip(featureGeometry).expression(
           "ceil(pop / 100) * 100", {
             'pop': population1980
           }
@@ -133,18 +123,17 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
         // Count cells within each 1980 bin
         var cellCounts = binned1980.reduceRegion({
           reducer: ee.Reducer.frequencyHistogram(),
-          geometry: featureGeom,
+          geometry: featureGeometry,
           scale: 1000,
-          tileScale: 4,
           maxPixels: 1e13
         }).get('binned_population');
 
-        var combined = populationYear.addBands(binned1980);
+        var combined = populationYear.clip(featureGeometry).addBands(binned1980);
         var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
         var popByBin = combined.reduceRegion({
           reducer: reducer,
-          geometry: featureGeom,
+          geometry: featureGeometry,
           scale: 1000,
           maxPixels: 1e13
         });
@@ -164,12 +153,8 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
       regionResults = regionResults.merge(ee.FeatureCollection(featureResults.flatten()));
     } else {
       var countryGeometry = countryFC.geometry();
-      
-      // Reproject country geometry to Mollweide projection
-      var countryGeom = countryGeometry.transform(mollweideProjection, 0.001); // Valid error margin
 
-
-      var binned1980 = population1980.clip(countryGeom).expression(
+      var binned1980 = population1980.clip(countryGeometry).expression(
         "ceil(pop / 100) * 100", {
           'pop': population1980
         }
@@ -178,20 +163,18 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
       // Count cells within each 1980 bin
       var cellCounts = binned1980.reduceRegion({
         reducer: ee.Reducer.frequencyHistogram(),
-        geometry: countryGeom,
+        geometry: countryGeometry,
         scale: 1000,
-        tileScale: 4,
         maxPixels: 1e9
       }).get('binned_population');
 
-      var combined = populationYear.addBands(binned1980);
+      var combined = populationYear.clip(countryGeometry).addBands(binned1980);
       var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
       var popByBin = combined.reduceRegion({
         reducer: reducer,
-        geometry: countryGeom,
+        geometry: countryGeometry,
         scale: 1000,
-        tileScale: 4,
         maxPixels: 1e9
       });
 
@@ -292,7 +275,7 @@ var NA = ['Bermuda', 'Canada', 'United States of America'];
 
 
 // Specify years to process
-var yearsToProcess = [1980, 1990, 2000, 2010, 2020];
+var yearsToProcess = [2010];
 
 // Process each region for the specified years
 yearsToProcess.forEach(function (year) {
