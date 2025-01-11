@@ -4,7 +4,9 @@
 var population1980 = ee.Image("JRC/GHSL/P2023A/GHS_POP/1980");
 var countriesFC = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
-// This script processes binned population by region and exports each region as a single CSV
+// Define the Mollweide projection
+var mollweideProjection = ee.Projection('PROJCS["World_Mollweide",GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Mollweide"],PARAMETER["false_easting",0],PARAMETER["false_northing",0],PARAMETER["central_meridian",0],UNIT["Meter",1]]');
+
 
 // Function to preprocess population raster and reproject to 1km scale
 function preprocessPopulation(population, year) {
@@ -30,9 +32,12 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
 
   countries.forEach(function (countryName) {
     var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
+    
+    // Reproject country geometry to Mollweide projection
+    var countryGeom = countryGeometry.transform(mollweideProjection, 0.01); 
 
     // Clip and bin the 1980 population
-    var binned1980 = population1980.clip(countryGeometry).expression(
+    var binned1980 = population1980.clip(countryGeom).expression(
       "ceil(pop / 100) * 100", {
         'pop': population1980
       }
@@ -41,20 +46,22 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
     // Count cells within each 1980 bin
     var cellCounts = binned1980.reduceRegion({
       reducer: ee.Reducer.frequencyHistogram(),
-      geometry: countryGeometry,
+      geometry: countryGeom,
       scale: 1000,
-      maxPixels: 1e9
+      tileScale: 4,
+      maxPixels: 1e13
     }).get('binned_population');
 
     // Sum population from the other year within the 1980 bins
-    var combined = populationYear.clip(countryGeometry).addBands(binned1980);
+    var combined = populationYear.addBands(binned1980);
     var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
     var popByBin = combined.reduceRegion({
       reducer: reducer,
-      geometry: countryGeometry,
+      geometry: countryGeom,
       scale: 1000,
-      maxPixels: 1e9
+      tileScale: 4,
+      maxPixels: 1e13
     });
 
     var groups = ee.List(popByBin.get('groups'));
@@ -97,12 +104,10 @@ function processRegionPopulationByYear(countries, exportFileName, year) {
   });
 }
 
-// Function to process dynamic regions and aggregate results for the entire region
+// Function to handle complex geometries (e.g., North America)
 function processDynamicRegionByYear(countries, exportFileName, year) {
   var populationYear = preprocessPopulation(ee.Image("JRC/GHSL/P2023A/GHS_POP/" + year), year);
-
   var regionResults = ee.FeatureCollection([]);
-
   countries.forEach(function (countryName) {
     var countryFC = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName));
     var countrySize = countryFC.size();
@@ -112,23 +117,23 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
 
       var featureResults = features.map(function (feature) {
         feature = ee.Feature(feature);
-        var featureGeometry = feature.geometry();
+        var featureGeometry = feature.geometry().transform(mollweideProjection, 0.01);
 
         var binned1980 = population1980.clip(featureGeometry).expression(
           "ceil(pop / 100) * 100", {
             'pop': population1980
           }
         ).rename('binned_population');
-
+        
         // Count cells within each 1980 bin
         var cellCounts = binned1980.reduceRegion({
           reducer: ee.Reducer.frequencyHistogram(),
           geometry: featureGeometry,
           scale: 1000,
-          maxPixels: 1e13
+          maxPixels: 1e9
         }).get('binned_population');
-
-        var combined = populationYear.clip(featureGeometry).addBands(binned1980);
+      
+        var combined = populationYear.addBands(binned1980);
         var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
         var popByBin = combined.reduceRegion({
@@ -152,14 +157,14 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
 
       regionResults = regionResults.merge(ee.FeatureCollection(featureResults.flatten()));
     } else {
-      var countryGeometry = countryFC.geometry();
+      var countryGeometry = countryFC.geometry().transform(mollweideProjection, 0.01);
 
       var binned1980 = population1980.clip(countryGeometry).expression(
         "ceil(pop / 100) * 100", {
           'pop': population1980
         }
       ).rename('binned_population');
-
+      
       // Count cells within each 1980 bin
       var cellCounts = binned1980.reduceRegion({
         reducer: ee.Reducer.frequencyHistogram(),
@@ -167,8 +172,8 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
         scale: 1000,
         maxPixels: 1e9
       }).get('binned_population');
-
-      var combined = populationYear.clip(countryGeometry).addBands(binned1980);
+      
+      var combined = populationYear.addBands(binned1980);
       var reducer = ee.Reducer.sum().group({ groupField: 1 });
 
       var popByBin = combined.reduceRegion({
@@ -189,19 +194,20 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
         });
       });
 
-      regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
+     regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
     }
   });
 
-  // Aggregate results for the entire region
+  // Aggregate results for the entire region by summing PopulationSum and CellCount by Bin
   var aggregatedResults = regionResults.reduceColumns({
     reducer: ee.Reducer.sum().repeat(2).group({
-      groupField: 0,
+      groupField: 0, // Bin column
       groupName: 'Bin'
     }),
     selectors: ['Bin', 'PopulationSum', 'CellCount']
   }).get('groups');
 
+  // Convert aggregated results to a FeatureCollection
   var finalResults = ee.FeatureCollection(ee.List(aggregatedResults).map(function (group) {
     var groupDict = ee.Dictionary(group);
     return ee.Feature(null, {
@@ -211,13 +217,13 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
     });
   }));
 
+  // Export the aggregated results as a single CSV
   Export.table.toDrive({
     collection: finalResults,
     description: exportFileName + '_Aggregated_' + year,
     fileFormat: 'CSV'
   });
 }
-
 
 // Sub-Saharan Africa
 var SSA = ['Angola','Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
@@ -241,13 +247,7 @@ var EAP =['American Samoa', 'Australia', 'Brunei Darussalam', 'Cambodia', 'China
   ];
   
 // Europe and Central Asia
-var ECA = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium',
-'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 'Cyprus', 'Denmark', 'Estonia', 'Faroe Islands',
-'Finland', 'France', 'Georgia', 'Germany', 'Gibraltar', 'Greece', 'Greenland', 'Hungary', 'Iceland',
-'Ireland', 'Isle of Man', 'Italy', 'Kazakhstan', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg',
-'Moldova, Republic of', 'Monaco', 'Montenegro', 'Netherlands', 'Norway', 'Poland', 'Portugal', 'Romania',
-'Russian Federation', 'San Marino', 'Serbia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Tajikistan',
-'Turkmenistan', 'Turkey', 'Ukraine', 'U.K. of Great Britain and Northern Ireland', 'Uzbekistan'
+var ECA = ['Albania', 'Andorra', 'Armenia', 'Austria', 'Azerbaijan', 'Belarus', 'Belgium'
 ];
 
 // Latin America & Caribbean
@@ -275,15 +275,15 @@ var NA = ['Bermuda', 'Canada', 'United States of America'];
 
 
 // Specify years to process
-var yearsToProcess = [2010];
+var yearsToProcess = [1980, 1990, 2000, 2010, 2010];
 
 // Process each region for the specified years
 yearsToProcess.forEach(function (year) {
-  processRegionPopulationByYear(EAP, 'East_Asia_and_Pacific', year);
+  processDynamicRegionByYear(EAP, 'East_Asia_and_Pacific', year);
   processRegionPopulationByYear(SSA, 'Sub_Saharan_Africa', year);
-  processRegionPopulationByYear(LAC, 'Latin_America_and_Caribbean', year);
+  processDynamicRegionByYear(LAC, 'Latin_America_and_Caribbean', year);
   processRegionPopulationByYear(MENA, 'Middle_East_and_North_Africa', year);
-  processRegionPopulationByYear(ECA, 'Europe_and_Central_Asia', year);
+  processDynamicRegionByYear(ECA, 'Europe_and_Central_Asia', year);
   processRegionPopulationByYear(SA, 'South_Asia', year);
   processDynamicRegionByYear(NA, 'North_America', year);
 });
