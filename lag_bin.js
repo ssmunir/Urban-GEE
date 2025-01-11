@@ -117,6 +117,7 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
 
       var featureResults = features.map(function (feature) {
         feature = ee.Feature(feature);
+        // Reproject country geometry to Mollweide projection
         var featureGeometry = feature.geometry().transform(mollweideProjection, 0.01);
 
         var binned1980 = population1980.clip(featureGeometry).expression(
@@ -157,6 +158,7 @@ function processDynamicRegionByYear(countries, exportFileName, year) {
 
       regionResults = regionResults.merge(ee.FeatureCollection(featureResults.flatten()));
     } else {
+      // Reproject country geometry to Mollweide projection
       var countryGeometry = countryFC.geometry().transform(mollweideProjection, 0.01);
 
       var binned1980 = population1980.clip(countryGeometry).expression(
@@ -274,8 +276,8 @@ var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', '
 var NA = ['Bermuda', 'Canada', 'United States of America'];
 
 
-// Specify years to process
-var yearsToProcess = [1980, 1990, 2000, 2010, 2010];
+// years to process
+var yearsToProcess = [1980, 1990, 2000, 2010, 2020];
 
 // Process each region for the specified years
 yearsToProcess.forEach(function (year) {
