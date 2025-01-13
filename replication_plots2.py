@@ -15,11 +15,18 @@ plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 
 mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Lagged Bin population"
 #mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
-SSA_contemp = mf + r"\SSA_contemp"
-SSA_1980 = mf + r"\SSA_1980_lag"
 
+contemp = [r"\SSA_contemp", r"\NA_contemp", r"\MENA_contemp",
+            r"\SA_contemp", r"\LAC_contemp", r"\EAP_contemp", r"\ECA_contemp"]
 
-folderList = [SSA_contemp, SSA_1980]
+lag_1980 = [r"\SSA_1980_lag", r"\NA_1980_lag", r"\MENA_1980_lag",
+            r"\SA_1980_lag", r"\LAC_1980_lag", r"\EAP_1980_lag", r"\ECA_1980_lag"]
+
+region = ['Sub Saharan Africa', 'North America', 'Middle East and North Africa', 
+          'South Asia', 'Latin America and Caribbean', 'East Asia and Pacific', 
+          'Europe and Central Asia']
+
+code = ['SSA', 'NA', 'MENA', 'SA', 'LAC', 'EAP', 'ECA']
 # Define the color mapping
 
 
@@ -113,7 +120,7 @@ def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='Popula
 
 
 
-def plot1a(data, plot_title, output_file=None, x_value=19000):
+def plot1a(data, plot_title, output_file=None, x_value=19000, x_label =""):
     """
     Create a line plot for all columns in the dataset with Bins as the index.
     Legend is sorted based on y-values at x=20000 from highest to lowest.
@@ -153,9 +160,19 @@ def plot1a(data, plot_title, output_file=None, x_value=19000):
     
     # Customize the plot
     plt.title(plot_title, fontsize=16)
-    plt.xlabel('Population / Square Kilometer', fontsize=14)
+    plt.xlabel(x_label, fontsize=14)
     plt.ylabel('Share of total population', fontsize=14)
-    plt.grid(True)
+    # Turn on the minor ticks, which are required for the minor grid
+    ax.minorticks_on()
+
+    # Customize the major grid
+    ax.grid(which='major', linestyle='-', linewidth='0.5', color='black')
+
+    # Customize the minor grid
+    ax.grid(which='minor', linestyle=':', linewidth='0.25', color='gray')
+
+    
+    
     
     # Customize x-axis ticks
     plt.xticks(ticks=[0, 5000, 10000, 15000, 20000, 25000, 30000])
@@ -168,15 +185,19 @@ def plot1a(data, plot_title, output_file=None, x_value=19000):
         print(f"Plot saved to {output_file}")
     else:
         plt.show()
-  
-        
-landshare, popshare = process_and_merge_csv_files(SSA_contemp)
-plot_title = "Sub Saharan Africa: Cumulative Share of Population"
-output_file = SSA_contemp + "\Cumulative share of population by density.png"  # Set to None if you want to display the plot
-plot1a(popshare, plot_title, output_file)
 
+# Contemporous plots
+for dt, reg, c in zip(contemp, region, code):
+    file = mf + dt
+    landshare, popshare = process_and_merge_csv_files(file)
+    plot_title = reg + ": Cumulative Share of Population"
+    output_file = file + f"\Cumulative share of population by density_{c}.png"  # Set to None if you want to display the plot
+    plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer")
 
-landshare, popshare = process_and_merge_csv_files(SSA_1980, pop_sum_col='TotalPopulationSum', cell_count_col='TotalCellCount')
-plot_title = "Sub Saharan Africa: Cumulative Share of Population (1980 bin)"
-output_file = SSA_1980 + "\Cumulative share of population by density(1980 bin).png"  # Set to None if you want to display the plot
-plot1a(popshare, plot_title, output_file)
+# 1980 lagged plots
+for dt, reg, c in zip(lag_1980, region, code):
+    file = mf + dt
+    landshare, popshare = process_and_merge_csv_files(file, pop_sum_col='TotalPopulationSum', cell_count_col='TotalCellCount')
+    plot_title = reg + ": Cumulative Share of Population(1980 bin)"
+    output_file = file + f"\Cumulative share of population by density in 1980_{c}.png"  # Set to None if you want to display the plot
+    plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer in 1980")
