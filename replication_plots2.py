@@ -190,7 +190,7 @@ def plot1a(data, plot_title, output_file=None, x_value=19000, x_label =""):
 for dt, reg, c in zip(contemp, region, code):
     file = mf + dt
     landshare, popshare = process_and_merge_csv_files(file)
-    plot_title = reg + ": Cumulative Share of Population"
+    plot_title = " "
     output_file = file + f"\Cumulative share of population by density_{c}.png"  # Set to None if you want to display the plot
     plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer")
 
@@ -198,6 +198,6 @@ for dt, reg, c in zip(contemp, region, code):
 for dt, reg, c in zip(lag_1980, region, code):
     file = mf + dt
     landshare, popshare = process_and_merge_csv_files(file, pop_sum_col='TotalPopulationSum', cell_count_col='TotalCellCount')
-    plot_title = reg + ": Cumulative Share of Population(1980 bin)"
+    plot_title = " "
     output_file = file + f"\Cumulative share of population by density in 1980_{c}.png"  # Set to None if you want to display the plot
     plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer in 1980")
