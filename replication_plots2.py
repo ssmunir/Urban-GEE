@@ -147,7 +147,7 @@ def plot1a(data, plot_title, output_file=None, x_value=19000, x_label =""):
         # Store the line object with its column name
         lines_dict[col] = line
 
-    # Sort columns based on y-values at x=20000
+    """# Sort columns based on y-values at x=20000
     y_values_at_x = {col: data.loc[x_value, col] for col in data.columns if x_value in data.index}
     sorted_columns = sorted(y_values_at_x.keys(), key=lambda x: y_values_at_x[x], reverse=True)
     
@@ -157,11 +157,12 @@ def plot1a(data, plot_title, output_file=None, x_value=19000, x_label =""):
     
     # Add sorted legend
     ax.legend(sorted_handles, sorted_labels, title="Years", loc='lower right', fontsize=10)
-    
+    """
     # Customize the plot
     plt.title(plot_title, fontsize=16)
     plt.xlabel(x_label, fontsize=14)
     plt.ylabel('Share of total population', fontsize=14)
+    ax.legend(title="Years", loc='lower right', fontsize=10)
     # Turn on the minor ticks, which are required for the minor grid
     ax.minorticks_on()
 
@@ -192,7 +193,7 @@ for dt, reg, c in zip(contemp, region, code):
     landshare, popshare = process_and_merge_csv_files(file)
     plot_title = " "
     output_file = file + f"\Cumulative share of population by density_{c}.png"  # Set to None if you want to display the plot
-    plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer")
+    plot1a(popshare, plot_title, output_file, x_label="Contemporaneous Population / Square Kilometer")
 
 # 1980 lagged plots
 for dt, reg, c in zip(lag_1980, region, code):
