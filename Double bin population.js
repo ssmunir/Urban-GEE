@@ -22,19 +22,20 @@ function preprocessPopulation(population) {
 var pop1980 = preprocessPopulation(population1980);
 var pop2020 = preprocessPopulation(population2020);
 
-// Function to create binned images
+// Function to create binned images with 500-unit bins
 function createBinnedImages(pop1980, pop2020) {
+  var binningExpression = 
+    "pop > 30000 ? 31000 : ceil(pop / 1000) * 1000";
+  
   var binned1980 = pop1980
-    .where(pop1980.gt(40000), 40000)
     .expression(
-      "floor(pop / 100) * 100",
+      binningExpression,
       {'pop': pop1980}
     ).rename('bin1980');
   
   var binned2020 = pop2020
-    .where(pop2020.gt(40000), 40000)
     .expression(
-      "floor(pop / 100) * 100",
+      binningExpression,
       {'pop': pop2020}
     ).rename('bin2020');
     
@@ -44,62 +45,63 @@ function createBinnedImages(pop1980, pop2020) {
   };
 }
 
+// Function to process a single country
+function processCountry(countryGeometry, countryName) {
+  var binnedImages = createBinnedImages(pop1980, pop2020);
+  var ones = ee.Image.constant(1);
+  
+  var analysisImage = pop2020.rename('pop2020')
+    .addBands(binnedImages.binned1980)
+    .addBands(binnedImages.binned2020)
+    .addBands(ones.rename('count'));
+  
+  var stats = analysisImage.reduceRegion({
+    reducer: ee.Reducer.sum().combine({
+      reducer2: ee.Reducer.count(),
+      sharedInputs: false
+    }).group({
+      groupField: 1,
+      groupName: 'bin1980'
+    }).group({
+      groupField: 2,
+      groupName: 'bin2020'
+    }),
+    geometry: countryGeometry,
+    scale: 1000,
+    maxPixels: 1e13
+  });
+  
+  var groups = ee.List(stats.get('groups'));
+  return groups.map(function(g) {
+    var groupDict = ee.Dictionary(g);
+    var bin2020Value = groupDict.get('bin2020');
+    var subGroups = ee.List(groupDict.get('groups'));
+    
+    return subGroups.map(function(subGroup) {
+      var subDict = ee.Dictionary(subGroup);
+      return ee.Feature(null, {
+        'bin1980': subDict.get('bin1980'),
+        'bin2020': bin2020Value,
+        'pop2020_sum': ee.Number(subDict.get('sum')).ceil(),
+        'pixel_count': ee.Number(subDict.get('count')).ceil(),
+        'country': countryName
+      });
+    });
+  }).flatten();
+}
+
 // Function to process regions with simple geometries
 function processRegionPopulation(countries, exportFileName) {
   var regionResults = ee.FeatureCollection([]);
-
+  
   countries.forEach(function(countryName) {
     var countryGeometry = countriesFC
       .filter(ee.Filter.eq('ADM0_NAME', countryName))
       .geometry()
       .transform(mollweideProjection, 0.01);
     
-    // Create binned images
-    var binnedImages = createBinnedImages(pop1980, pop2020);
-    var ones = ee.Image.constant(1);
-    
-    // Create analysis image
-    var analysisImage = pop2020.rename('pop2020')
-      .addBands(binnedImages.binned1980)
-      .addBands(binnedImages.binned2020)
-      .addBands(ones.rename('count'));
-    
-    // Perform reduction
-    var stats = analysisImage.reduceRegion({
-      reducer: ee.Reducer.sum().combine({
-        reducer2: ee.Reducer.count(),
-        sharedInputs: false
-      }).group({
-        groupField: 1,
-        groupName: 'bin1980'
-      }).group({
-        groupField: 2,
-        groupName: 'bin2020'
-      }),
-      geometry: countryGeometry,
-      scale: 1000,
-      maxPixels: 1e13
-    });
-    
-    // Process the groups
-    var groups = ee.List(stats.get('groups'));
-    var features = groups.map(function(g) {
-      var groupDict = ee.Dictionary(g);
-      var bin2020Value = groupDict.get('bin2020');
-      var subGroups = ee.List(groupDict.get('groups'));
-      
-      return subGroups.map(function(subGroup) {
-        var subDict = ee.Dictionary(subGroup);
-        return ee.Feature(null, {
-          'bin1980': subDict.get('bin1980'),
-          'bin2020': bin2020Value,
-          'pop2020_sum': ee.Number(subDict.get('sum')).ceil(),
-          'cell_count': ee.Number(subDict.get('count')).ceil()
-        });
-      });
-    }).flatten();
-    
-    regionResults = regionResults.merge(ee.FeatureCollection(features));
+    var countryFeatures = processCountry(countryGeometry, countryName);
+    regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
   });
 
   // Aggregate results for the entire region
@@ -111,7 +113,7 @@ function processRegionPopulation(countries, exportFileName) {
       groupField: 1,  // bin2020
       groupName: 'bin2020'
     }),
-    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'cell_count']
+    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'pixel_count']
   }).get('groups');
 
   var finalResults = ee.FeatureCollection(ee.List(aggregatedResults).map(function(g) {
@@ -134,7 +136,7 @@ function processRegionPopulation(countries, exportFileName) {
   Export.table.toDrive({
     collection: finalResults,
     description: exportFileName + '_Aggregated',
-    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'cell_count'],
+     selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'pixel_count'],
     fileFormat: 'CSV'
   });
 }
@@ -153,98 +155,13 @@ function processDynamicRegion(countries, exportFileName) {
       var featureResults = features.map(function(feature) {
         feature = ee.Feature(feature);
         var featureGeometry = feature.geometry().transform(mollweideProjection, 0.01);
-        
-        // Create binned images
-        var binnedImages = createBinnedImages(pop1980, pop2020);
-        var ones = ee.Image.constant(1);
-        
-        // Create analysis image
-        var analysisImage = pop2020.rename('pop2020')
-          .addBands(binnedImages.binned1980)
-          .addBands(binnedImages.binned2020)
-          .addBands(ones.rename('count'));
-        
-        // Perform reduction
-        var stats = analysisImage.reduceRegion({
-          reducer: ee.Reducer.sum().combine({
-            reducer2: ee.Reducer.count(),
-            sharedInputs: false
-          }).group({
-            groupField: 1,
-            groupName: 'bin1980'
-          }).group({
-            groupField: 2,
-            groupName: 'bin2020'
-          }),
-          geometry: featureGeometry,
-          scale: 1000,
-          maxPixels: 1e13
-        });
-        
-        var groups = ee.List(stats.get('groups'));
-        
-        return groups.map(function(g) {
-          var groupDict = ee.Dictionary(g);
-          var bin2020Value = groupDict.get('bin2020');
-          var subGroups = ee.List(groupDict.get('groups'));
-          
-          return subGroups.map(function(subGroup) {
-            var subDict = ee.Dictionary(subGroup);
-            return ee.Feature(null, {
-              'bin1980': subDict.get('bin1980'),
-              'bin2020': bin2020Value,
-              'pop2020_sum': ee.Number(subDict.get('sum')).ceil(),
-              'cell_count': ee.Number(subDict.get('count')).ceil()
-            });
-          });
-        }).flatten();
+        return processCountry(featureGeometry, countryName);
       });
 
       regionResults = regionResults.merge(ee.FeatureCollection(featureResults.flatten()));
     } else {
-      // Handle single geometry countries using the same logic as processRegionPopulation
       var countryGeometry = countryFC.geometry().transform(mollweideProjection, 0.01);
-      var binnedImages = createBinnedImages(pop1980, pop2020);
-      var ones = ee.Image.constant(1);
-      
-      var analysisImage = pop2020.rename('pop2020')
-        .addBands(binnedImages.binned1980)
-        .addBands(binnedImages.binned2020)
-        .addBands(ones.rename('count'));
-      
-      var stats = analysisImage.reduceRegion({
-        reducer: ee.Reducer.sum().combine({
-          reducer2: ee.Reducer.count(),
-          sharedInputs: false
-        }).group({
-          groupField: 1,
-          groupName: 'bin1980'
-        }).group({
-          groupField: 2,
-          groupName: 'bin2020'
-        }),
-        geometry: countryGeometry,
-        scale: 1000,
-        maxPixels: 1e13
-      });
-      
-      var groups = ee.List(stats.get('groups'));
-      var countryFeatures = groups.map(function(g) {
-        var groupDict = ee.Dictionary(g);
-        var bin2020Value = groupDict.get('bin2020');
-        var subGroups = ee.List(groupDict.get('groups'));
-        
-        return subGroups.map(function(subGroup) {
-          var subDict = ee.Dictionary(subGroup);
-          return ee.Feature(null, {
-            'bin1980': subDict.get('bin1980'),
-            'bin2020': bin2020Value,
-            'pop2020_sum': ee.Number(subDict.get('sum')).ceil(),
-            'cell_count': ee.Number(subDict.get('count')).ceil()
-          });
-        });
-      }).flatten();
-      
+      var countryFeatures = processCountry(countryGeometry, countryName);
       regionResults = regionResults.merge(ee.FeatureCollection(countryFeatures));
     }
   });
@@ -258,7 +175,7 @@ function processDynamicRegion(countries, exportFileName) {
       groupField: 1,  // bin2020
       groupName: 'bin2020'
     }),
-    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'cell_count']
+    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'pixel_count']
   }).get('groups');
 
   var finalResults = ee.FeatureCollection(ee.List(aggregatedResults).map(function(g) {
@@ -273,7 +190,7 @@ function processDynamicRegion(countries, exportFileName) {
         'bin1980': subDict.get('bin1980'),
         'bin2020': bin2020Value,
         'pop2020_sum': sumList.get(0),
-        'cell_count': sumList.get(1)
+        'pixel_count': sumList.get(1)
       });
     });
   }).flatten());
@@ -281,22 +198,25 @@ function processDynamicRegion(countries, exportFileName) {
   Export.table.toDrive({
     collection: finalResults,
     description: exportFileName + '_Aggregated',
-    selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'cell_count'],
+     selectors: ['bin1980', 'bin2020', 'pop2020_sum', 'pixel_count'],
     fileFormat: 'CSV'
   });
 }
 
 // Define regions
 // Sub-Saharan Africa
-var SSA = ['Angola','Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
-'Botswana', 'Burkina Faso', 'Burundi', 'Cape Verde', 'Cameroon', 
-'Central African Republic', 'Chad', 'Comoros', 'Congo', 
-'Democratic Republic of the Congo', "Côte d'Ivoire", 'Equatorial Guinea',
-'Eritrea', 'Ethiopia', 'Gabon', 'Gambia', 'Guinea', 'Guinea-Bissau', 'Lesotho',
+var SSA = ['Gambia', 'Guinea', 'Guinea-Bissau', 'Lesotho',
 'Liberia', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Mozambique',
 'Namibia', 'Niger', 'Rwanda', 'Sao Tome and Principe', 'Senegal', 'Seychelles', 
 'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'United Republic of Tanzania', 
 'Togo', 'Uganda', 'Zambia', 'Zimbabwe'];
+
+// Sub-Saharan Africa
+var SSA2 = ['Angola','Nigeria', 'Ghana', 'Kenya', 'Swaziland', 'Benin',
+'Botswana', 'Burkina Faso', 'Burundi', 'Cape Verde', 'Cameroon', 
+'Central African Republic', 'Chad', 'Comoros', 'Congo', 
+'Democratic Republic of the Congo', "Côte d'Ivoire", 'Equatorial Guinea',
+'Eritrea', 'Ethiopia', 'Gabon'];
 
 // East Asia and Pacific
 var EAP =['American Samoa', 'Australia', 'Brunei Darussalam', 'Cambodia', 'China', 'Fiji',
@@ -335,9 +255,9 @@ var SA = ['Afghanistan', 'Bangladesh', 'Bhutan', 'India', 'Maldives', 'Nepal', '
 // North America 
 var NA = ['Bermuda', 'Canada', 'United States of America'];
 
-
 // Process each region
 processDynamicRegion(EAP, 'East_Asia_and_Pacific');
+processRegionPopulation(SSA2, 'Sub_Saharan_Africa2');
 processRegionPopulation(SSA, 'Sub_Saharan_Africa');
 processDynamicRegion(LAC, 'Latin_America_and_Caribbean');
 processRegionPopulation(MENA, 'Middle_East_and_North_Africa');
