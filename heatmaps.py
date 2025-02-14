@@ -70,7 +70,8 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     # Create figure
     plt.figure(figsize=(10, 8))
     ax = sns.heatmap(
-        heatmap_data, cmap="Blues", cbar_kws={'label': 'Population Share (log scale)'}, square=True,  norm=LogNorm(vmin=0.001, vmax=0.2)
+        heatmap_data, cmap="Blues", square=True,  norm=LogNorm(vmin=0.001, vmax=0.2), 
+        cbar_kws={'label': 'Population Share (log scale)','format':'%4.3f'}
     )
     
     # Add a border around the plot space
@@ -82,21 +83,21 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     plt.ylabel("Thousands of people / sqkm in 2020")
     plt.title(f"Population Density Change Heatmap: {region_name}")
     
-
-     # Dynamically extract tick labels based on available data
-    x_ticks = [tick for tick in ax.get_xticks() if tick < len(bin_labels)]
-    y_ticks = [tick for tick in ax.get_yticks() if tick < len(bin_labels)]
-    ax.set_xticks(x_ticks)
-    ax.set_yticklabels([bin_labels[int(tick)] for tick in y_ticks], rotation=0)
-    ax.set_xticklabels([bin_labels[int(tick)] for tick in x_ticks], rotation=45, ha="right")
-
-
     # Fix axis orientation (lower left should be (0,0))
     ax.invert_yaxis()
 
     #set the axis range to extend fully
     ax.set_xlim([0, len(bin_labels)])
     ax.set_ylim([0, len(bin_labels)])
+    
+
+    # Dynamically extract tick labels based on bin range
+    x_ticks = [tick+0.5 for tick in range(len(bin_labels))]
+    y_ticks = [tick+0.5 for tick in range(len(bin_labels))]
+    ax.set_xticks(x_ticks)
+    ax.set_yticks(y_ticks)
+    ax.set_yticklabels([bin_labels[int(tick)] for tick in y_ticks], rotation=0)
+    ax.set_xticklabels([bin_labels[int(tick)] for tick in x_ticks], rotation=45, ha="right")
     
     # Add 45-degree reference line
     ticks = np.arange(len(bin_labels_upper)+2)
