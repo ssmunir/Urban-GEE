@@ -14,23 +14,17 @@ elif os.getlogin() == "auuser":
 else: raise ValueError('Path not correctly specified for this computer.')
 
 
-# Load the two CSV files
-SSA = bindata + r"\Sub_Saharan_Africa_Aggregated.csv"
-SA = bindata + r"\South_Asia_Aggregated.csv"
-LAC = bindata + r"\Latin_America_and_Caribbean_Aggregated.csv"
-EAP = bindata + r"\East_Asia_and_Pacific_Aggregated.csv"
-ECA= bindata +  r"\Europe_and_Central_Asia_Aggregated.csv"
-MENA = bindata + r"\Middle_East_and_North_Africa_Aggregated.csv"
-NA = bindata + r"\North_America_Aggregated.csv"
-
-
-def generate_population_heatmap(file_path, output_folder=heatmaps):
+def generate_population_heatmap(file_path, output_folder=heatmaps + r"\population_density_heatmaps", bin1="bin1980", bin2="bin2020", year1="1980", year2="2020"):
     """
     Generates a population density change heatmap from a given CSV file.
 
     Parameters:
     - file_path (str): Path to the CSV file containing population data.
     - output_folder (str): Directory to save the output heatmap (default: 'output_plots').
+    - bin1 (str): Column name for the density bin in the first year (default: 'bin1980').
+    - bin2 (str): Column name for the density bin in the second year (default: 'bin2020').
+    - year1 (str): Year corresponding to the first density bin (default: '1980').
+    - year2 (str): Year corresponding to the second density bin (default: '2020').
 
     Saves:
     - A heatmap PNG file in the specified output folder.
@@ -44,10 +38,10 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
 
     # set the upper limit of the data dynamically
     bupr=30
-    df.loc[df.bin1980>(bupr+1)*1000,'bin1980']=(bupr+1)*1000
-    df.loc[df.bin2020>(bupr+1)*1000,'bin2020']=(bupr+1)*1000
+    df.loc[df[bin1]>(bupr+1)*1000,bin1]=(bupr+1)*1000
+    df.loc[df[bin2]>(bupr+1)*1000,bin2]=(bupr+1)*1000
      
-    df = df.groupby(['bin1980', 'bin2020'], as_index=False).agg({
+    df = df.groupby([bin1, bin2], as_index=False).agg({
             'pop2020_sum': 'sum','pixel_count': 'sum'})
     
     # Define bin edges and upper bound labels
@@ -57,7 +51,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     bin_labels =["0"] + [f"({i},{i+1}]" for i in range(0, bupr)] + [">"+str(bupr)]
 
     # Aggregate population by (1980_bin, 2020_bin)
-    df_grouped = df.groupby(["bin1980", "bin2020"], observed=True).agg({"pop2020_sum": "sum"}).reset_index()
+    df_grouped = df.groupby([bin1, bin2], observed=True).agg({"pop2020_sum": "sum"}).reset_index()
     #df_grouped.iat[0,2] = 0.0
 
     # Calculate population share
@@ -65,7 +59,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     df_grouped["Population_Share"] = df_grouped["pop2020_sum"] / total_population
     #df_grouped["Population_Share1"]= np.log(df_grouped["Population_Share"])
     # Pivot data for heatmap
-    heatmap_data = df_grouped.pivot(index="bin2020", columns="bin1980", values="Population_Share")
+    heatmap_data = df_grouped.pivot(index=bin2, columns=bin1, values="Population_Share")
 
     # Create figure
     plt.figure(figsize=(10, 8))
@@ -79,8 +73,8 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
         spine.set_visible(True)
     
     # Set axis labels and title
-    plt.xlabel("Thousands of people / sqkm in 1980")
-    plt.ylabel("Thousands of people / sqkm in 2020")
+    plt.xlabel(f"Thousands of people / sqkm in {year1}")
+    plt.ylabel(f"Thousands of people / sqkm in {year2}")
     plt.title(f"Population Density Change Heatmap: {region_name}")
     
     # Fix axis orientation (lower left should be (0,0))
@@ -114,6 +108,13 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     print(f"Saved: {output_file}")
 
 
-regions = [SSA, NA, MENA, ECA, EAP, SA, LAC]
-for region in regions:
-    generate_population_heatmap(region)
+region = [r"\Sub_Saharan_Africa_Aggregated.csv", r"\South_Asia_Aggregated.csv", r"\Latin_America_and_Caribbean_Aggregated.csv", 
+          r"\East_Asia_and_Pacific_Aggregated.csv", r"\Europe_and_Central_Asia_Aggregated.csv", r"\Middle_East_and_North_Africa_Aggregated.csv", 
+          r"\North_America_Aggregated.csv"]
+
+year1 = r"\1980_2020"
+year2 = r"\2000_2020"
+
+for r in region:
+    generate_population_heatmap(file_path=bindata + year1 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year1)
+    generate_population_heatmap(file_path=bindata + year2 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year2, bin1="bin2000", bin2="bin2020", year1="2000")

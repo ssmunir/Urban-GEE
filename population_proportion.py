@@ -7,27 +7,22 @@ if os.getlogin() == "tanner_regan":
     bindata=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Double bin data/" 
     heatmaps=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Heatmaps"
 elif os.getlogin() == "auuser":
-    bindata = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Double bin data/"
-    heatmaps = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Heatmaps/"
+    bindata = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Double bin data"
+    heatmaps = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\Data\Heatmaps"
 else: raise ValueError('Path not correctly specified for this computer.')
 
 
-# Load the two CSV files
-SSA = bindata + r"\Sub_Saharan_Africa_Aggregated.csv"
-SA = bindata + r"\South_Asia_Aggregated.csv"
-LAC = bindata + r"\Latin_America_and_Caribbean_Aggregated.csv"
-EAP = bindata + r"\East_Asia_and_Pacific_Aggregated.csv"
-ECA= bindata +  r"\Europe_and_Central_Asia_Aggregated.csv"
-MENA = bindata + r"\Middle_East_and_North_Africa_Aggregated.csv"
-NA = bindata + r"\North_America_Aggregated.csv"
-
-def generate_population_shift_plot(file_path, output_folder=heatmaps):
+def generate_population_shift_plot(file_path, output_folder, bin1="bin1980", bin2="bin2020", year1="1980", year2="2020"):
     """
     Generates a plot showing the proportion of the 2020 population in density bins exceeding given thresholds.
     
     Parameters:
     - file_path (str): Path to the CSV file containing population data.
     - output_folder (str): Directory to save the output plot (default: 'output_plots').
+    - bin1 (str): Column name for the density bin in the first year (default: 'bin1980').
+    - bin2 (str): Column name for the density bin in the second year (default: 'bin2020').
+    - year1 (str): Year corresponding to the first density bin (default: '1980').
+    - year2 (str): Year corresponding to the second density bin (default: '2020').
     
     Saves:
     - A line plot PNG file in the specified output folder.
@@ -40,11 +35,11 @@ def generate_population_shift_plot(file_path, output_folder=heatmaps):
     df = pd.read_csv(file_path)
     
     # Define dynamic density bin edges based on data range
-    max_density = df["bin2020"].max()
+    max_density = df[bin2].max()
     bin_edges = np.arange(0, max_density + 1000, 1000)  
     
     # Calculate cumulative 2020 population for each density threshold
-    df_sorted = df.sort_values(by="bin2020", ascending=False)
+    df_sorted = df.sort_values(by=bin2, ascending=False)
     df_sorted["Cumulative_2020_Pop"] = df_sorted["pop2020_sum"].cumsum()
     
     # Prepare plotting data
@@ -53,13 +48,13 @@ def generate_population_shift_plot(file_path, output_folder=heatmaps):
     proportions = {shift: [] for shift in shifts}
     
     for x in x_values:
-        total_pop_x = df_sorted.loc[df_sorted["bin2020"] > x, "pop2020_sum"].sum()
+        total_pop_x = df_sorted.loc[df_sorted[bin2] > x, "pop2020_sum"].sum()
         
         for shift in shifts:
             if x < shift:
                 proportions[shift].append(np.nan)  # Leave missing values for x < shift
             else:
-                pop_x_shift = df_sorted.loc[(df_sorted["bin2020"] > x) & (df_sorted["bin1980"] <= x - shift), "pop2020_sum"].sum()
+                pop_x_shift = df_sorted.loc[(df_sorted[bin2] > x) & (df_sorted[bin1] <= x - shift), "pop2020_sum"].sum()
                 proportions[shift].append(pop_x_shift / total_pop_x if total_pop_x > 0 else np.nan)
     
     # Plot
@@ -68,7 +63,7 @@ def generate_population_shift_plot(file_path, output_folder=heatmaps):
         plt.plot(x_values, proportions[shift], label=f"Threshold: x-{shift}")
     
     plt.xlabel("Population Density (people per sqkm)")
-    plt.ylabel("2020 population share above density x on land below threshold in 1980")
+    plt.ylabel(f"2020 population share above density x on land below threshold in {year1}")
     plt.title(f"Population Shift Proportions: {region_name}")
     plt.legend()
     # Force y-axis to range from 0 to 1 and x-axis 0 to 20000
@@ -86,6 +81,13 @@ def generate_population_shift_plot(file_path, output_folder=heatmaps):
     print(f"Saved: {output_file}")
     
     
-regions = [SSA, NA, MENA, ECA, EAP, SA, LAC]
-for region in regions:
-    generate_population_shift_plot(region)
+region = [r"\Sub_Saharan_Africa_Aggregated.csv", r"\South_Asia_Aggregated.csv", r"\Latin_America_and_Caribbean_Aggregated.csv", 
+          r"\East_Asia_and_Pacific_Aggregated.csv", r"\Europe_and_Central_Asia_Aggregated.csv", r"\Middle_East_and_North_Africa_Aggregated.csv", 
+          r"\North_America_Aggregated.csv"]
+
+year1 = r"\1980_2020"
+year2 = r"\2000_2020"
+
+for r in region:
+    generate_population_shift_plot(file_path=bindata + year1 + r, output_folder= heatmaps + r"\population_shift_plots\1980_2020")
+    generate_population_shift_plot(file_path=bindata + year2 + r, output_folder= heatmaps + r"\population_shift_plots\2000_2020", bin1="bin2000", bin2="bin2020", year1="2000")
