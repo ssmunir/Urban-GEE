@@ -46,7 +46,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps):
     bupr=30
     df.loc[df.bin1980>(bupr+1)*1000,'bin1980']=(bupr+1)*1000
     df.loc[df.bin2020>(bupr+1)*1000,'bin2020']=(bupr+1)*1000
-    
+     
     df = df.groupby(['bin1980', 'bin2020'], as_index=False).agg({
             'pop2020_sum': 'sum','pixel_count': 'sum'})
     
