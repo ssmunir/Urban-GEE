@@ -58,7 +58,7 @@ def generate_population_shift_plot(file_path, output_folder, bin1="bin1980", bin
                 proportions[shift].append(pop_x_shift / total_pop_x if total_pop_x > 0 else np.nan)
     
     # Plot
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(13, 9))
     for shift in shifts:
         plt.plot(x_values, proportions[shift], label=f"Threshold: x-{shift}")
     

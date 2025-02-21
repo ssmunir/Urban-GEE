@@ -62,7 +62,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps + r"\populatio
     heatmap_data = df_grouped.pivot(index=bin2, columns=bin1, values="Population_Share")
 
     # Create figure
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(13, 9))
     ax = sns.heatmap(
         heatmap_data, cmap="Blues", square=True,  norm=LogNorm(vmin=0.001, vmax=0.2), 
         cbar_kws={'label': 'Population Share (log scale)','format':'%4.3f'}
