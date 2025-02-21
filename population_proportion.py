@@ -64,7 +64,7 @@ def generate_population_shift_plot(file_path, output_folder, bin1="bin1980", bin
     
     plt.xlabel("Population Density (people per sqkm)")
     plt.ylabel(f"2020 population share above density x on land below threshold in {year1}")
-    plt.title(f"Population Shift Proportions: {region_name}")
+    #plt.title(f"Population Shift Proportions: {region_name}")
     plt.legend()
     # Force y-axis to range from 0 to 1 and x-axis 0 to 20000
     plt.ylim(0, 1)

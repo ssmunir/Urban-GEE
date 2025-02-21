@@ -75,7 +75,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps + r"\populatio
     # Set axis labels and title
     plt.xlabel(f"Thousands of people / sqkm in {year1}")
     plt.ylabel(f"Thousands of people / sqkm in {year2}")
-    plt.title(f"Population Density Change Heatmap: {region_name}")
+    #plt.title(f"Population Density Change Heatmap: {region_name}")
     
     # Fix axis orientation (lower left should be (0,0))
     ax.invert_yaxis()
