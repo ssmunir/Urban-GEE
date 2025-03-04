@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-def merge_datasets(file1, file2, bin1="bin1980", bin2="bin2020", output_file=""):
+def merge_datasets(file1, file2, bin1="bin1980", bin2="bin2020", output_file="", pop_sum1="pop2020_sum", pop_sum2="pop1980_sum"):
     """
     Merges two datasets and aggregates by (bin1, bin2) summing population and bin count.
 
@@ -22,8 +22,8 @@ def merge_datasets(file1, file2, bin1="bin1980", bin2="bin2020", output_file="")
 
     # Aggregate by (bin1980, bin2020) summing population and bin count
     df_aggregated = df_combined.groupby([bin1, bin2], observed=True).agg({
-        "pop2020_sum": "sum",
-        "pixel_count": "sum"
+        pop_sum1: "sum",
+        pop_sum2: "sum"
     }).reset_index()
 
     # Save the merged dataset
@@ -33,11 +33,10 @@ def merge_datasets(file1, file2, bin1="bin1980", bin2="bin2020", output_file="")
 
 # Example usage
 main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\archive\Double bin data"
-"""
-merge_datasets(file1 = main_path + r"\1980_2020\ssa split file\Sub_Saharan_Africa_Aggregated.csv",
+
+"""merge_datasets(file1 = main_path + r"\1980_2020\ssa split file\Sub_Saharan_Africa_Aggregated.csv",
                file2 = main_path + r"\1980_2020\ssa split file\Sub_Saharan_Africa2_Aggregated.csv",
-               output_file=main_path + r"\1980_2020\Sub_Saharan_Africa_Aggregated.csv")
-"""
+               output_file=main_path + r"\1980_2020\Sub_Saharan_Africa_Aggregated.csv")"""
 merge_datasets(file1 = main_path + r"\2000_2020\ssa split file\Sub_Saharan_Africa_Aggregated.csv",
                file2 = main_path + r"\2000_2020\ssa split file\Sub_Saharan_Africa2_Aggregated.csv",
-               output_file = main_path + r"\2000_2020\Sub_Saharan_Africa_Aggregated.csv", bin1="bin2000")
+               output_file = main_path + r"\2000_2020\Sub_Saharan_Africa_Aggregated.csv", bin1="bin2000", pop_sum2 = "pop2000_sum")

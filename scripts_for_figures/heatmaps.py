@@ -14,7 +14,7 @@ elif os.getlogin() == "auuser":
 else: raise ValueError('Path not correctly specified for this computer.')
 
 
-def generate_population_heatmap(file_path, output_folder=heatmaps + r"\population_density_heatmaps", bin1="bin1980", bin2="bin2020", year1="1980", year2="2020"):
+def generate_population_heatmap(file_path, output_folder=heatmaps + r"\population_density_heatmaps", bin1="bin1980", bin2="bin2020", year1="1980", year2="2020", pop_sum2 = "pop2020_sum", pop_sum1 = "pop1980_sum"):
     """
     Generates a population density change heatmap from a given CSV file.
 
@@ -42,7 +42,7 @@ def generate_population_heatmap(file_path, output_folder=heatmaps + r"\populatio
     df.loc[df[bin2]>(bupr+1)*1000,bin2]=(bupr+1)*1000
      
     df = df.groupby([bin1, bin2], as_index=False).agg({
-            'pop2020_sum': 'sum','pixel_count': 'sum'})
+            pop_sum2: 'sum', pop_sum1: 'sum'})
     
     # Define bin edges and upper bound labels
     #bin_edges = list(range(0, 31000, 1000)) + [float('inf')]
@@ -51,12 +51,12 @@ def generate_population_heatmap(file_path, output_folder=heatmaps + r"\populatio
     bin_labels =["0"] + [f"({i},{i+1}]" for i in range(0, bupr)] + [">"+str(bupr)]
 
     # Aggregate population by (1980_bin, 2020_bin)
-    df_grouped = df.groupby([bin1, bin2], observed=True).agg({"pop2020_sum": "sum"}).reset_index()
+    df_grouped = df.groupby([bin1, bin2], observed=True).agg({pop_sum2: "sum"}).reset_index()
     #df_grouped.iat[0,2] = 0.0
 
     # Calculate population share
-    total_population = df_grouped["pop2020_sum"].sum()
-    df_grouped["Population_Share"] = df_grouped["pop2020_sum"] / total_population
+    total_population = df_grouped[pop_sum2].sum()
+    df_grouped["Population_Share"] = df_grouped[pop_sum2] / total_population
     #df_grouped["Population_Share1"]= np.log(df_grouped["Population_Share"])
     # Pivot data for heatmap
     heatmap_data = df_grouped.pivot(index=bin2, columns=bin1, values="Population_Share")
@@ -114,7 +114,13 @@ region = [r"\Sub_Saharan_Africa_Aggregated.csv", r"\South_Asia_Aggregated.csv", 
 
 year1 = r"\1980_2020"
 year2 = r"\2000_2020"
+year3 = r"\2020_1980"
+year4 = r"\2020_2000"
 
 for r in region:
     generate_population_heatmap(file_path=bindata + year1 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year1)
-    generate_population_heatmap(file_path=bindata + year2 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year2, bin1="bin2000", bin2="bin2020", year1="2000")
+    generate_population_heatmap(file_path=bindata + year2 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year2, bin1="bin2000", bin2="bin2020", year1="2000", pop_sum2="pop2000_sum", pop_sum1="pop2020_sum")
+    generate_population_heatmap(file_path=bindata + year1 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year3, pop_sum2="pop1980_sum", pop_sum1="pop2020_sum")
+    generate_population_heatmap(file_path=bindata + year2 + r, output_folder=heatmaps + r"\population_density_heatmaps" + year4, bin1="bin2000", bin2="bin2020", year1="2000", pop_sum2="pop2000_sum", pop_sum1="pop2020_sum")
+    
+    

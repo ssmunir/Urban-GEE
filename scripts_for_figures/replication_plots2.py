@@ -187,19 +187,19 @@ def plot1a(data, plot_title, output_file=None, x_value=19000, x_label =""):
     else:
         plt.show()
 
-
+outfile = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\figures\contemporaneous_plots"
 # Contemporous plots
 for dt, reg, c in zip(contemp, region, code):
-    file = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\figures\contemporaneous_plots"
+    file = mf + dt
     landshare, popshare = process_and_merge_csv_files(file)
     plot_title = " "
-    output_file = file + f"\Cumulative share of population by density_{c}.png"  # Set to None if you want to display the plot
+    output_file = outfile + f"\Cumulative share of population by density_{c}.png"  # Set to None if you want to display the plot
     plot1a(popshare, plot_title, output_file, x_label="Contemporaneous Population / Square Kilometer")
 
 # 1980 lagged plots
 for dt, reg, c in zip(lag_1980, region, code):
-    file = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\figures\contemporaneous_plots"
+    file = mf + dt
     landshare, popshare = process_and_merge_csv_files(file, pop_sum_col='TotalPopulationSum', cell_count_col='TotalCellCount')
     plot_title = " "
-    output_file = file + f"\Cumulative share of population by density in 1980_{c}.png"  # Set to None if you want to display the plot
+    output_file = outfile + f"\Cumulative share of population by density in 1980_{c}.png"  # Set to None if you want to display the plot
     plot1a(popshare, plot_title, output_file, x_label="Population / Square Kilometer in 1980")
