@@ -32,7 +32,7 @@ lsd={   'East_Asia_and_Pacific':       ['solid',"#8c564b",1],
         'Middle_East_and_North_Africa':['dashdot',"#2ca02c",1],
         'North_America':               [(5, (10, 3)),"#e377c2",1],
         'South_Asia':                  ['solid',"#1f77b4",1],
-        'Sub_Saharan_Africa':          ['solid',"#d62728",3]
+        'Sub_Saharan_Africa':          ['solid',"#d62728",2]
         }
 
 def process_and_merge_csv_files(input_folder, bin_col='Bin', pop_sum_col='PopulationSum', cell_count_col='GridcellCount'):
