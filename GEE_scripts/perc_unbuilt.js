@@ -22,12 +22,18 @@ var avgPercentBuilt1km = percentBuilt100m
     scale: 1000
   })
   .clip(nigeria);
-
+  
 // Calculate percentage unbuilt (0-100 scale)
 var percentUnbuilt1km = ee.Image.constant(100).subtract(avgPercentBuilt1km);
-
 // Round to nearest whole percentage for more intuitive grouping
 var roundedPercentUnbuilt = percentUnbuilt1km.round();
+
+
+// create vizualization parameters
+var viz = {min:0, max:100, palette:['d600ff','ffffff']};
+Map.addLayer(roundedPercentUnbuilt.updateMask(roundedPercentUnbuilt.neq(100)),viz, 'GHS_UNBUILT_S1km');
+
+
 
 // Get frequency histogram
 var histDict = roundedPercentUnbuilt.reduceRegion({
@@ -39,6 +45,7 @@ var histDict = roundedPercentUnbuilt.reduceRegion({
   tileScale: 4
 });
 
+
 // Extract frequency dictionary
 var bandName = roundedPercentUnbuilt.bandNames().get(0);
 var freqDict = ee.Dictionary(histDict.get(bandName));
@@ -46,6 +53,7 @@ var freqDict = ee.Dictionary(histDict.get(bandName));
 // Print for debugging
 print('Number of unique unbuilt percentage values:', freqDict.size());
 print('Sample of frequency dictionary:', freqDict);
+
 
 // Convert to Feature Collection
 var keys = freqDict.keys().sort();
@@ -66,4 +74,5 @@ Export.table.toDrive({
   fileFormat: 'CSV',
   selectors: ['percent_unbuilt', 'frequency']
 });
+
 
