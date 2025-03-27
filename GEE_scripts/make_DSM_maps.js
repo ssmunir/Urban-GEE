@@ -50,11 +50,12 @@ var sld_intervals =
   '<RasterSymbolizer>' +
     '<ColorMap type="intervals" extended="false" >' +
       '<ColorMapEntry color="#0000ff" quantity="0" label="0 ﹤ x" opacity="0" />' +
-      '<ColorMapEntry color="#007f30" quantity="100" label="0 ≤ x ﹤ 200" />' +
-      '<ColorMapEntry color="#30b855" quantity="500" label="200 ≤ x ﹤ 400" />' +
-      '<ColorMapEntry color="#00ff00" quantity="1000" label="400 ≤ x ﹤ 800" />' +
-      '<ColorMapEntry color="#ffff00" quantity="5000" label="800 ≤ x ﹤ 2000" />' +
-      '<ColorMapEntry color="#ff0000" quantity="500000" label="2000 ≤ x ﹤ 5000000" />' +
+      '<ColorMapEntry color="#007f30" quantity="100" label="0 ≤ x ﹤ 100" />' +
+      '<ColorMapEntry color="#30b855" quantity="500" label="100 ≤ x ﹤ 500" />' +
+      '<ColorMapEntry color="#00ff00" quantity="1000" label="500 ≤ x ﹤ 1000" />' +
+      '<ColorMapEntry color="#ffff00" quantity="5000" label="1000 ≤ x ﹤ 5000" />' +
+      '<ColorMapEntry color="#ff0000" quantity="10000" label="5000 ≤ x ﹤ 10000" />' +
+      '<ColorMapEntry color="#8B4513" quantity="999999999" label="x ≥ 10000" />' +
     '</ColorMap>' +
   '</RasterSymbolizer>';
 
@@ -115,12 +116,26 @@ var makeRow = function(color, name) {
       });
 };
  
-//  Palette with the colors
-var palette =['007f30', '30b855', '00ff00','ffff00','ff0000'];
- 
-// name of the legend
-var names = ['0<pop<100','100≤pop<500','500≤pop<1000','1000≤pop<5000','5000≤pop'];
- 
+///  Palette with the colors (now 6 entries)
+var palette = [
+  '007f30',  // 0-100
+  '30b855',  // 100-500
+  '00ff00',  // 500-1000
+  'ffff00',  // 1000-5000
+  'ff0000',  // 5000-10000
+  '8B4513'   // ≥10000 (new)
+];
+
+// Names for each category (also 6 entries)
+var names = [
+  '0<pop<100',
+  '100≤pop<500',
+  '500≤pop<1000',
+  '1000≤pop<5000',
+  '5000≤pop<10000',
+  '≥10000'      // new
+];
+
 // Add color and and names
 for (var i = 0; i < 5; i++) {
   legend.add(makeRow(palette[i], names[i]));

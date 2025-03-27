@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_479ec73c9ab05d3d410ee519785c5a83 {
+                #map_59ee8581cd3b3a5b9976629b1ec953c7 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -39,14 +39,14 @@
 <body>
     
     
-            <div class="folium-map" id="map_479ec73c9ab05d3d410ee519785c5a83" ></div>
+            <div class="folium-map" id="map_59ee8581cd3b3a5b9976629b1ec953c7" ></div>
         
 </body>
 <script>
     
     
-            var map_479ec73c9ab05d3d410ee519785c5a83 = L.map(
-                "map_479ec73c9ab05d3d410ee519785c5a83",
+            var map_59ee8581cd3b3a5b9976629b1ec953c7 = L.map(
+                "map_59ee8581cd3b3a5b9976629b1ec953c7",
                 {
                     center: [20.0, 0.0],
                     crs: L.CRS.EPSG3857,
@@ -66,30 +66,24 @@
                     layersControl: true,
                 }
             );
-            L.control.scale().addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+            L.control.scale().addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
 
             
 
         
     
-            var tile_layer_ffd303a0b7313b422cd9d54a39be5905 = L.tileLayer(
+            var tile_layer_b7006575e93cb2e7255f403326b73318 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 30, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_ffd303a0b7313b422cd9d54a39be5905.addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+            tile_layer_b7006575e93cb2e7255f403326b73318.addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
         
     
-            map_479ec73c9ab05d3d410ee519785c5a83.fitBounds(
+            map_59ee8581cd3b3a5b9976629b1ec953c7.fitBounds(
                 [[20, 0], [20, 0]],
                 {"maxZoom": 2}
-            );
-        
-    
-            map_479ec73c9ab05d3d410ee519785c5a83.fitBounds(
-                [[-6.9, 39.3], [-6.9, 39.3]],
-                {"maxZoom": 10.499}
             );
         
     
@@ -99,16 +93,22 @@
             );
         
     
-            tile_layer_dc5edfce742500684c376a4955c5e9a5.addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+            tile_layer_dc5edfce742500684c376a4955c5e9a5.addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
         
     
-            var tile_layer_d2527961c242588e9ea21897df03b71b = L.tileLayer(
-                "https://earthengine.googleapis.com/v1/projects/urbanization-436918/maps/ebad2e4740b52268b02be7868f907b5a-2d8d3748a0745d4f39a4f74f4fcd3e55/tiles/{z}/{x}/{y}",
+            map_59ee8581cd3b3a5b9976629b1ec953c7.fitBounds(
+                [[-6.9, 39.3], [-6.9, 39.3]],
+                {"maxZoom": 10.499}
+            );
+        
+    
+            var tile_layer_e890148fc45ea741ec0e57718ba526d2 = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/urbanization-436918/maps/3aac89fc6dc1864304ca4bfb3f44e130-4e4ef5304531ca5a4819eaa8308a1db0/tiles/{z}/{x}/{y}",
                 {"attribution": "Google Earth Engine", "detectRetina": false, "maxZoom": 24, "minZoom": 0, "noWrap": false, "opacity": 1.0, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_d2527961c242588e9ea21897df03b71b.addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+            tile_layer_e890148fc45ea741ec0e57718ba526d2.addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
         
     
         L.Control.CustomControl = L.Control.extend({
@@ -132,17 +132,15 @@
               font-size: 14px;
             "
         >
-            <div class="legend-title">Degree of Urbanization 2020</div>
+            <div class="legend-title">Pop. density per sqkm (2010)</div>
             <div class="legend-scale">
                 <ul class="legend-labels">
-                    <li><span style='background:#ff0000;opacity:1.0;'></span>30 Urban Centre</li>
-                    <li><span style='background:#663300;opacity:1.0;'></span>23 Dense Urban Cluster</li>
-                    <li><span style='background:#996600;opacity:1.0;'></span>22 Semi-dense Urban Cluster</li>
-                    <li><span style='background:#ffff00;opacity:1.0;'></span>21 Suburban or Peri-urban</li>
-                    <li><span style='background:#006600;opacity:1.0;'></span>13 Rural Cluster</li>
-                    <li><span style='background:#99cc00;opacity:1.0;'></span>12 Low Density Rural</li>
-                    <li><span style='background:#ccff99;opacity:1.0;'></span>11 Very Low Density Rural</li>
-                    <li><span style='background:#66c2ff;opacity:1.0;'></span>10 Water</li>
+                    <li><span style='background:#006600;opacity:1.0;'></span>0 < pop < 100</li>
+                    <li><span style='background:#99cc00;opacity:1.0;'></span>100 ≤ pop < 500</li>
+                    <li><span style='background:#ccff99;opacity:1.0;'></span>500 ≤ pop < 1000</li>
+                    <li><span style='background:#ffff00;opacity:1.0;'></span>1000 ≤ pop < 5000</li>
+                    <li><span style='background:#ff0000;opacity:1.0;'></span>5000 ≤ pop < 10000</li>
+                    <li><span style='background:#663300;opacity:1.0;'></span>≥ 10000</li>
                 </ul>
             </div>
         </div>
@@ -200,23 +198,23 @@
         }
         L.control.customControl(
             { position: "bottomright" }
-        ).addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+        ).addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
         
     
-            var layer_control_fa117bea0dee97ddf909e0b9ba96fb17_layers = {
+            var layer_control_363f6580e1a06f09718df0394806dc08_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_ffd303a0b7313b422cd9d54a39be5905,
+                    "openstreetmap" : tile_layer_b7006575e93cb2e7255f403326b73318,
                 },
                 overlays :  {
                     "Esri.WorldStreetMap" : tile_layer_dc5edfce742500684c376a4955c5e9a5,
-                    "Degree of Urbanization 2020" : tile_layer_d2527961c242588e9ea21897df03b71b,
+                    "Population density 2010" : tile_layer_e890148fc45ea741ec0e57718ba526d2,
                 },
             };
-            let layer_control_fa117bea0dee97ddf909e0b9ba96fb17 = L.control.layers(
-                layer_control_fa117bea0dee97ddf909e0b9ba96fb17_layers.base_layers,
-                layer_control_fa117bea0dee97ddf909e0b9ba96fb17_layers.overlays,
+            let layer_control_363f6580e1a06f09718df0394806dc08 = L.control.layers(
+                layer_control_363f6580e1a06f09718df0394806dc08_layers.base_layers,
+                layer_control_363f6580e1a06f09718df0394806dc08_layers.overlays,
                 {"autoZIndex": true, "collapsed": true, "position": "topright"}
-            ).addTo(map_479ec73c9ab05d3d410ee519785c5a83);
+            ).addTo(map_59ee8581cd3b3a5b9976629b1ec953c7);
 
         
 </script>

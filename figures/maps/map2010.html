@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_616d325a999677861a244b750812ac38 {
+                #map_8dd5c6f8b6ea679ddf32769bf3615bdd {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -39,14 +39,14 @@
 <body>
     
     
-            <div class="folium-map" id="map_616d325a999677861a244b750812ac38" ></div>
+            <div class="folium-map" id="map_8dd5c6f8b6ea679ddf32769bf3615bdd" ></div>
         
 </body>
 <script>
     
     
-            var map_616d325a999677861a244b750812ac38 = L.map(
-                "map_616d325a999677861a244b750812ac38",
+            var map_8dd5c6f8b6ea679ddf32769bf3615bdd = L.map(
+                "map_8dd5c6f8b6ea679ddf32769bf3615bdd",
                 {
                     center: [20.0, 0.0],
                     crs: L.CRS.EPSG3857,
@@ -66,40 +66,49 @@
                     layersControl: true,
                 }
             );
-            L.control.scale().addTo(map_616d325a999677861a244b750812ac38);
+            L.control.scale().addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
 
             
 
         
     
-            var tile_layer_9a62bf34fc165445cab567ff099c7c5b = L.tileLayer(
+            var tile_layer_c4907e4ea4bc645bad7c2f29ea676c1a = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 30, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_9a62bf34fc165445cab567ff099c7c5b.addTo(map_616d325a999677861a244b750812ac38);
+            tile_layer_c4907e4ea4bc645bad7c2f29ea676c1a.addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
         
     
-            map_616d325a999677861a244b750812ac38.fitBounds(
+            map_8dd5c6f8b6ea679ddf32769bf3615bdd.fitBounds(
                 [[20, 0], [20, 0]],
                 {"maxZoom": 2}
             );
         
     
-            map_616d325a999677861a244b750812ac38.fitBounds(
+            map_8dd5c6f8b6ea679ddf32769bf3615bdd.fitBounds(
                 [[-6.9, 39.3], [-6.9, 39.3]],
                 {"maxZoom": 10.499}
             );
         
     
-            var tile_layer_72b4e4951b1def35fa139ca7c8a2ac63 = L.tileLayer(
-                "https://earthengine.googleapis.com/v1/projects/urbanization-436918/maps/bbf46c521eb1cd14043ef36214fa5e2d-9090d2a8c5538f2685b9cabcd619539c/tiles/{z}/{x}/{y}",
+            var tile_layer_dc5edfce742500684c376a4955c5e9a5 = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+                {"attribution": "Esri", "detectRetina": false, "maxZoom": 30, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_dc5edfce742500684c376a4955c5e9a5.addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
+        
+    
+            var tile_layer_44884cd69ae5711a5d0a465b67fbfe09 = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/urbanization-436918/maps/bbf46c521eb1cd14043ef36214fa5e2d-97b996265d5353cc68ef1ba0dc3bd560/tiles/{z}/{x}/{y}",
                 {"attribution": "Google Earth Engine", "detectRetina": false, "maxZoom": 24, "minZoom": 0, "noWrap": false, "opacity": 1.0, "subdomains": "abc", "tms": false}
             );
         
     
-            tile_layer_72b4e4951b1def35fa139ca7c8a2ac63.addTo(map_616d325a999677861a244b750812ac38);
+            tile_layer_44884cd69ae5711a5d0a465b67fbfe09.addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
         
     
         L.Control.CustomControl = L.Control.extend({
@@ -191,22 +200,23 @@
         }
         L.control.customControl(
             { position: "bottomright" }
-        ).addTo(map_616d325a999677861a244b750812ac38);
+        ).addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
         
     
-            var layer_control_77ef5828a9e63fbd511a4f3218b9d50f_layers = {
+            var layer_control_13a512bf024225dd977b0c486a10cdd2_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_9a62bf34fc165445cab567ff099c7c5b,
+                    "openstreetmap" : tile_layer_c4907e4ea4bc645bad7c2f29ea676c1a,
                 },
                 overlays :  {
-                    "Degree of Urbanization 2010" : tile_layer_72b4e4951b1def35fa139ca7c8a2ac63,
+                    "Esri.WorldStreetMap" : tile_layer_dc5edfce742500684c376a4955c5e9a5,
+                    "Degree of Urbanization 2010" : tile_layer_44884cd69ae5711a5d0a465b67fbfe09,
                 },
             };
-            let layer_control_77ef5828a9e63fbd511a4f3218b9d50f = L.control.layers(
-                layer_control_77ef5828a9e63fbd511a4f3218b9d50f_layers.base_layers,
-                layer_control_77ef5828a9e63fbd511a4f3218b9d50f_layers.overlays,
+            let layer_control_13a512bf024225dd977b0c486a10cdd2 = L.control.layers(
+                layer_control_13a512bf024225dd977b0c486a10cdd2_layers.base_layers,
+                layer_control_13a512bf024225dd977b0c486a10cdd2_layers.overlays,
                 {"autoZIndex": true, "collapsed": true, "position": "topright"}
-            ).addTo(map_616d325a999677861a244b750812ac38);
+            ).addTo(map_8dd5c6f8b6ea679ddf32769bf3615bdd);
 
         
 </script>
