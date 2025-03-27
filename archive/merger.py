@@ -6,7 +6,7 @@ import pycountry_convert as pc
 # Define the folder containing the CSV files
 main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE"  # main folder containing all data
 pop_def1 = main_path + r"\archive\Population data def1"  # urban class 1 data folder
-results1 = main_path + r"\tables\urbanchange_summary_stats1"   # urban class 1 result folder
+results1 = main_path + r"\data\gen"   # urban class 1 result folder
 
 
 # --------------- urban definition 1 ------------------------------
@@ -110,23 +110,21 @@ data = data.groupby("country").sum().reset_index()
 ####### Generate summary statistics by region ##############
 
 # Import income data 
-incomeGroup = pd.read_csv(main_path + r"\Countries income group\income_class.csv")
+incomeGroup = pd.read_csv(main_path + r"\archive\income_class.csv")
 incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only relevant columns
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 
 
 
 # Compute the final merged result and save it to a new CSV file - 
-popData.to_csv(results1 + r"\full_population_data.csv")
+popData.to_csv(results1 + "\urbanchange_summary_stats1.csv")
 print(f'Main population data saved at: {results1}')
-
-
 
 
 # -------------------------------------- urban definition 2 ------------------------------
 
 pop_def2 = main_path + r"\archive\Population data def2"  # urban class 1 data folder
-results2 = main_path + r"\tables\urbanchange_summary_stats2"   # urban class 1 result folder
+results2 = main_path + r"\data\gen"   # urban class 1 result folder
 
 # Loop through all files in the folder and create a list of DataFrames
 dataframes = []
@@ -226,13 +224,13 @@ data = data.groupby("country").sum().reset_index()
 ####### Generate summary statistics by region ##############
 
 # Import income data 
-incomeGroup = pd.read_csv(main_path + r"\Countries income group\income_class.csv")
+incomeGroup = pd.read_csv(main_path + r"\archive\income_class.csv")
 incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only relevant columns
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 
 
 
 # Compute the final merged result and save it to a new CSV file
-popData.to_csv(results2 + r"\full_population_data.csv")
+popData.to_csv(results2 + "\urbanchange_summary_stats2.csv")
 print(f'Main population data saved at: {results2}')
 

@@ -10,10 +10,10 @@ from matplotlib.colors import FuncNorm
 
 
 if os.getlogin() == "tanner_regan":
-    bindata=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\archive\Double bin data/" 
+    bindata=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\data\gen\Double bin data/" 
     heatmaps=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\figures\Heatmaps/popchange_heatmaps/"
 elif os.getlogin() == "auuser":
-    bindata = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\archive\Double bin data/"
+    bindata = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\Double bin data/"
     heatmaps = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\figures\Heatmaps/popchange_heatmaps/"
 else: raise ValueError('Path not correctly specified for this computer.')
 

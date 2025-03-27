@@ -14,7 +14,7 @@ results2 = main_path + r"\tables\urbanchange_summary_stats2"   # urban class 2 r
 figures1 = main_path + r"\figures\urbanchange_scatterplots_def1"  # folder to save figures def 1
 figures2 = main_path + r"\figures\urbanchange_scatterplots_def2"  # folder to save figures def 2
 # Read full population data with urban def 1
-dt = pd.read_csv(results1 + r"\full_population_data.csv")
+dt = pd.read_csv(main_path + r"\data\gen\urbanchange_summary_stats1.csv")
 del dt["Unnamed: 0"]
 
 # Drop countries with less than 100000 population in 2000
@@ -133,7 +133,7 @@ print('Results for urban def 1 saved in ' + results1)
 
 # ------------------------------------ Figures generated from population data 2 with urban >= 21 ---------------------------------#
 # Read full population data
-dt = pd.read_csv(results2 + r"\full_population_data.csv")
+dt = pd.read_csv(main_path + r"\data\gen\urbanchange_summary_stats2.csv")
 
 # Drop countries with less than 100000 population in 2000
 dt = dt.loc[dt['Population2000'] > 100000]

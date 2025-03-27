@@ -13,8 +13,8 @@ plt.rcParams['axes.labelsize'] = 16
 plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 # Data folder
 
-mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\archive\Binned population"
-#mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\archive\Binned population"
+mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\Binned population"
+#mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\data\gen\Binned population"
 pop1980 = mf + r"\pop1980"
 pop1990 = mf + r"\pop1990"
 pop2000 = mf + r"\pop2000"

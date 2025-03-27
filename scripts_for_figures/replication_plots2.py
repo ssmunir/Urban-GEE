@@ -13,7 +13,7 @@ plt.rcParams['axes.labelsize'] = 16
 plt.rcParams['font.family'] = 'Verdana' # Set font for the plot
 # Data folder
 
-mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\archive\Lagged Bin population"
+mf = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\Lagged Bin population"
 #mf = r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE\Data\Binned population"
 
 contemp = [r"\SSA_contemp", r"\NA_contemp", r"\MENA_contemp",
