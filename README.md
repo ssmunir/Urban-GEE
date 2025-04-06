@@ -30,10 +30,9 @@ To set up the environment and run the scripts:
 ## Scripts Overview
 
 ### JavaScript Scripts (GEE)
-- **`double bin population.js`**: Performs double binning for two years on population data in GEE. Re
+- **`double bin population.js`**: Performs double binning for two years on population data in GEE. Results are saved in `Archive/Double bin data`
 - **`urbanization.js`**: Aggregates urbanization data using the SMOD Urban def 1 in GEE. Results are saved in `Archive/Population data def1`
 - **`urbanizationV2.js`**: Updated version of `Urbanization.js` using second definition of urbanization.
-- **`fullagg.js`**: Performs entire aggregation of spatial data in GEE (needs fixes).
 - **`lag_bin.js`**: Applies population bin from `year1` on `year2` population data in GEE. Results are saved in `data/gen/Lagged Bin population.`
 - **`bin.js`**: Bins population data in GEE for a given year. Results are saved in `data/gen/Binned population`.
 
@@ -43,12 +42,12 @@ To set up the environment and run the scripts:
 - **`heatmaps_popchange.py`**: Creates heatmaps for population change combinations. Results are stored in the `figures/popchange_heatmaps`.
 - **`merger.py`**: Script to merge the CSV output from `Urbanization.js` and `UrbanizationV2.js`. 
 - **`mergeSSA.py`**: Merges datasets specific to Sub-Saharan Africa.
-- **`scatter_plots.py`**: Generates scatter plots for urban change variables.
+- **`scatter_plots.py`**: Generates scatter plots for urban change variables. Results are stored `\figures`
 - **`population_proportion.py`**: Calculates population proportions from datasets.
-- **`regions.py`**: Plots world regions as defined in this research.
+- **`regions.py`**: Plots world regions as defined in this research. Results are stored in `figures/maps`
 - **`replication_plots.py`**: Reproduces ` Henderson, J. V. & Turner, M. (2020) ` figure 1a and 1b.
 - **`replication_plots2.py`**: Reproduces ` Henderson, J. V. & Turner, M. (2020) ` figure 1a for each region over multiple years.
-- **`tables.py`**: Generates tables summarizing data analyses.
+- **`tables.py`**: Generates tables summarizing data analyses. Results are saved at `\tables`
 
 ---
 
