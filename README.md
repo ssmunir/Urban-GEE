@@ -42,12 +42,12 @@ To set up the environment and run the scripts:
 - **`heatmaps_popchange.py`**: Creates heatmaps for population change combinations. Results are stored in the `figures/popchange_heatmaps`.
 - **`merger.py`**: Script to merge the CSV output from `Urbanization.js` and `UrbanizationV2.js`. 
 - **`mergeSSA.py`**: Merges datasets specific to Sub-Saharan Africa.
-- **`scatter_plots.py`**: Generates scatter plots for urban change variables. Results are stored `\figures`
+- **`scatter_plots.py`**: Generates scatter plots for urban change variables. Results are stored `/figures`
 - **`population_proportion.py`**: Calculates population proportions from datasets.
 - **`regions.py`**: Plots world regions as defined in this research. Results are stored in `figures/maps`
 - **`replication_plots.py`**: Reproduces ` Henderson, J. V. & Turner, M. (2020) ` figure 1a and 1b.
 - **`replication_plots2.py`**: Reproduces ` Henderson, J. V. & Turner, M. (2020) ` figure 1a for each region over multiple years.
-- **`tables.py`**: Generates tables summarizing data analyses. Results are saved at `\tables`
+- **`tables.py`**: Generates tables summarizing data analyses. Results are saved at `/tables`
 
 ---
 
@@ -58,6 +58,6 @@ To set up the environment and run the scripts:
        - `Binned population`: Data in this folder is generated from running the `regionagg.js` script in the `GEE_scripts`             folder. Data stored here is used to create the replication plots for ` Henderson, J. V. & Turner, M. (2020) `                figure 1a and 1b by running `replication_plots.py` from the `scripts_for_figures` folder.
        - `Double bin data`: Data in this folder is generated from running the `Double bin population.js` script in the `GEE_scripts` folder. It is used to create the plots in `figures/Heatmaps/population_density_heatmaps` & `/popchange_heatmaps` by running `heatmaps.py` and `heatmaps_popchange.py` respectively from the `scripts_for_figures` folder.
        - `Lagged Bin population`: Data in this folder is generated from running the `lag_bin.js` script in the `GEE_scripts` folder. It is used to create the plots in `figures/contemporaneous_plot` by running `replication_plots2.py` from the `scripts_for_figures` folder.
-   - `figures/` directory.
+   - `/figures`:
 - **Summary Tables**: Stored in the `tables/` directory.
 
