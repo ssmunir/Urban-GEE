@@ -14,7 +14,7 @@ results2 = main_path + r"\tables\urbanchange_summary_stats2"   # urban class 2 r
 
 # ------------------------------------ Tables generated from 1 population data with urban >= 22 ---------------------------------#
 
-popData = pd.read_csv(results1 + r"\full_population_data.csv")  # import pop data 1
+popData = pd.read_csv(main_path + r"data\gen\urbanchange_summary_stats1.csv")  # import pop data 1
 
 # drop high income countries
 ##lowMidIncome = popData[popData["Income group"] != "High income"]
@@ -314,7 +314,7 @@ print(f'Urban def 1 results saved at: {results1}')
 
 # ------------------------------------ Tables generated from second population data with urban >= 21 ---------------------------------#
 
-popData = pd.read_csv(results2 + r"\full_population_data.csv")  # import pop data 2
+popData = pd.read_csv(main_path + r"data\gen\urbanchange_summary_stats2.csv")  # import pop data 2
 
 # drop high income countries
 #popData = popData[popData["Income group"] != "High income"]

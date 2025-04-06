@@ -181,9 +181,6 @@ function processDynamicRegion(countries, exportFileName) {
         feature = ee.Feature(feature);
         var featureGeometry = feature.geometry();
         
-        // Reproject the geometry to match the population data's projection
-        //featureGeometry = featureGeometry.transform(population1km.projection(), ee.ErrorMargin(1000, 'meters'));
-        
         // Clip population data to the feature geometry
         var combined_x = combined.clip(featureGeometry);
         
@@ -233,9 +230,6 @@ function processDynamicRegion(countries, exportFileName) {
       var countryGeometry = countriesFC.filter(ee.Filter.eq('ADM0_NAME', countryName)).geometry();
       
       var combined_x = combined.clip(countryGeometry);
-      
-      // Use unbounded geometry for reduction
-      //var reducerGeometry = countryGeometry.bounds();
       
       // Define reducer
       var reducer = ee.Reducer.sum().combine({
@@ -294,7 +288,7 @@ function processDynamicRegion(countries, exportFileName) {
  // Export to CSV
   Export.table.toDrive({
     collection: mergedFC,
-    description: exportFileName,  // Name of your export file
+    description: exportFileName, 
     fileFormat: 'CSV'
   });
 }

@@ -77,31 +77,13 @@ continent_name = [country_to_continent(i) for i in country_name] # list with con
 data.insert(1, "continent", continent_name)  # insert column 
 
 # rename population data country names to match Income class country name for better merge
-data = country_renamer("Taiwan", "Taiwan, China")
-data = country_renamer("Turkey", "Türkiye")
-data = country_renamer("United Republic of Tanzania", "Tanzania")
-data = country_renamer("Iran, Islamic Republic of", "Iran, Islamic Rep.")
-data = country_renamer("Democratic People's Republic of Korea", "Korea, Dem. People's Rep.")
-data = country_renamer("Viet Nam", "Vietnam")
-data = country_renamer("United States Virgin Islands", "Virgin Islands (U.S.)")
-data = country_renamer("Yemen", "Yemen, Rep.")
-data = country_renamer("West Bank", "West Bank and Gaza")
-data = country_renamer("Venezuela", "Venezuela, RB")
-data = country_renamer("United States of America", "United States")
-data = country_renamer("Korea, Republic Of", "Korea, Rep.")
-data = country_renamer("Great Britain", "United Kingdom")
-data = country_renamer("Saint Vincent and the Grenadines", "St. Vincent and the Grenadines")
-data = country_renamer("Saint Lucia", "St Lucia")
-data = country_renamer("Saint Kitts and Nevis", "St. Kitts and Nevis")
-data = country_renamer("Democratic Republic of the Congo", "Congo, Dem. Rep.")
-data = country_renamer("Egypt", "Egypt, Arab Rep.")
-data = country_renamer("Gambia", "Gambia, The")
-data = country_renamer("Hong Kong", "Hong Kong SAR, China")
-data = country_renamer("Lao People's Democratic Republic", "Lao PDR")
-data = country_renamer("Macau", "Macao SAR, China")
-data = country_renamer("Micronesia, Federated States of", "Micronesia, Fed. Sts.")
-data = country_renamer("Moldova, Republic of", "Moldova")
-data = country_renamer("Sao Tome and Principe", "São Tomé and Príncipe")
+data = country_renamer("Bahamas", "Bahamas, The")
+data = country_renamer("Cape Verde", "Cabo Verde")
+data = country_renamer("Czech Republic", "Czechia")
+data = country_renamer("Congo, Dem. Rep.", "Democratic Republic of the Congo")
+data = country_renamer("Congo, Rep.", "Republic of the Congo")
+data = country_renamer("CÃ´te d'Ivoire", "Cote d'Ivoire")
+data = country_renamer("Moldova", "Moldova, Republic of")
 
 # group by country name and sum
 data = data.groupby("country").sum().reset_index()
@@ -117,7 +99,7 @@ popData = data.merge(incomeGroup, how="left", on="country") # merge income group
 
 
 # Compute the final merged result and save it to a new CSV file - 
-popData.to_csv(results1 + "\urbanchange_summary_stats1.csv")
+popData.to_csv(results1 + r"\urbanchange_summary_stats1.csv")
 print(f'Main population data saved at: {results1}')
 
 
@@ -191,31 +173,13 @@ continent_name = [country_to_continent(i) for i in country_name] # list with con
 data.insert(1, "continent", continent_name)  # insert column 
 
 # rename population data country names to match Income class country name for better merge
-data = country_renamer("Taiwan", "Taiwan, China")
-data = country_renamer("Turkey", "Türkiye")
-data = country_renamer("United Republic of Tanzania", "Tanzania")
-data = country_renamer("Iran, Islamic Republic of", "Iran, Islamic Rep.")
-data = country_renamer("Democratic People's Republic of Korea", "Korea, Dem. People's Rep.")
-data = country_renamer("Viet Nam", "Vietnam")
-data = country_renamer("United States Virgin Islands", "Virgin Islands (U.S.)")
-data = country_renamer("Yemen", "Yemen, Rep.")
-data = country_renamer("West Bank", "West Bank and Gaza")
-data = country_renamer("Venezuela", "Venezuela, RB")
-data = country_renamer("United States of America", "United States")
-data = country_renamer("Korea, Republic Of", "Korea, Rep.")
-data = country_renamer("Great Britain", "United Kingdom")
-data = country_renamer("Saint Vincent and the Grenadines", "St. Vincent and the Grenadines")
-data = country_renamer("Saint Lucia", "St Lucia")
-data = country_renamer("Saint Kitts and Nevis", "St. Kitts and Nevis")
-data = country_renamer("Democratic Republic of the Congo", "Congo, Dem. Rep.")
-data = country_renamer("Egypt", "Egypt, Arab Rep.")
-data = country_renamer("Gambia", "Gambia, The")
-data = country_renamer("Hong Kong", "Hong Kong SAR, China")
-data = country_renamer("Lao People's Democratic Republic", "Lao PDR")
-data = country_renamer("Macau", "Macao SAR, China")
-data = country_renamer("Micronesia, Federated States of", "Micronesia, Fed. Sts.")
-data = country_renamer("Moldova, Republic of", "Moldova")
-data = country_renamer("Sao Tome and Principe", "São Tomé and Príncipe")
+data = country_renamer("Bahamas", "Bahamas, The")
+data = country_renamer("Cape Verde", "Cabo Verde")
+data = country_renamer("Czech Republic", "Czechia")
+data = country_renamer("Congo, Dem. Rep.", "Democratic Republic of the Congo")
+data = country_renamer("Congo, Rep.", "Republic of the Congo")
+data = country_renamer("CÃ´te d'Ivoire", "Cote d'Ivoire")
+data = country_renamer("Moldova", "Moldova, Republic of")
 
 # group by country name and sum
 data = data.groupby("country").sum().reset_index()
@@ -231,6 +195,6 @@ popData = data.merge(incomeGroup, how="left", on="country") # merge income group
 
 
 # Compute the final merged result and save it to a new CSV file
-popData.to_csv(results2 + "\urbanchange_summary_stats2.csv")
+popData.to_csv(results2 + r"\urbanchange_summary_stats2.csv")
 print(f'Main population data saved at: {results2}')
 
