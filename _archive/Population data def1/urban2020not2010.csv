@@ -1,0 +1,293 @@
+country,urban2020not2010,TotalLandArea
+Montenegro,17,19374
+Serbia,238.5254902,124643
+South Sudan,896.9019608,642378
+Sudan,2004.352941,1936292
+Taiwan,100.5254902,40528
+Cocos (Keeling) Islands,0,73
+Christmas Island,0,179
+Ashmore and Cartier Islands,0,13
+Faroe Islands,0,3770
+Mayotte,14.65098039,539
+Réunion,37.48627451,2831
+Tromelin Island,0,5
+Juan de Nova Island,0,14
+Glorioso Island,0,17
+Europa Island,0,52
+Bassas da India,0,13
+Saint Pierre et Miquelon,0,449
+French Southern and Antarctic Territories,0,13814
+Denmark,113.2078431,82958
+The former Yugoslav Republic of Macedonia,43.05098039,34578
+Croatia,66.43137255,84060
+Malta,28.74117647,501
+San Marino,0,109
+Slovenia,13,30045
+Greece,35.38039216,179328
+Italy,1020.4,417503
+Portugal,133.3333333,117126
+Spain,806.0235294,668743
+Bosnia and Herzegovina,179.254902,72325
+Andorra,0,713
+Albania,144.6392157,38936
+Monaco,0,23
+Netherlands,385.6352941,59318
+Luxembourg,41.42352941,4262
+Liechtenstein,0,267
+France,1743.678431,803884
+Germany,1578.172549,573373
+Switzerland,319.4745098,61397
+Belgium,409.8352941,49225
+Austria,172.1294118,126030
+Australia,241.0470588,6329666
+Palau,2.294117647,811
+Canada,505.0470588,2612492
+Canada,72.29803922,671902
+Canada,10.05882353,239793
+Mozambique,1701.894118,836165
+Mauritius,9.364705882,2441
+Malawi,2258.952941,124500
+Rwanda,289,26096
+Somalia,421.654902,645049
+Zambia,507.4901961,780663
+Kenya,2786.776471,589417
+Madagascar,1857.254902,634373
+Seychelles,8.266666667,962
+United Republic of Tanzania,5408.439216,956662
+Uganda,5831.843137,244758
+Zimbabwe,435.4627451,417287
+Ethiopia,7426.941176,1154057
+Eritrea,167.2745098,129006
+Djibouti,10.74117647,22845
+Comoros,39.61176471,1952
+Burundi,677.9607843,27662
+Gabon,62.05882353,268359
+Equatorial Guinea,43.69411765,27609
+Chad,626.6666667,1325581
+Sao Tome and Principe,7.08627451,1142
+Congo,88.07058824,345915
+Democratic Republic of the Congo,3537.682353,2360504
+Cameroon,767.4784314,474407
+Central African Republic,113.5098039,631154
+Angola,828.8705882,1289947
+Morocco,840.2509804,491734
+Libya,288.4078431,1832847
+Tunisia,321.6862745,190068
+Egypt,2694.596078,1107423
+Algeria,1461.552941,2640603
+Namibia,51.7372549,898632
+Swaziland,30.40392157,19722
+Lesotho,121.7098039,35671
+South Africa,1576.839216,1406879
+Botswana,122.9647059,630231
+Togo,290.5529412,58763
+Sierra Leone,248.9294118,74843
+Senegal,446.6431373,206145
+Nigeria,7577.788235,932187
+Niger,1067.443137,1250962
+Mauritania,132.5803922,1117619
+Mali,599.4705882,1325009
+Liberia,77.03529412,98569
+Guinea-Bissau,38.27843137,35524
+Gambia,100.145098,12024
+Guinea,381.5686275,251997
+Ghana,828.1294118,244375
+Cape Verde,37.38431373,4829
+Côte d'Ivoire,800.8705882,328939
+Burkina Faso,1103.94902,283431
+Benin,472.5372549,118952
+Brazil,2738.384314,8795435
+Turkmenistan,319.1254902,720650
+Uzbekistan,1979.176471,607812
+Tajikistan,710.7568627,184351
+Kyrgyzstan,302.6156863,268767
+Kazakhstan,854.6156863,4260325
+Mongolia,90,2293470
+Republic of Korea,968.1568627,128536
+Dem People's Rep of Korea,639.2941176,163263
+China,51098.63137,11778413
+Myanmar,1774.345098,730451
+Cambodia,1299.741176,188985
+Viet Nam,2817.317647,350541
+Lao People's Democratic Republic,485.1882353,247267
+Malaysia,831.9607843,338370
+Thailand,2452.65098,543783
+Brunei Darussalam,23.23529412,6339
+Philippines,4905.807843,320120
+Indonesia,6288.043137,1950906
+Singapore,1.792156863,730
+Timor-Leste,119.8705882,15735
+Maldives,2.784313725,1857
+Nepal,2594.07451,169822
+Pakistan,6965.043137,914970
+India,59295.12941,3245716
+Iran  (Islamic Republic of),1955.509804,2009405
+Sri Lanka,889.9921569,68407
+Bhutan,39.95294118,43267
+Bangladesh,8086.329412,157582
+Afghanistan,2570.631373,778847
+Oman,399.7882353,333696
+Kuwait,63.52941176,20677
+Lebanon,251.3529412,12674
+Qatar,204.6745098,13306
+Saudi Arabia,1181.427451,2129955
+Turkey,1857.572549,1013854
+Yemen,1184.933333,477186
+Iraq,1320.054902,524129
+Jordan,300.0235294,105608
+Syrian Arab Republic,231.0627451,231855
+Israel,147.5686275,25087
+Georgia,91,95475
+Cyprus,41.05882353,11781
+Bahrain,7.764705882,921
+Azerbaijan,421.1960784,218321
+Armenia,27.79607843,39787
+United Arab Emirates,243.2862745,80421
+"Moldova, Republic of",101.6901961,50817
+Hungary,258.9019608,138235
+Poland,605.9960784,510056
+Romania,439.4862745,343797
+Ukraine,493.3058824,920766
+Belarus,229,350969
+Czech Republic,303,123272
+Slovakia,72.76862745,75291
+Bulgaria,89.48235294,153116
+Norway,269.8862745,783279
+Sweden,472.2941176,991564
+Lithuania,109.7137255,115106
+Latvia,48,119062
+Ireland,160.9921569,120155
+Iceland,22.32156863,247308
+U.K. of Great Britain and Northern Ireland,857.1960784,428546
+Finland,239.4823529,789611
+Estonia,58.76078431,89771
+Svalbard and Jan Mayen Islands,0,335225
+Madeira Islands,1,1133
+Azores Islands,7.262745098,3456
+British Indian Ocean Territory,0,237
+Guernsey,3.933333333,205
+Jersey,8.847058824,234
+Isle of Man,6.015686275,1089
+Holy See,0,2
+Greenland,0,8290339
+Western Sahara,9.290196078,298572
+Gaza Strip,34.29019608,501
+West Bank,5.6,176
+West Bank,116.2196078,7109
+Gibraltar,0,15
+Saint Helena,0,587
+Macau,0.588235294,37
+Hong Kong,10.9372549,1558
+Abyei,5.745098039,10339
+Ilemi triangle,0,3358
+Hala'ib triangle,0,19823
+Ma'tan al-Sarra,0,2303
+Paracel Islands,0,50
+Senkaku Islands,0,21
+Scarborough Reef,0,92
+China/India,0,4564
+Aksai Chin,0,38231
+Spratly Islands,0,16
+Jammu and Kashmir,1289.698039,228248
+Arunachal Pradesh,67.48627451,78567
+Norfolk Island,0,72
+Wallis and Futuna,0,239
+French Polynesia,31.92156863,8802
+New Zealand,226.6980392,371280
+Australia,315.9529412,228334
+Australia,614.0862745,2097260
+Papua New Guinea,796.8784314,478221
+Vanuatu,3.239215686,14592
+Solomon Islands,11.92156863,33500
+Fiji,14.70980392,21468
+Marshall Islands,0.729411765,1949
+Nauru,2.058823529,30
+Micronesia (Federated States of),0,1871
+Kiribati,0.17254902,2126
+Samoa,5.776470588,3198
+Tonga,0,1297
+Tuvalu,0.345098039,207
+Canada,0,54448
+Canada,172.854902,620620
+Canada,68,4442029
+Canada,408,4977564
+Canada,35,3140925
+Canada,0,3371872
+Canada,0,1036606
+United States of America,4263.105882,8984337
+United States of America,4491.32549,3014778
+United States of America,296.2901961,267538
+Japan,1318.968627,486545
+Russian Federation,3562.313725,36436360
+Cook Islands,0,562
+Niue,0,320
+Northern Mariana Islands,0,714
+Wake Island,0,24
+Jarvis Island,0,11
+New Caledonia,19.60392157,22020
+Tokelau,0,103
+Guam,11.87058824,662
+American Samoa,37.92156863,316
+Kuril islands,0,7899
+Martinique,4.678431373,1346
+Guadeloupe,7.745098039,2112
+Clipperton Island,0,14
+Dominica,5.349019608,875
+Dominican Republic,269.3843137,52186
+Antigua and Barbuda,1,611
+Cuba,75.87843137,124848
+Grenada,1.050980392,417
+Jamaica,54.11764706,12055
+Saint Kitts and Nevis,0.992156863,344
+Trinidad and Tobago,24.87843137,5639
+Bahamas,10.51764706,19222
+Saint Lucia,12.6,720
+Saint Vincent and the Grenadines,0.639215686,639
+Barbados,19.83921569,503
+Haiti,731.1215686,29913
+Panama,90.16862745,79522
+El Salvador,137.5137255,21991
+Nicaragua,127.6078431,133977
+Mexico,3578.329412,2165140
+Honduras,442.5254902,118467
+Guatemala,836.745098,115061
+Costa Rica,120.9568627,53571
+Belize,27.45882353,24163
+United States of America,1642.564706,465381
+United States of America,3216.792157,987875
+Colombia,610.454902,1155587
+Guyana,11.96078431,215854
+Ecuador,191.8352941,261283
+French Guiana,25.97254902,84961
+Paraguay,228.6627451,439157
+Suriname,22.77254902,147732
+Uruguay,41.2745098,213564
+Venezuela,213.1294118,932166
+Peru,324.5411765,1324944
+Chile,321.8235294,1025792
+Bolivia,235.4666667,1143798
+Netherlands Antilles,37.19215686,1060
+Navassa Island,0,10
+Puerto Rico,110.8392157,10043
+Palmyra Atoll,0,21
+Midway Island,0,33
+Kingman Reef,0,491
+Johnston Atoll,0,13
+Howland Island,0,7
+Baker Island,0,6
+Bird Island,0,2
+Aruba,15.14901961,237
+Pitcairn,0,101
+Cayman Islands,1,410
+Montserrat,0,132
+Turks and Caicos islands,7.125490196,922
+British Virgin Islands,1.725490196,354
+Anguilla,11.30588235,145
+Bermuda,0,139
+United States Virgin Islands,0,592
+Falkland Islands (Malvinas),0,23546
+South Georgia and the South Sandwich Islands,0,7686
+Argentina,963.1647059,3459950
+Heard Island and McDonald Islands,0,790
+Bouvet Island,0,98
+Antarctica,0,71354739

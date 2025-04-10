@@ -5,7 +5,7 @@ import pycountry_convert as pc
 
 # Define the folder containing the CSV files
 main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE"  # main folder containing all data
-pop_def1 = main_path + r"\archive\Population data def1"  # urban class 1 data folder
+pop_def1 = main_path + r"\_archive\Population data def1"  # urban class 1 data folder
 results1 = main_path + r"\data\gen"   # urban class 1 result folder
 
 
@@ -92,7 +92,7 @@ data = data.groupby("country").sum().reset_index()
 ####### Generate summary statistics by region ##############
 
 # Import income data 
-incomeGroup = pd.read_csv(main_path + r"\archive\income_class.csv")
+incomeGroup = pd.read_csv(main_path + r"\_archive\income_class.csv")
 incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only relevant columns
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 
@@ -105,7 +105,7 @@ print(f'Main population data saved at: {results1}')
 
 # -------------------------------------- urban definition 2 ------------------------------
 
-pop_def2 = main_path + r"\archive\Population data def2"  # urban class 1 data folder
+pop_def2 = main_path + r"\_archive\Population data def2"  # urban class 1 data folder
 results2 = main_path + r"\data\gen"   # urban class 1 result folder
 
 # Loop through all files in the folder and create a list of DataFrames
@@ -188,7 +188,7 @@ data = data.groupby("country").sum().reset_index()
 ####### Generate summary statistics by region ##############
 
 # Import income data 
-incomeGroup = pd.read_csv(main_path + r"\archive\income_class.csv")
+incomeGroup = pd.read_csv(main_path + r"\_archive\income_class.csv")
 incomeGroup = incomeGroup[["Economy", "Region", "Income group"]] # keep only relevant columns
 incomeGroup = incomeGroup.rename(columns={"Economy": "country"})  # rename column to match main data column
 popData = data.merge(incomeGroup, how="left", on="country") # merge income group with population data by country name 

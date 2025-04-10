@@ -74,8 +74,7 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         """Format percentage values with proper handling of NaN values"""
         if pd.isna(value):
             return "N/A"
-        val = round(value, 1)
-        return f"{int(val)}%"
+        return f"{int(value)}%"
     
     # Function to process data for either grouping
     def process_urban_data(df1, df2, group_col):
@@ -85,12 +84,17 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
             'UrbanPopulation2020': 'sum',
             'c3UrbanPopChange_2010-2020': 'sum',
             'c2UrbanPopChange_2010-2020': 'sum',
+            'UrbanLand2020': 'sum',
+            'TotalLandArea': 'sum',
+            'urban2020not2010': 'sum'
         })
         
         # Calculate new columns
         smod1["urbanPopChange2010_2020"] = smod1["UrbanPopulation2020"] - smod1["UrbanPopulation2010"]
         smod1["Urban2020"] = smod1['UrbanPopulation2010'] + smod1['urbanPopChange2010_2020']
         smod1['urbanpopchange'] = smod1['c3UrbanPopChange_2010-2020'] + smod1['c2UrbanPopChange_2010-2020']
+        smod1['shareUrban2020'] = (smod1['UrbanLand2020']/smod1['TotalLandArea'])*100
+        smod1['shUrban2020not2010'] = (smod1['urban2020not2010']/smod1['UrbanLand2020'])*100
         # Handle potential division by zero
         smod1['perchange'] = smod1.apply(
             lambda x: (x["c2UrbanPopChange_2010-2020"]/x["urbanpopchange"])*100 
@@ -99,7 +103,7 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         )
         
         # Select only the columns needed for the final output
-        smod1 = smod1[["Urban2020", 'urbanpopchange', 'perchange']]
+        smod1 = smod1[["Urban2020", 'urbanpopchange', 'perchange', 'shareUrban2020', 'shUrban2020not2010' ]]
         
         # Process SMOD definition 2
         smod2 = df2.groupby(group_col).agg({
@@ -107,12 +111,17 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
             'UrbanPopulation2020': 'sum',
             'c3UrbanPopChange_2010-2020': 'sum',
             'c2UrbanPopChange_2010-2020': 'sum',
+            'UrbanLand2020': 'sum',
+            'TotalLandArea': 'sum',
+            'urban2020not2010': 'sum'
         })
         
         # Calculate new columns
         smod2["urbanPopChange2010_2020"] = smod2["UrbanPopulation2020"] - smod2["UrbanPopulation2010"]
         smod2["Urban2020"] = smod2['UrbanPopulation2010'] + smod2['urbanPopChange2010_2020']
         smod2['urbanpopchange'] = smod2['c3UrbanPopChange_2010-2020'] + smod2['c2UrbanPopChange_2010-2020']
+        smod2['shareUrban2020'] = (smod2['UrbanLand2020']/smod2['TotalLandArea'])*100
+        smod2['shUrban2020not2010'] = (smod2['urban2020not2010']/smod2['UrbanLand2020'])*100
         # Handle potential division by zero
         smod2['perchange'] = smod2.apply(
             lambda x: (x["c2UrbanPopChange_2010-2020"]/(x["c2UrbanPopChange_2010-2020"] + x["c3UrbanPopChange_2010-2020"]))*100 
@@ -121,7 +130,7 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         )
         
         # Select only the columns needed for the final output
-        smod2 = smod2[["Urban2020", 'urbanpopchange', 'perchange']]
+        smod2 = smod2[["Urban2020", 'urbanpopchange', 'perchange', 'shareUrban2020', 'shUrban2020not2010']]
         
         return smod1, smod2
     
@@ -137,6 +146,8 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         df['Urban2020'] = df['Urban2020'].apply(format_population)
         df['urbanpopchange'] = df['urbanpopchange'].apply(format_population)
         df['perchange'] = df['perchange'].apply(format_percent)
+        df['shareUrban2020'] = df['shareUrban2020'].apply(format_percent)
+        df['shUrban2020not2010'] = df['shUrban2020not2010'].apply(format_percent)
     
     # Format region data
     region_smod1_formatted = region_smod1.copy()
@@ -146,11 +157,14 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         df['Urban2020'] = df['Urban2020'].apply(format_population)
         df['urbanpopchange'] = df['urbanpopchange'].apply(format_population)
         df['perchange'] = df['perchange'].apply(format_percent)
+        df['shareUrban2020'] = df['shareUrban2020'].apply(format_percent)
+        df['shUrban2020not2010'] = df['shUrban2020not2010'].apply(format_percent)
+    
     
     # Generate LaTeX table for income groups
     income_groups = ["HICs", "UMICs", "LMICs", "LICs"]
     income_latex_table = r"""
-\begin{tabular}{l||cccc}
+\begin{tabular}{lcccc}
 \hline\hline
          & HICs & UMICs & LMICs & LICs \\
 \hline
@@ -159,12 +173,16 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
      Population in 2020 urban areas         & """ + income_smod1_formatted.loc['HICs', 'Urban2020'] + r""" & """ + income_smod1_formatted.loc['UMICs', 'Urban2020'] + r""" & """ + income_smod1_formatted.loc['LMICs', 'Urban2020'] + r""" & """ + income_smod1_formatted.loc['LICs', 'Urban2020'] + r""" \\
      $\Delta$ pop. on this land since 2010  & """ + income_smod1_formatted.loc['HICs', 'urbanpopchange'] + r"""   & """ + income_smod1_formatted.loc['UMICs', 'urbanpopchange'] + r"""  & """ + income_smod1_formatted.loc['LMICs', 'urbanpopchange'] + r"""  & """ + income_smod1_formatted.loc['LICs', 'urbanpopchange'] + r""" \\
      Share of $\Delta$ on land turned urban since 2010  & """ + income_smod1_formatted.loc['HICs', 'perchange'] + r""" & """ + income_smod1_formatted.loc['UMICs', 'perchange'] + r""" & """ + income_smod1_formatted.loc['LMICs', 'perchange'] + r""" & """ + income_smod1_formatted.loc['LICs', 'perchange'] + r""" \\
+     Share of Urban Land in 2020  & """ + income_smod1_formatted.loc['HICs', 'shareUrban2020'] + r""" & """ + income_smod1_formatted.loc['UMICs', 'shareUrban2020'] + r""" & """ + income_smod1_formatted.loc['LMICs', 'shareUrban2020'] + r""" & """ + income_smod1_formatted.loc['LICs', 'shareUrban2020'] + r""" \\
+    Share of Land Turned Urban since 2010  & """ + income_smod1_formatted.loc['HICs', 'shUrban2020not2010'] + r""" & """ + income_smod1_formatted.loc['UMICs', 'shUrban2020not2010'] + r""" & """ + income_smod1_formatted.loc['LMICs', 'shUrban2020not2010'] + r""" & """ + income_smod1_formatted.loc['LICs', 'shUrban2020not2010'] + r""" \\
 \hline
          \multicolumn{5}{c}{\it Restrict to land that is urban in 2020 based on SMOD definition 2}\\
 \hline
      Population in 2020 urban areas         & """ + income_smod2_formatted.loc['HICs', 'Urban2020'] + r""" & """ + income_smod2_formatted.loc['UMICs', 'Urban2020'] + r""" & """ + income_smod2_formatted.loc['LMICs', 'Urban2020'] + r""" & """ + income_smod2_formatted.loc['LICs', 'Urban2020'] + r""" \\
      $\Delta$ pop. on this land since 2010  & """ + income_smod2_formatted.loc['HICs', 'urbanpopchange'] + r"""   & """ + income_smod2_formatted.loc['UMICs', 'urbanpopchange'] + r"""  & """ + income_smod2_formatted.loc['LMICs', 'urbanpopchange'] + r"""  & """ + income_smod2_formatted.loc['LICs', 'urbanpopchange'] + r""" \\
      Share of $\Delta$ on land turned urban since 2010  & """ + income_smod2_formatted.loc['HICs', 'perchange'] + r""" & """ + income_smod2_formatted.loc['UMICs', 'perchange'] + r""" & """ + income_smod2_formatted.loc['LMICs', 'perchange'] + r""" & """ + income_smod2_formatted.loc['LICs', 'perchange'] + r"""\\
+         Share of Urban Land in 2020  & """ + income_smod2_formatted.loc['HICs', 'shareUrban2020'] + r""" & """ + income_smod2_formatted.loc['UMICs', 'shareUrban2020'] + r""" & """ + income_smod2_formatted.loc['LMICs', 'shareUrban2020'] + r""" & """ + income_smod2_formatted.loc['LICs', 'shareUrban2020'] + r""" \\
+        Share of Land Turned Urban since 2010  & """ + income_smod2_formatted.loc['HICs', 'shUrban2020not2010'] + r""" & """ + income_smod2_formatted.loc['UMICs', 'shUrban2020not2010'] + r""" & """ + income_smod2_formatted.loc['LMICs', 'shUrban2020not2010'] + r""" & """ + income_smod2_formatted.loc['LICs', 'shUrban2020not2010'] + r""" \\
 \hline\hline
 \end{tabular}
 """
@@ -173,8 +191,9 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
     regions = ["SSA", "NA", "MENA", "SA", "LAC", "EAP", "ECA"]
     region_headers = " & ".join(regions)
     
+   # Updated region latex table generation
     region_latex_table = r"""
-\begin{tabular}{l||""" + "c" * len(regions) + r"""}
+\begin{tabular}{l""" + "c" * len(regions) + r"""}
 \hline\hline
          & """ + region_headers + r""" \\
 \hline
@@ -210,11 +229,32 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         else:
             pct_values.append("N/A")
     region_latex_table += r""" & """.join(pct_values) + r""" \\
+     Share of Urban Land in 2020         & """
+    
+    # Add share of urban land values for all regions (SMOD definition 1)
+    urban_land_share_values = []
+    for region in regions:
+        if region in region_smod1_formatted.index:
+            urban_land_share_values.append(region_smod1_formatted.loc[region, 'shareUrban2020'])
+        else:
+            urban_land_share_values.append("N/A")
+    region_latex_table += r""" & """.join(urban_land_share_values) + r""" \\
+     Share of Land Turned Urban since 2010 & """
+    
+    # Add share of land turned urban values for all regions (SMOD definition 1)
+    land_turned_urban_values = []
+    for region in regions:
+        if region in region_smod1_formatted.index:
+            land_turned_urban_values.append(region_smod1_formatted.loc[region, 'shUrban2020not2010'])
+        else:
+            land_turned_urban_values.append("N/A")
+    region_latex_table += r""" & """.join(land_turned_urban_values) + r""" \\
 \hline
          \multicolumn{""" + str(len(regions) + 1) + r"""}{c}{\it Restrict to land that is urban in 2020 based on SMOD definition 2}\\
 \hline
      Population in 2020 urban areas         & """
     
+    # Repeat similar logic for SMOD definition 2
     # Add population values for all regions (definition 2)
     pop_values2 = []
     for region in regions:
@@ -243,9 +283,30 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         else:
             pct_values2.append("N/A")
     region_latex_table += r""" & """.join(pct_values2) + r""" \\
+     Share of Urban Land in 2020         & """
+    
+    # Add share of urban land values for all regions (SMOD definition 2)
+    urban_land_share_values2 = []
+    for region in regions:
+        if region in region_smod2_formatted.index:
+            urban_land_share_values2.append(region_smod2_formatted.loc[region, 'shareUrban2020'])
+        else:
+            urban_land_share_values2.append("N/A")
+    region_latex_table += r""" & """.join(urban_land_share_values2) + r""" \\
+     Share of Land Turned Urban since 2010 & """
+    
+    # Add share of land turned urban values for all regions (SMOD definition 2)
+    land_turned_urban_values2 = []
+    for region in regions:
+        if region in region_smod2_formatted.index:
+            land_turned_urban_values2.append(region_smod2_formatted.loc[region, 'shUrban2020not2010'])
+        else:
+            land_turned_urban_values2.append("N/A")
+    region_latex_table += r""" & """.join(land_turned_urban_values2) + r""" \\
 \hline\hline
 \end{tabular}
 """
+    """
     
     # Define the full names for regions
     region_full_names = {
@@ -281,10 +342,10 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
     # FIX: Create notes without including the tables again
     region_notes_latex = r"\vspace{0.5em}" + "\n" + r"\begin{flushleft}" + "\n" + r"\footnotesize " + region_notes + "\n" + r"\end{flushleft}"
     income_notes_latex = r"\vspace{0.5em}" + "\n" + r"\begin{flushleft}" + "\n" + r"\footnotesize " + income_notes + "\n" + r"\end{flushleft}"
-    
+    """
     # FIX: Just append the notes after the tables
-    final_region_latex = region_latex_table + region_notes_latex
-    final_income_latex = income_latex_table + income_notes_latex
+    final_region_latex = region_latex_table
+    final_income_latex = income_latex_table 
     
     # Save tables to files
     with open('urban_population_by_income.tex', 'w') as f:

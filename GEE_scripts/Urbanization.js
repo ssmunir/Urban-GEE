@@ -312,6 +312,6 @@ var rasters = [
 
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
-  var rasterName = r.prefix + r.year;  // Create the dynamic column name based on prefix and year
+  var rasterName = r.prefix + r.year;  // Create column name based on prefix and year
   computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
 });
