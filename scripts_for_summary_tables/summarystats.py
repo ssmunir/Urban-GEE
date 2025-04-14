@@ -61,13 +61,19 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
     
     # Function to format population values
     def format_population(value):
-        """Format population values in billions or millions with appropriate suffix"""
+        """Format population values in billions"""
         if pd.isna(value):
             return "N/A"
-        if value >= 1_000_000_000:
-            return f"{value/1_000_000_000:.2f}bn".replace('.00bn', 'bn')
         else:
-            return f"{int(value/1_000_000)}mn"
+            return f"{value/1_000_000_000:.2f}".replace('.00', '')
+        
+        # Function to format population change values
+        def format_population_change(value):
+            """Format population values in millions"""
+            if pd.isna(value):
+                return "N/A"
+            else:
+                return f"{int(value/1_000_000)}"
     
     # Function to format percentage values
     def format_percent(value):
@@ -75,7 +81,7 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
         if pd.isna(value):
             return "N/A"
         val = float(value)
-        return f"{round(val, 2)}%"
+        return f"{round(val, 2)}"
     
     # Function to process data for either grouping
     def process_urban_data(df1, df2, group_col):
