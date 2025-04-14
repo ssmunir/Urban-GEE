@@ -361,7 +361,13 @@ def generate_urban_tables(data1_path, data2_path, output_dir=None):
 
 # Example usage
 if __name__ == "__main__":
-    main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE"
+    
+    if os.getlogin() == "tanner_regan":
+        main_path=r"C:\Users\tanner_regan\Documents\GitHub\Urban-GEE/" 
+    elif os.getlogin() == "auuser":
+        main_path = r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE/"
+    else: raise ValueError('Path not correctly specified for this computer.')
+
     data1 = main_path + r"\data\gen\urbanchange_summary_stats1.csv"
     data2 = main_path + r"\data\gen\urbanchange_summary_stats2.csv"
     output_dir = main_path + r"\tables"
