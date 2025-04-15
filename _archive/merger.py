@@ -82,7 +82,7 @@ data = country_renamer("Cape Verde", "Cabo Verde")
 data = country_renamer("Czech Republic", "Czechia")
 data = country_renamer("Congo, Dem. Rep.", "Democratic Republic of the Congo")
 data = country_renamer("Congo, Rep.", "Republic of the Congo")
-data = country_renamer("CÃ´te d'Ivoire", "Cote d'Ivoire")
+data = country_renamer(r"CÃ´te d'Ivoire", "Cote d'Ivoire")
 data = country_renamer("Moldova", "Moldova, Republic of")
 
 # group by country name and sum
