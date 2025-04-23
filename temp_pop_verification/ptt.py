@@ -13,7 +13,7 @@ from adjustText import adjust_text
 
 # Load data
 # Note: Replace these paths with your actual paths when running the code
-real = pd.read_csv(r"C:\Users\auuser\Downloads\popwb.csv")
+real = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\popwb.csv")
 gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats1.csv")
 
 # Merge datasets
