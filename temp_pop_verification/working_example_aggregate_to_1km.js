@@ -37,18 +37,23 @@ var country = countries.filter(ee.Filter.eq('ADM0_NAME', countryname)).first();
 
 print('Working on country: ', countryname);
 
-// Compute total population using native settings
+//NB: could try to simplify the country boundaries wiht "geometry: country.geometry().simplify(1000)"
+// Compute total population using target settings
 var populationSum = pop1km.reduceRegion({
   reducer: ee.Reducer.sum().unweighted(),
   geometry: country.geometry(),
-  scale: nativeScale,
+  scale: targetScale,
   maxPixels: 1e13
 });
 
-// Get the actual band name
-var bandName = pop1km.bandNames().get(0);
-var populationValue = populationSum.get(bandName);
 
 // Print result as a clean message
-print('Population sum for ' + countryname + ' (negative values masked out):', populationValue);
+print('Population sum for ' + countryname + ' (negative values masked out):', populationSum.get(pop1km.bandNames().get(0)));
+
+
+// Map the world
+Map.addLayer(countries, {color: 'grey'}, 'World Map');
+// Simplify the country geometry to add to the map 
+Map.addLayer(country.geometry().simplify(1000), {color: 'blue'}, 'Simplified Country Boundary');
+
 
