@@ -1,50 +1,51 @@
 var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
-var pop2020 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2020');
+var pop2020   = ee.Image('JRC/GHSL/P2023A/GHS_POP/2020');
 
+// 1) Select Russia and simplify its geometry (drops tiny slivers)
+var russiaFeat = countries.filter(ee.Filter.eq('ADM0_NAME', 'Sri Lanka')).first();
+var russiaGeom = ee.Feature(russiaFeat)
+  .geometry()
+  .simplify(100);  // 1 km error tolerance
 
+// 2) Mask to “land” (pop ≥ 0)
+var masked = pop2020.updateMask(pop2020.gte(0));
 
-
-// Filter for Nigeria
-var nigeria = countries.filter(ee.Filter.eq('ADM0_NAME', 'China')).first();
-
-// Try multiple projections for population calculation
+// 3) Try different projections using reduceRegion’s crs+scale
 var projections = [
-  'EPSG:3857',   // Web Mercator
-  'EPSG:3410', // (Global Equal Area)
+  'EPSG:3857',
+  'EPSG:3410',
   'EPSG:3572',
   'EPSG:3576',
-  'EPSG:3575'
-
+  'EPSG:3575',
+  'EPSG:3035',
+  'EPSG:3573',
+  'EPSG:4326'
 ];
 
-// Function to compute population with different projections
-function computePopulationByProjection(raster, geometry, projectionCRS) {
-  var reprojectedRaster = raster
-    .updateMask(raster.gt(0))
-    .reproject({
-      crs: projectionCRS,
-      scale: 100
-    });
-  
-  var populationSum = reprojectedRaster.reduceRegion({
-    reducer: ee.Reducer.sum(),
-    geometry: geometry,
-    scale: 100,
-    maxPixels: 1e13
+function computePopulationByProjection(raster, geom, crs) {
+  var stats = raster.reduceRegion({
+    reducer:   ee.Reducer.sum(),
+    geometry:  geom,
+    crs:       crs,
+    scale:     100,       // 1 km
+    maxPixels: 1e13,
+    tileScale: 8           // breaks the job into smaller tiles
   });
-  
-  return {
-    projection: projectionCRS,
-    population: populationSum
-  };
+  // pull out whatever band you have (JRC is called 'population')
+  var band = raster.bandNames().get(0);
+  return ee.Dictionary({
+    projection: crs,
+    population: stats.get(band)
+  });
 }
 
-// Compute population for each projection
-var populationResults = projections.map(function(proj) {
-  return computePopulationByProjection(pop2020, nigeria.geometry(), proj);
+var results = projections.map(function(crs) {
+  return computePopulationByProjection(masked, russiaGeom, crs);
 });
 
-// Print results
-print('Population by Projection', populationResults);
+print('Population by projection (1 km, tileScale=8):', results);
 
-// Visualization of original and reproejcted rasters
+
+
+
+
