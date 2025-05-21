@@ -14,11 +14,11 @@ from adjustText import adjust_text
 # Load data
 # Note: Replace these paths with your actual paths when running the code
 real = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\popwb.csv")
-gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats1.csv")
-
+gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats2.csv")
+#geemod = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\Population_2020 (3).csv")
 # Merge datasets
 df = pd.merge(real, gee, how="inner", on="country")
-# Create logarithmic columns for plotting
+# Create logarithmic columns for plottings
 df["log2020"] = np.log(df["Population2020"])
 df["log2020_real"] = np.log(df["Population2020_real"])
 
@@ -79,7 +79,7 @@ plt.grid(True, alpha=0.3, linestyle='--')
 
 # Save Plot 1
 #plt.tight_layout()
-#plt.savefig('population_comparison_log.png', dpi=300, bbox_inches='tight')
+plt.savefig('population_comparison_log2.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # PLOT 2: Population Ratio Analysis
@@ -127,5 +127,5 @@ plt.legend(title='Population Log Diff.', bbox_to_anchor=(1.05, 1), loc='upper le
 
 # Save Plot 2
 #plt.tight_layout()
-#plt.savefig('population_ratio_analysis.png', dpi=300, bbox_inches='tight')
+plt.savefig('population_ratio_analysis2.png', dpi=300, bbox_inches='tight')
 plt.show()

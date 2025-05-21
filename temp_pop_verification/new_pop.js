@@ -277,44 +277,33 @@ var crsGroups = [
  'Gabon', 'Gambia', 'Guinea', 'Guinea-Bissau',
 'Liberia', 'Mali', 'Mauritania', 'Niger', 'Sao Tome and Principe', 'Senegal', 'Seychelles', 
 'Sierra Leone',
-'Togo', 'Zimbabwe', 'Malaysia'] },
+'Togo', 'Zimbabwe', 'Malaysia','Monaco'] },
 
-  { crs: 'EPSG:3035', countries: ['China', 'Hong Kong', 'Indonesia', 'Japan', 
-      'Singapore', 'Greece', 'Albania'] },
+ { crs: 'EPSG:3035', countries: ['China', 'Hong Kong', 'Indonesia', 'Japan', 'Republic of Korea',
+      'Taiwan', 'Thailand', 'Cambodia', "Republic of Korea", "Dem People's Rep of Korea", 
+      'Singapore', 'Greece', 'Albania','Belarus','Cyprus','Denmark','Estonia','Georgia', 'Liechtenstein'] },
       
-  {crs:'EPSG:3410', countries: ['Mongolia', 'Lesotho']},
+  {crs:'EPSG:3410', countries: ['Mongolia', 'Lesotho','Bulgaria']},
   
-  {crs:'EPSG:3572', countries: ['Spain', 'Germany', 'Poland']},
+  {crs:'EPSG:3572', countries: ['Spain', 'Germany', 'Poland','Armenia', 'Azerbaijan','Croatia']},
   
   
-  {crs:'EPSG:3576', countries: ['Romania', 'Algeria', 'Morocco', 'U.K. of Great Britain and Northern Ireland']},
-  
-  {crs:'EPSG:3573', countries: ['Italy', 'Kazakhstan', 'Austria', 'Hungary', 'Switzerland']}
+  {crs:'EPSG:3576', countries: ['Romania', 'Algeria', 'Morocco', 'Bahrain', 'Egypt', 'Iran  (Islamic Republic of)', 'Iraq', 'Israel', 'Jordan',
+'Kuwait', 'Lebanon', 'Libya', 'Malta', 'Oman', 'Qatar', 'Saudi Arabia', 'Syrian Arab Republic',
+'Tunisia', 'United Arab Emirates', 'Yemen', 'U.K. of Great Britain and Northern Ireland','Austria','Belgium','Finland','Lithuania','Iceland','Netherlands','Montenegro']},
+
+  {crs:'EPSG:3573', countries: ['Italy', 'Kazakhstan', 'Austria', 'Hungary', 'Switzerland','Ireland','Luxembourg','Moldova, Republic of']}
 ];
 // Flatten all override country names
 var overrideList = crsGroups.reduce(function(acc, g) {
   return acc.concat(g.countries);
 }, []);
 
-// 4) HELPER: SUM A BAND OVER GEOMETRY IN SPECIFIED CRS
-function sumOver(image, geom, crs) {
-  var band = ee.String(image.bandNames().get(0));
-  var stats = image.reduceRegion({
-    reducer:   ee.Reducer.sum().unweighted(),
-    geometry:  geom,
-    crs:       crs,
-    scale:     100,
-    maxPixels: 1e13,
-    tileScale: 4
-  });
-  return ee.Number(stats.get(band));
-}
-
-// 5) COMPUTE & EXPORT FUNCTION
+//COMPUTE & EXPORT FUNCTION
 function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   var allResults = ee.FeatureCollection([]);
 
-  // 5a) Process each CRS group
+  // Process each CRS group
   crsGroups.forEach(function(group) {
     var crs = group.crs;
     var fc = countries.filter(ee.Filter.inList('ADM0_NAME', group.countries));
@@ -335,7 +324,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
     allResults = allResults.merge(mapped);
   });
 
-  // 5b) Process the default-CRS countries
+  // Process the default-CRS countries
   var defaultFC = countries.filter(
     ee.Filter.inList('ADM0_NAME', overrideList).not()
     );
@@ -355,7 +344,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   });
   allResults = allResults.merge(mappedDef);
 
-  // 5c) Export allResults as one CSV
+  // Export allResults as one CSV
   Export.table.toDrive({
     collection:  allResults,
     description: fileNamePrefix + '_' + year,
@@ -364,7 +353,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   });
 }
 
-// 6) LOOP OVER RASTERS
+//  LOOP OVER RASTERS
 rasters.forEach(function(r) {
   var rasterName = r.prefix + r.year;
   computeZonalStatsAndExport(
