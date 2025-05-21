@@ -307,7 +307,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   crsGroups.forEach(function(group) {
     var crs = group.crs;
     var fc = countries.filter(ee.Filter.inList('ADM0_NAME', group.countries));
-    var img = raster.reproject({ crs: crs, scale: 100 });
+    //var img = raster.reproject({ crs: crs, scale: 100 });
     var stats = raster.reduceRegions({
       collection: fc,
       reducer:    ee.Reducer.sum().unweighted(),
@@ -328,7 +328,7 @@ function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
   var defaultFC = countries.filter(
     ee.Filter.inList('ADM0_NAME', overrideList).not()
     );
-  var imgDefault = raster.reproject({ crs: defaultCRS, scale: 100 });
+  //var imgDefault = raster.reproject({ crs: defaultCRS, scale: 100 });
   var statsDef = raster.reduceRegions({
     collection: defaultFC,
     reducer:    ee.Reducer.sum().unweighted(),
