@@ -1,294 +1,293 @@
-country,Population2020
-Monaco,18120.63
-Seychelles,103157.78
-Zimbabwe,17500000.00
-Gabon,2280698.34
-Equatorial Guinea,1593243.16
-Chad,17300000.00
-Sao Tome and Principe,219906.86
-Congo,5674911.03
-Democratic Republic of the Congo,93900000.00
-Cameroon,26700000.00
-Central African Republic,5404466.02
-Swaziland,1474837.53
-Togo,8506927.59
-Sierra Leone,8402797.96
-Senegal,17500000.00
-Nigeria,213000000.00
-Niger,25800000.00
-Mauritania,4917254.29
-Mali,22400000.00
-Liberia,5147349.10
-Guinea-Bissau,2106578.14
-Gambia,2753131.11
-Guinea,13600000.00
-Ghana,32800000.00
-Cape Verde,586906.47
-Côte d'Ivoire,27200000.00
-Burkina Faso,22500000.00
-Benin,12900000.00
-Malaysia,32900000.00
-Taiwan,23500000.00
-Denmark,5723783.24
-Greece,10000000.00
-Albania,2860019.23
-Liechtenstein,37792.06
-Republic of Korea,50400000.00
-Dem People's Rep of Korea,25400000.00
-China,1410000000.00
-Cambodia,16200000.00
-Thailand,71300000.00
-Indonesia,266000000.00
-Singapore,5774352.18
-Georgia,3758305.38
-Cyprus,1232856.21
-Belarus,9654093.74
-Estonia,1334119.81
-Hong Kong,6165438.59
-Japan,122000000.00
-Lesotho,2241889.76
-Mongolia,3300956.74
-Bulgaria,6933439.21
-Croatia,4026532.61
-Spain,46400000.00
-Germany,83400000.00
-Azerbaijan,10200000.00
-Armenia,2801507.87
-Poland,38500000.00
-Montenegro,607905.41
-Malta,507764.72
-Netherlands,17400000.00
-Belgium,11600000.00
-Austria,8917072.13
-Morocco,36600000.00
-Libya,6631086.11
-Tunisia,12100000.00
-Egypt,107000000.00
-Algeria,43400000.00
-Iran  (Islamic Republic of),87000000.00
-Oman,4448448.72
-Kuwait,4287622.42
-Lebanon,5287975.33
-Qatar,2730908.58
-Saudi Arabia,35700000.00
-Yemen,32000000.00
-Iraq,42400000.00
-Jordan,10900000.00
-Syrian Arab Republic,20500000.00
-Israel,8532886.33
-Bahrain,1021487.72
-United Arab Emirates,9131814.99
-Romania,19400000.00
-Lithuania,2819619.75
-Iceland,353368.04
-U.K. of Great Britain and Northern Ireland,66600000.00
-Finland,5445062.59
-Italy,59100000.00
-Luxembourg,634001.25
-Switzerland,8636928.32
-Austria,8917135.30
-Kazakhstan,19000000.00
-"Moldova, Republic of",3077947.21
-Hungary,9745864.21
-Ireland,4887132.65
-Serbia,12600000.00
-South Sudan,10700000.00
-Sudan,46000000.00
-Cocos (Keeling) Islands,514.98
-Christmas Island,3077.89
-Ashmore and Cartier Islands,0.00
-Faroe Islands,108346.64
-Mayotte,317503.36
-Réunion,1022234.73
-Tromelin Island,0.00
-Juan de Nova Island,0.00
-Glorioso Island,0.00
-Europa Island,0.00
-Bassas da India,0.00
-Saint Pierre et Miquelon,8203.87
-French Southern and Antarctic Territories,0.00
-The former Yugoslav Republic of Macedonia,2831274.78
-San Marino,43411.06
-Slovenia,3028872.01
-Portugal,12700000.00
-Bosnia and Herzegovina,4629353.30
-Andorra,103468.24
-France,94200000.00
-Australia,5914757.03
-Palau,17123.08
-Canada,31700000.00
-Canada,3250168.63
-Canada,745660.80
-Mozambique,32900000.00
-Mauritius,1380030.11
-Malawi,20000000.00
-Rwanda,13100000.00
-Somalia,16600000.00
-Zambia,19500000.00
-Kenya,52100000.00
-Madagascar,29900000.00
-United Republic of Tanzania,62000000.00
-Uganda,44500000.00
-Ethiopia,119000000.00
-Eritrea,3654665.21
-Djibouti,1110806.57
-Comoros,811892.07
-Burundi,12200000.00
-Angola,34100000.00
-Namibia,2670350.34
-South Africa,66900000.00
-Botswana,2766869.54
-Brazil,226000000.00
-Turkmenistan,8037530.03
-Uzbekistan,44100000.00
-Tajikistan,12200000.00
-Kyrgyzstan,8512409.17
-Myanmar,55800000.00
-Viet Nam,100000000.00
-Lao People's Democratic Republic,7681977.93
-Brunei Darussalam,445924.11
-Philippines,111000000.00
-Timor-Leste,1309784.57
-Maldives,431113.27
-Nepal,33000000.00
-Pakistan,259000000.00
-India,1500000000.00
-Sri Lanka,21800000.00
-Bhutan,934111.38
-Bangladesh,183000000.00
-Afghanistan,47300000.00
-Turkey,106000000.00
-Ukraine,66600000.00
-Czech Republic,16300000.00
-Slovakia,8240933.00
-Norway,10400000.00
-Sweden,19700000.00
-Latvia,3433624.22
-Svalbard and Jan Mayen Islands,12706.04
-Madeira Islands,309980.28
-Azores Islands,288894.07
-British Indian Ocean Territory,0.00
-Guernsey,94992.41
-Jersey,161787.68
-Isle of Man,141692.63
-Holy See,1580.18
-Greenland,74214.04
-Western Sahara,599843.23
-Gaza Strip,2098928.30
-West Bank,119997.98
-West Bank,3786297.42
-Gibraltar,30498.66
-Saint Helena,5770.65
-Macau,526855.02
-Abyei,29759.76
-Ilemi triangle,25443.25
-Hala'ib triangle,5250.07
-Ma'tan al-Sarra,0.00
-Paracel Islands,465.87
-Senkaku Islands,0.00
-Scarborough Reef,0.00
-China/India,910.50
-Aksai Chin,5707.08
-Spratly Islands,0.00
-Jammu and Kashmir,23400000.00
-Arunachal Pradesh,1282109.72
-Norfolk Island,2482.39
-Wallis and Futuna,11738.60
-French Polynesia,302928.96
-New Zealand,6452119.45
-Australia,8470352.24
-Australia,16400000.00
-Papua New Guinea,9290075.61
-Vanuatu,315867.39
-Solomon Islands,675930.47
-Fiji,858337.07
-Marshall Islands,37263.85
-Nauru,11656.31
-Micronesia (Federated States of),105676.60
-Kiribati,123173.53
-Samoa,215176.69
-Tonga,110237.62
-Tuvalu,10130.87
-Canada,8067.24
-Canada,7213348.79
-Canada,909414.02
-Canada,9576037.22
-Canada,2259485.50
-Canada,42017.80
-Canada,46190.59
-United States of America,114000000.00
-United States of America,141000000.00
-United States of America,25300000.00
-Russian Federation,250000000.00
-Cook Islands,17912.87
-Niue,2194.38
-Northern Mariana Islands,50187.19
-Wake Island,0.00
-Jarvis Island,0.00
-New Caledonia,305292.65
-Tokelau,1494.93
-Guam,173484.55
-American Samoa,47077.44
-Kuril islands,20884.17
-Martinique,375953.59
-Guadeloupe,450121.00
-Clipperton Island,0.00
-Dominica,72833.95
-Dominican Republic,11600000.00
-Antigua and Barbuda,96033.87
-Cuba,12200000.00
-Grenada,118480.53
-Jamaica,2959406.40
-Saint Kitts and Nevis,49030.93
-Trinidad and Tobago,1541754.38
-Bahamas,442535.48
-Saint Lucia,182925.35
-Saint Vincent and the Grenadines,112291.88
-Barbados,287989.26
-Haiti,11900000.00
-Panama,4325964.59
-El Salvador,6486100.33
-Nicaragua,6925135.68
-Mexico,135000000.00
-Honduras,10400000.00
-Guatemala,18000000.00
-Costa Rica,5201010.95
-Belize,412059.94
-United States of America,30600000.00
-United States of America,117000000.00
-Colombia,51300000.00
-Guyana,806610.44
-Ecuador,17600000.00
-French Guiana,292276.07
-Paraguay,7315790.41
-Suriname,601844.24
-Uruguay,4109240.23
-Venezuela,28900000.00
-Peru,33800000.00
-Chile,23400000.00
-Bolivia,12500000.00
-Netherlands Antilles,268690.38
-Navassa Island,0.00
-Puerto Rico,3445269.43
-Palmyra Atoll,0.00
-Midway Island,0.00
-Kingman Reef,0.00
-Johnston Atoll,0.00
-Howland Island,0.00
-Baker Island,0.00
-Bird Island,0.00
-Aruba,108358.05
-Pitcairn,62.67
-Cayman Islands,71993.38
-Montserrat,4736.33
-Turks and Caicos islands,46600.78
-British Virgin Islands,31060.18
-Anguilla,16073.56
-Bermuda,53043.35
-United States Virgin Islands,104838.30
-Falkland Islands (Malvinas),5433.55
-South Georgia and the South Sandwich Islands,0.00
-Argentina,53800000.00
-Heard Island and McDonald Islands,0.00
-Bouvet Island,0.00
-Antarctica,0.00
+country,population_2020
+Montenegro,605552.8161157463
+Serbia,9020602.18678812
+South Sudan,1.0601553872479027E7
+Sudan,4.447511310325266E7
+Taiwan,2.3509155381351247E7
+Cocos (Keeling) Islands,45.788851235061884
+Christmas Island,2836.2092148051597
+Ashmore and Cartier Islands,0.0
+Faroe Islands,45913.88314802705
+Mayotte,281118.98600060586
+Réunion,938693.1973839002
+Tromelin Island,0.0
+Juan de Nova Island,0.0
+Glorioso Island,0.0
+Europa Island,0.0
+Bassas da India,0.0
+Saint Pierre et Miquelon,5098.234594870359
+French Southern and Antarctic Territories,0.0
+Denmark,5663948.190912208
+The former Yugoslav Republic of Macedonia,2117697.9968387736
+Croatia,3992494.9179414096
+Malta,496328.28186339745
+San Marino,31588.686461331323
+Slovenia,2099689.207537087
+Greece,9947170.300228989
+Italy,5.8856111975115314E7
+Portugal,9701600.757949924
+Spain,4.623126984106023E7
+Bosnia and Herzegovina,3309361.2989319963
+Andorra,76475.33523247764
+Albania,2855694.1431431477
+Monaco,16412.87135931058
+Netherlands,1.7303827959306777E7
+Luxembourg,627047.2556340687
+Liechtenstein,38005.10387613345
+France,6.394054658596313E7
+Germany,8.322757970347407E7
+Switzerland,8647187.288275547
+Belgium,1.1541788180713937E7
+Austria,8908600.314121379
+Australia,4911120.374306915
+Palau,12087.044037482032
+Canada,2.229228443531114E7
+Canada,2174405.655805951
+Canada,459632.4991505174
+Mozambique,3.104235832722622E7
+Mauritius,1265654.672259706
+Malawi,1.9423988851241402E7
+Rwanda,1.313555483552035E7
+Somalia,1.6409984884616371E7
+Zambia,1.8903180615266077E7
+Kenya,5.20311152109038E7
+Madagascar,2.798273113700068E7
+Seychelles,90362.50606658729
+United Republic of Tanzania,6.150151574102622E7
+Uganda,4.447982068854266E7
+Zimbabwe,1.5669568949391471E7
+Ethiopia,1.1702102936070518E8
+Eritrea,3477599.8493039943
+Djibouti,1050898.6464713737
+Comoros,729326.6638488988
+Burundi,1.2215197353655925E7
+Gabon,2240212.617729983
+Equatorial Guinea,1569961.6532366483
+Chad,1.6548472516522657E7
+Sao Tome and Principe,199279.60095792823
+Congo,5652986.403479005
+Democratic Republic of the Congo,9.294860900831904E7
+Cameroon,2.640405758394288E7
+Central African Republic,5343864.623142976
+Angola,3.3269605113810163E7
+Morocco,3.6556227465222016E7
+Libya,6592679.2604447445
+Tunisia,1.2027801935865082E7
+Egypt,1.071047702761927E8
+Algeria,4.319232918437162E7
+Namibia,2516049.438188548
+Swaziland,1181994.2759200225
+Lesotho,2241938.1855550217
+South Africa,5.8739242613431945E7
+Botswana,2545340.3180881566
+Togo,8321022.746879424
+Sierra Leone,8143215.824032925
+Senegal,1.6224045474958317E7
+Nigeria,2.0807526863057658E8
+Niger,2.4279402466356385E7
+Mauritania,4461174.724258652
+Mali,2.1225324261158742E7
+Liberia,5079901.001359449
+Guinea-Bissau,1989082.3843040727
+Gambia,2608839.588355909
+Guinea,1.3147097270197678E7
+Ghana,3.209877797245899E7
+Cape Verde,532748.2325948195
+Côte d'Ivoire,2.678137645517443E7
+Burkina Faso,2.1501635367721345E7
+Benin,1.256833776294962E7
+Brazil,2.122435340413412E8
+Turkmenistan,6262464.24041496
+Uzbekistan,3.360551884932263E7
+Tajikistan,9559350.723331297
+Kyrgyzstan,6342907.5913393935
+Kazakhstan,1.8989429417668432E7
+Mongolia,3290752.861533619
+Republic of Korea,5.041796883320812E7
+Dem People's Rep of Korea,2.535029645863224E7
+China,1.418216342874941E9
+Myanmar,5.240241599615818E7
+Cambodia,1.6247074718107618E7
+Viet Nam,9.603979987121093E7
+Lao People's Democratic Republic,7333269.061819672
+Malaysia,3.2642272594055388E7
+Thailand,7.148474732017215E7
+Brunei Darussalam,444963.663007073
+Philippines,1.0707459874261507E8
+Indonesia,2.670113755783412E8
+Singapore,5823058.582825003
+Timor-Leste,1282565.6853186141
+Maldives,261939.9577306258
+Nepal,2.9258156642471425E7
+Pakistan,2.2248729499032915E8
+India,1.3786074160343645E9
+Iran  (Islamic Republic of),8.711208472970119E7
+Sri Lanka,2.1438732811092697E7
+Bhutan,871524.7298073051
+Bangladesh,1.668174442136379E8
+Afghanistan,3.8831938976179056E7
+Oman,4430624.451289791
+Kuwait,4258216.043207933
+Lebanon,5317656.0551888
+Qatar,2743665.851184944
+Saudi Arabia,3.5775164412485056E7
+Turkey,8.198037477693781E7
+Yemen,3.2170509151798803E7
+Iraq,4.254647044611037E7
+Jordan,1.0925153269508889E7
+Syrian Arab Republic,2.0536391008300304E7
+Israel,8510391.78458468
+Georgia,3742625.38477468
+Cyprus,1213897.291701633
+Bahrain,998313.5817487885
+Azerbaijan,1.0242499041780366E7
+Armenia,2803968.152095626
+United Arab Emirates,9023122.115519673
+"Moldova, Republic of",3077540.380840912
+Hungary,9735194.408165202
+Poland,3.839431933549006E7
+Romania,1.9445165641225375E7
+Ukraine,4.372891814903774E7
+Belarus,9638176.883561268
+Czech Republic,1.053433322493194E7
+Slovakia,5468913.706656223
+Bulgaria,6927770.605945438
+Norway,4939996.727467849
+Sweden,1.0104753917049885E7
+Lithuania,2815168.0453165183
+Latvia,1873365.0591089497
+Ireland,4842429.797388319
+Iceland,341687.7559771023
+U.K. of Great Britain and Northern Ireland,6.624461660561674E7
+Finland,5396200.326379318
+Estonia,1313209.5810769496
+Svalbard and Jan Mayen Islands,2942.0838828086853
+Madeira Islands,254599.04781921353
+Azores Islands,213880.44692448847
+British Indian Ocean Territory,0.0
+Guernsey,59701.771447225474
+Jersey,103003.55460197013
+Isle of Man,81260.30629598256
+Holy See,0.0
+Greenland,35208.0414673529
+Western Sahara,524559.5188226962
+Gaza Strip,1788224.3414439878
+West Bank,117508.45995342219
+West Bank,3212774.6502919756
+Gibraltar,24273.70351619553
+Saint Helena,5260.020073696971
+Macau,463206.16937328014
+Hong Kong,6095620.078495492
+Abyei,29544.55426173471
+Ilemi triangle,24367.265646107495
+Hala'ib triangle,4678.353475250304
+Ma'tan al-Sarra,0.0
+Paracel Islands,344.5133568458259
+Senkaku Islands,0.0
+Scarborough Reef,0.0
+China/India,784.8853459432721
+Aksai Chin,4646.003720019013
+Spratly Islands,0.0
+Jammu and Kashmir,1.948603869074358E7
+Arunachal Pradesh,1138552.371315373
+Norfolk Island,2083.384002172854
+Wallis and Futuna,10137.720557559282
+French Polynesia,239919.9143014185
+New Zealand,4913302.101686716
+Australia,6587190.618401511
+Australia,1.3670352639855992E7
+Papua New Guinea,9169066.172984663
+Vanuatu,263993.96040999587
+Solomon Islands,576022.2676594218
+Fiji,811840.9479023165
+Marshall Islands,14146.162060763338
+Nauru,9271.71373439394
+Micronesia (Federated States of),73204.46740829463
+Kiribati,79286.94841171894
+Samoa,190680.16288291896
+Tonga,91702.94798950292
+Tuvalu,6293.127309817821
+Canada,2792.957419809587
+Canada,4603534.647142778
+Canada,500980.07027833676
+Canada,5861051.9114242
+Canada,1450454.5494084146
+Canada,13691.100512100213
+Canada,20113.052746011715
+United States of America,8.888230876682776E7
+United States of America,1.0912667038474275E8
+United States of America,1.8567095830884945E7
+Japan,1.2198216515612751E8
+Russian Federation,1.4520395965111077E8
+Cook Islands,12747.787388499826
+Niue,1621.5474466483302
+Northern Mariana Islands,46742.592662089184
+Wake Island,0.0
+Jarvis Island,0.0
+New Caledonia,271841.68756095297
+Tokelau,639.6442219465971
+Guam,165897.01326216746
+American Samoa,41447.64001647709
+Kuril islands,10897.008653604425
+Martinique,343898.69302268093
+Guadeloupe,407465.95065210806
+Clipperton Island,0.0
+Dominica,65997.08303972613
+Dominican Republic,1.0915868630506732E7
+Antigua and Barbuda,88493.47081619594
+Cuba,1.1109780089233376E7
+Grenada,106883.66586091183
+Jamaica,2762759.894019268
+Saint Kitts and Nevis,42925.99162961682
+Trinidad and Tobago,1492450.5848903588
+Bahamas,370161.73595085647
+Saint Lucia,169715.13582453365
+Saint Vincent and the Grenadines,99106.32050139387
+Barbados,270755.07926580077
+Haiti,1.1025851293450737E7
+Panama,4183854.142118486
+El Salvador,6268260.873229213
+Nicaragua,6708291.301773785
+Mexico,1.2562597589095236E8
+Honduras,1.0044194955293722E7
+Guatemala,1.7331626825238205E7
+Costa Rica,5105586.14732698
+Belize,379067.5992349582
+United States of America,2.6438810514988754E7
+United States of America,9.137313951827896E7
+Colombia,5.0755030031138934E7
+Guyana,776039.2918498778
+Ecuador,1.744679742253775E7
+French Guiana,286782.0956527656
+Paraguay,6603758.705834539
+Suriname,601253.4797254629
+Uruguay,3404468.148908564
+Venezuela,2.824236123063775E7
+Peru,3.306733452444164E7
+Chile,1.9145275988228053E7
+Bolivia,1.1878102167541968E7
+Netherlands Antilles,257200.17235769483
+Navassa Island,0.0
+Puerto Rico,3233042.1332632597
+Palmyra Atoll,0.0
+Midway Island,0.0
+Kingman Reef,0.0
+Johnston Atoll,0.0
+Howland Island,0.0
+Baker Island,0.0
+Bird Island,0.0
+Aruba,104151.04513275763
+Pitcairn,45.707550782710314
+Cayman Islands,60904.73568015988
+Montserrat,4319.048300457449
+Turks and Caicos islands,39665.1800035038
+British Virgin Islands,27162.18572309357
+Anguilla,14299.675740154926
+Bermuda,47967.4787765732
+United States Virgin Islands,96749.05232180934
+Falkland Islands (Malvinas),2519.400560496375
+South Georgia and the South Sandwich Islands,0.0
+Argentina,4.482050740339233E7
+Heard Island and McDonald Islands,0.0
+Bouvet Island,0.0
+Antarctica,0.0

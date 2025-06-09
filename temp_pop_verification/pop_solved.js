@@ -317,3 +317,10 @@ var rasters = [
   { image: c3PopChange2010_2030.updateMask(c3PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c3UrbanPopChange_' }, 
   { image: c3PopChange2020_2030.updateMask(c3PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c3UrbanPopChange_' }
 ];
+
+
+// Loop through each raster and compute zonal statistics
+rasters.forEach(function(r) {
+  var rasterName = r.prefix + r.year;  // Create column name based on prefix and year
+  computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
+});

@@ -10,12 +10,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from adjustText import adjust_text
+import os
+# Set the working directory to where the data files are located
+os.chdir(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification")
+
 
 # Load data
 # Note: Replace these paths with your actual paths when running the code
-real = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\popwb.csv")
-gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats2.csv")
-#geemod = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\Population_2020 (3).csv")
+#real = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\temp_pop_verification\popwb.csv")
+real = pd.read_csv(r"C:\Users\auuser\Downloads\API_AG.LND.TOTL.K2_DS2_en_csv_v2_85432.csv")
+gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats1.csv")
+
 # Merge datasets
 df = pd.merge(real, gee, how="inner", on="country")
 # Create logarithmic columns for plottings
@@ -128,4 +133,125 @@ plt.legend(title='Population Log Diff.', bbox_to_anchor=(1.05, 1), loc='upper le
 # Save Plot 2
 #plt.tight_layout()
 plt.savefig('population_ratio_analysis2.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+
+### Land Area Comparison
+
+# Load data
+real = pd.read_csv(r"C:\Users\auuser\Downloads\API_AG.LND.TOTL.K2_DS2_en_csv_v2_85432.csv")
+gee = pd.read_csv(r"C:\Users\auuser\Documents\Munir\Urbanization Analysis\GEE\data\gen\urbanchange_summary_stats1.csv")
+
+# Merge datasets
+df = pd.merge(real, gee, how="inner", on="country")
+# Create logarithmic columns for plottings
+df["log2020"] = np.log(df["area"])
+df["log2020_real"] = np.log(df["area_real"])
+
+# Calculate the difference and ratio between Population2020 and Population2020_real
+df["pop_diff"] = np.abs(df["log2020"] - df["log2020_real"])
+df["pop_ratio"] = df["area"] / df["area_real"]
+df["pop_diffexp"] = np.abs(df["area"] - df["area_real"])
+# Calculate summary stats for the title
+sumpop = round(sum(df['area_real']) / 1e6, 1)
+geepop = round(sum(df['area']) / 1e6, 1)
+
+# PLOT 1: Scatter plot with 45-degree line and point size based on difference
+plt.figure(figsize=(20, 12))
+sns.set_style("whitegrid")
+
+# Create the scatter plot with point size based on the log difference
+scatter = sns.scatterplot(
+    data=df,
+    x='log2020', 
+    y='log2020_real',
+    size='pop_diff',  # Size points by difference between the two values
+    sizes=(50, 400),  # Range of point sizes
+    hue='pop_diff',   # Color points by difference for added emphasis
+    palette='viridis', # Use a color palette that shows the gradient well
+    alpha=0.8
+)
+
+# Add a 45-degree line
+x_min, x_max = plt.xlim()
+y_min, y_max = plt.ylim()
+max_val = max(x_max, y_max)
+min_val = min(x_min, y_min)
+plt.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=1.5, label='Perfect Match Line')
+
+"""
+# Add country labels with adjustment to prevent overlap
+texts = []
+for i, row in df.iterrows():
+    texts.append(plt.text(row['log2020'], row['log2020_real'], row['country'], fontsize=10))
+"""
+texts = []
+for i, row in df.iterrows():
+    ratio = row['pop_ratio']
+    # Only label countries with ratio outside the 10% range
+    if ratio < 0.5 or ratio > 1.6:
+        texts.append(plt.text(row['log2020'], row['log2020_real'], row['country'], fontsize=11))
+
+# Improve styling
+plt.xlabel('Log of GEE area', fontsize=16)
+plt.ylabel('Log of Actual area (WB)', fontsize=16)
+plt.title(f'Land Area Comparison by Country: World Area = {sumpop}M and GEE Area = {geepop}M', fontsize=18)
+
+# Add a legend
+plt.legend(title='Area Difference', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Add grid
+plt.grid(True, alpha=0.3, linestyle='--')
+
+# Save Plot 1
+#plt.tight_layout()
+plt.savefig('area_comparison_log2.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+# PLOT 2: Population Ratio Analysis
+plt.figure(figsize=(20, 12))
+sns.set_style("whitegrid")
+
+# Create the ratio scatter plot
+ratio_plot = sns.scatterplot(
+    data=df,
+    x='area_real',  # Actual population on x-axis
+    y='pop_ratio',            # Ratio on y-axis
+    s=150,                    # Point size
+    hue='pop_diff',          # Color by ratio
+    palette='coolwarm',       # Use diverging palette centered around 1.0
+    alpha=0.8
+)
+
+# Add a horizontal line at ratio = 1.0 (perfect match)
+plt.axhline(y=1.0, color='r', linestyle='--', linewidth=1.5, label='Perfect Ratio (1.0)')
+
+# Add labels only for countries with ratio < 0.9 or ratio > 1.1 (10% difference in either direction)
+texts = []
+for i, row in df.iterrows():
+    ratio = row['pop_ratio']
+    # Only label countries with ratio outside the 10% range
+    if ratio < 0.5 or ratio > 1.6:
+        texts.append(plt.text(row['area_real'], row['pop_ratio'], row['country'], fontsize=12))
+
+# Improve styling
+plt.xlabel('Actual Area', fontsize=16)
+plt.ylabel('GEE Area / Actual Area Ratio', fontsize=16)
+plt.title('Area Ratio vs Actual Area by Country', fontsize=18)
+
+# Add logarithmic scale to x-axis for better visualization
+plt.xscale('log')
+
+# Set y-axis limits to focus on the important range
+#plt.ylim(0.5, 1.5)  # Adjust as needed based on your data
+
+# Add grid
+plt.grid(True, alpha=0.3, linestyle='--')
+
+# Add a legend
+plt.legend(title='Area Log Diff.', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+# Save Plot 2
+#plt.tight_layout()
+plt.savefig('Area_ratio_analysis2.png', dpi=300, bbox_inches='tight')
 plt.show()

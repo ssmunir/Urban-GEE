@@ -3,11 +3,10 @@ Map.setCenter(7.7501, 12.8969, 4);
 // Add Country Boundries
 var countries = ee.FeatureCollection('FAO/GAUL/2015/level0');
 
-
-
 ///////////////
 
 // Import Urbanisation Dataset
+var smod1990 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/1990").select('smod_code');
 var smod2000 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2000").select('smod_code');
 var smod2010 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2010").select('smod_code');
 var smod2020 = ee.Image("JRC/GHSL/P2023A/GHS_SMOD/2020").select('smod_code');
@@ -30,6 +29,7 @@ var createUrbanLayer = function(image, year) {
 };
 
 // Create urban layers for each year
+var urban1990 = createUrbanLayer(smod1990, '1990');
 var urban2000 = createUrbanLayer(smod2000, '2000');
 var urban2010 = createUrbanLayer(smod2010, '2010');
 var urban2020 = createUrbanLayer(smod2020, '2020');
@@ -40,6 +40,7 @@ var urban2030 = createUrbanLayer(smod2030, '2030');
 
 
 // import Population data 
+var pop1990 = ee.Image('JRC/GHSL/P2023A/GHS_POP/1990');
 var pop2000 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2000');
 var pop2010 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2010');
 var pop2020 = ee.Image('JRC/GHSL/P2023A/GHS_POP/2020');
@@ -59,6 +60,7 @@ var multiplyUrbanByPopulation = function(urbanLayer, populationLayer, year) {
 };
 
 // Create population urban layers for each year (current year)
+var populationUrban1990 = multiplyUrbanByPopulation(urban1990, pop1990, '1990');
 var populationUrban2000 = multiplyUrbanByPopulation(urban2000, pop2000, '2000');
 var populationUrban2010 = multiplyUrbanByPopulation(urban2010, pop2010, '2010');
 var populationUrban2020 = multiplyUrbanByPopulation(urban2020, pop2020, '2020');
@@ -66,12 +68,20 @@ var populationUrban2030 = multiplyUrbanByPopulation(urban2030, pop2030, '2030');
 
 // Combine all population urban layers into a single image with multiple bands
 var multiBandPopulationUrban = ee.Image.cat([
+  populationUrban1990,
   populationUrban2000,
   populationUrban2010,
   populationUrban2020,
   populationUrban2030
 ]);
 
+
+//////////////////////
+// Land that is urban in 2020 but was NOT urban in 2010
+var newUrban2020 = urban2020
+  .eq(1)
+  .and(urban2010.eq(0))
+  .rename('urban2020_not2010');
 
 //////////// Urban LAG 2020/2030 -- urban today that was not urban 10/20 years ago
 
@@ -87,15 +97,19 @@ var NOTurbanlagBYpop = function(currentUrbanLayer, pastUrbanLayer, populationLay
 
 
 // Create population urban layers for each year (current year) 
+var popUrban_10YearLag2010 = NOTurbanlagBYpop(urban2010, urban2000, pop2010, 'popUrban_10YearLag_', '2010');
 var popUrban_10YearLag2020 = NOTurbanlagBYpop(urban2020, urban2010, pop2020, 'popUrban_10YearLag_', '2020');
 var popUrban_10YearLag2030 = NOTurbanlagBYpop(urban2030, urban2020, pop2030, 'popUrban_10YearLag_', '2030');
+var popUrban_20YearLag2010 = NOTurbanlagBYpop(urban2010, urban1990, pop2010, 'popUrban_20YearLag_', '2010');
 var popUrban_20YearLag2020 = NOTurbanlagBYpop(urban2020, urban2000, pop2020, 'popUrban_20YearLag_', '2020');
 var popUrban_20YearLag2030 = NOTurbanlagBYpop(urban2030, urban2010, pop2030, 'popUrban_20YearLag_', '2030');
 
 // Combine all population urban layers into a single image with multiple bands
 var multiBandPopUrban10YearLag = ee.Image.cat([
+  popUrban_10YearLag2010,
   popUrban_10YearLag2020,
   popUrban_10YearLag2030,
+  popUrban_20YearLag2010,
   popUrban_20YearLag2020,
   popUrban_20YearLag2030
 ]);
@@ -114,13 +128,21 @@ var urbanlagBYpop = function(currentUrbanLayer, pastUrbanLayer, populationLayer,
 
 
 // Create population urban layers for each year (current year) 
+var NonUrbanPop_10YearLag2010 = urbanlagBYpop(urban2010, urban2000, pop2010, 'NonUrbanPop_10YearLag_', '2010');
 var NonUrbanPop_10YearLag2020 = urbanlagBYpop(urban2020, urban2010, pop2020, 'NonUrbanPop_10YearLag_', '2020');
 var NonUrbanPop_10YearLag2030 = urbanlagBYpop(urban2030, urban2020, pop2030, 'NonUrbanPop_10YearLag_', '2030');
+var NonUrbanPop_20YearLag2010 = urbanlagBYpop(urban2010, urban1990, pop2010, 'NonUrbanPop_20YearLag_', '2010');
 var NonUrbanPop_20YearLag2020 = urbanlagBYpop(urban2020, urban2000, pop2020, 'NonUrbanPop_20YearLag_', '2020');
 var NonUrbanPop_20YearLag2030 = urbanlagBYpop(urban2030, urban2010, pop2030, 'NonUrbanPop_20YearLag_', '2030');
 
 
-// Population change  2000/2020, 2010/2020,2010/2030, 2020/2030
+// Population change  1990\2010, 1990\2000, 2000/2020, 2010/2020,2010/2030, 2020/2030
+
+// Calculate the change in population between 1990 and 2010
+var popChange_1990_2010 = pop2010.subtract(pop1990).abs();
+
+// Calculate the change in population between 1990 and 2000
+var popChange_1990_2000 = pop2000.subtract(pop1990).abs();
 
 // Calculate the change in population between 2000 and 2020
 var popChange_2000_2020 = pop2020.subtract(pop2000).abs();
@@ -222,47 +244,56 @@ Map.addLayer(multiBandPopUrban20YearLag.select('popUrban_20YearLag_2020'), {}, '
 //////// ZONAL STATISTICS
 
 
-// Define the function to compute zonal statistics and export the results with dynamic column names
-function computeZonalStatsAndExport(raster, year, rasterName, fileNamePrefix) {
- // Reproject the population raster to EPSG:4326 (WGS84) to match the countries
-  var reprojectedRaster = raster.reproject({
-    crs: 'EPSG:4326',
-    scale: 100   // Set the resolution to 100 meters (or adjust based on your raster)
-  });
-
-  // Compute zonal statistics: sum of population for each country using the reprojected raster
-  var zonalStats = reprojectedRaster.reduceRegions({
-    collection: countries,               // Use the countries in their native EPSG:4326 projection
-    reducer: ee.Reducer.sum(),           // Sum reducer for population
-    scale: 100,                          // Keep the scale consistent with the raster
-    crs: 'EPSG:4326'                     // Ensure both raster and polygons are in EPSG:4326
+// 2) FUNCTION TO AGGREGATE & EXPORT FOR ANY RASTER
+function exportRasterByCountry(raster, rasterLabel, filePrefix) {
+  // Mask negatives out
+  var clean = raster.updateMask(raster.gte(0));
+  // Select first band
+  var band0 = clean.select(0);
+  // Target 1 km scale & projection
+  var targetScale  = 1000;
+  var projAt1k     = band0.projection().atScale(targetScale);
+  // Aggregate into 1 km pixels
+  var agg1km = band0
+    .reduceResolution({
+      reducer:   ee.Reducer.sum().unweighted(),
+      maxPixels: 1024
+    })
+    .reproject({
+      crs:   projAt1k,
+      scale: targetScale
+    });
+  // Get the actual band name
+  var aggName = agg1km.bandNames().get(0);
+  
+  // Map over every country and compute sum
+  var byCountry = countries.map(function(feat) {
+    var geom = feat.geometry();
+    var stats = agg1km.reduceRegion({
+      reducer:   ee.Reducer.sum().unweighted(),
+      geometry:  geom,
+      scale:     targetScale,
+      maxPixels: 1e13,
+      tileScale: 4
+    });
+    var sum = stats.get(aggName);
+    // Build Feature without computed property names
+    return ee.Feature(null)
+      .set('country',        feat.get('ADM0_NAME'))
+      .set(rasterLabel,      sum);
   });
   
- 
-
-  // Create a simplified FeatureCollection with just country name and the dynamically named sum
-  var simplifiedZonalStats = zonalStats.map(function(feature) {
-    var properties = {};
-    properties['country'] = feature.get('ADM0_NAME');   // Get the country name
-    properties[rasterName] = feature.get('sum');        // Dynamically name the population sum column
-    //properties['year'] = year;                          // Add the year as a property
-
-    return ee.Feature(null, properties);
-  });
-
-  // Export the results to Google Drive as a CSV
+  // Export one CSV with all countries
   Export.table.toDrive({
-    collection: simplifiedZonalStats,
-    description: fileNamePrefix + year,  // File name with prefix and year
-    fileFormat: 'CSV',
-    selectors: ['country', rasterName]  // Only export these columns
+    collection:  byCountry,
+    description: rasterLabel,
+    fileFormat:  'CSV',
+    selectors:   ['country', rasterLabel]
   });
 }
 
-
-// Example call to the function for population in 2000
-//computeZonalStatsAndExport(pop2000, 2000, 'Pop2000', 'Population');
-
+// 3) CALL THE FUNCTION FOR 2020 POPULATION
+//exportRasterByCountry(pop2020, 'population_2020', 'PopByCountry');
 
 // List of rasters with corresponding years
 var rasters = [
@@ -306,12 +337,16 @@ var rasters = [
   { image: c3PopChange2000_2020.updateMask(c3PopChange2000_2020.gt(0)), year: '2000-2020', prefix: 'c3UrbanPopChange_' }, // Class 3 urban change
   { image: c3PopChange2010_2020.updateMask(c3PopChange2010_2020.gt(0)), year: '2010-2020', prefix: 'c3UrbanPopChange_' },
   { image: c3PopChange2010_2030.updateMask(c3PopChange2010_2030.gt(0)), year: '2010-2030', prefix: 'c3UrbanPopChange_' }, 
-  { image: c3PopChange2020_2030.updateMask(c3PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c3UrbanPopChange_' }
+  { image: c3PopChange2020_2030.updateMask(c3PopChange2020_2030.gt(0)), year: '2020-2030', prefix: 'c3UrbanPopChange_' },
+  
+  { image: urban2020, year: '2020', prefix: 'UrbanLand' }, 
+  { image: newUrban2020, year: ' ', prefix: 'urban2020not2010' }
 ];
 
 
 // Loop through each raster and compute zonal statistics
 rasters.forEach(function(r) {
-  var rasterName = r.prefix + r.year;  // Create column name based on prefix and year
-  computeZonalStatsAndExport(r.image, r.year, rasterName, r.prefix);
+  var rasterLabel = r.prefix + r.year;  // Create column name based on prefix and year
+  var filePrefix = r.prefix + r.year; 
+  exportRasterByCountry(r.image, rasterLabel, filePrefix);
 });
